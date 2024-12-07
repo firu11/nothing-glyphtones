@@ -1,19 +1,17 @@
 package views
 
-import "gliphtones/database"
-import "fmt"
+import (
+	"fmt"
+	"gliphtones/database"
+)
 
-templ Canvas() {
-	<canvas></canvas>
-}
-
-templ Ringtone(data database.RingtoneModel) {
-	<div class="ringtone">
+templ Ringtone(data database.RingtoneModel, index int) {
+	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.Id) }>
 		<div class="audio">
-			<button>
-				<img src="/static/icons/iconmonstr-video-13.svg"/>
+			<button type="button">
+				<img src="/static/icons/loading.svg"/>
 			</button>
-			@Canvas()
+			<div class="wave"></div>
 		</div>
 		<span>{ data.Name } { fmt.Sprintf("%d", data.Id) }</span>
 	</div>

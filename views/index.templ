@@ -10,11 +10,13 @@ templ Index(ringtones []database.RingtoneModel) {
 			@Header()
 			<main>
 				<div id="list-of-ringtones">
-					for _, ring := range ringtones {
-						@Ringtone(ring)
+					for i, ring := range ringtones {
+						@Ringtone(ring, i)
 					}
 				</div>
+				<div id="sus"></div>
 			</main>
+			<script src="/static/ringtone.js" type="module"></script>
 		</body>
 	</html>
 }
