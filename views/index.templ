@@ -1,0 +1,20 @@
+package views
+
+import "gliphtones/database"
+
+templ Index(ringtones []database.RingtoneModel) {
+	<!DOCTYPE html>
+	<html lang="cs">
+		@Head()
+		<body>
+			@Header()
+			<main>
+				<div id="list-of-ringtones">
+					for _, ring := range ringtones {
+						@Ringtone(ring)
+					}
+				</div>
+			</main>
+		</body>
+	</html>
+}
