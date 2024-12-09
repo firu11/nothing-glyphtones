@@ -1,36 +1,66 @@
 package utils
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io"
 	"net/http"
 	"os"
+	"time"
+
+	"github.com/golang-jwt/jwt"
+	"github.com/labstack/echo/v4"
 )
 
-/*
-Returns users email and name
-*/
-func GoogleTokenToData(token string) (string, string, error) {
-	res, err := http.Get(fmt.Sprintf("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=%v", token))
-	if err != nil {
-		return "", "", err
+var privateKey []byte = []byte(os.Getenv("TOKEN_KEY"))
+var tokenTimeDuration time.Duration = time.Hour * 24 * 14 // 14 days
+var CookieName string = "GliphtonesCookie"
+
+type data struct {
+	Id int
+	jwt.StandardClaims
+}
+
+func generateToken(id int) (string, error) {
+	data := data{
+		Id: id,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(tokenTimeDuration).Unix(),
+		},
 	}
-	body, err := io.ReadAll(res.Body)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, data)
+	tokenString, err := token.SignedString(privateKey)
+	return tokenString, err
+}
+
+func validateToken(tokenString string) (bool, int, error) {
+	data := data{}
+	token, err := jwt.ParseWithClaims(tokenString, &data, func(token *jwt.Token) (interface{}, error) {
+		return privateKey, nil
+	})
 	if err != nil {
-		return "", "", err
+		return false, 0, err
+	}
+	return token.Valid, data.Id, err
+}
+
+func WriteAuthCookie(c echo.Context, id int) error {
+	jwt, err := generateToken(id)
+	if err != nil {
+		return err
 	}
 
-	m := make(map[string]string)
-	err = json.Unmarshal(body, &m)
-	if err != nil {
-		return "", "", err
+	cookie := http.Cookie{
+		Name:    CookieName,
+		Value:   jwt,
+		Expires: time.Now().Add(tokenTimeDuration),
 	}
+	c.SetCookie(&cookie)
+	return nil
+}
 
-	if m["aud"] != os.Getenv("GOOGLE_CLIENT_ID") {
-		return "", "", errors.New("fake token")
+func RemoveAuthCookie(c echo.Context) {
+	cookie := http.Cookie{
+		Name:   CookieName,
+		Value:  "",
+		MaxAge: -1,
 	}
-
-	return m["email"], m["name"], err
+	c.SetCookie(&cookie)
 }

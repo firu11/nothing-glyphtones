@@ -10,8 +10,11 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/patrickmn/go-cache"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
+var googleOauthConfig *oauth2.Config
 var myCache *cache.Cache
 
 func main() {
@@ -19,10 +22,19 @@ func main() {
 		log.Fatal(err)
 	}
 
+	googleOauthConfig = &oauth2.Config{
+		RedirectURL:  "http://localhost:1323/google-callback",
+		ClientID:     os.Getenv("GOOGLE_ID"),
+		ClientSecret: os.Getenv("GOOGLE_SECRET"),
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"},
+		Endpoint:     google.Endpoint,
+	}
+
 	database.Init()
 	myCache = cache.New(10*time.Second, 1*time.Hour)
 
 	e := echo.New()
+
 	e.Static("/static", "static")
 	setupRouter(e)
 

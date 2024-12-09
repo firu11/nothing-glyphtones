@@ -10,13 +10,18 @@ templ Head() {
 	</head>
 }
 
-templ Header() {
+templ Header(loggedIn bool) {
 	<header>
 		<a id="logo" href="/">
-			Gliphtones
+			GLIPHTONES
+            <span>not by NOTHING</span>
 		</a>
 		<nav>
-			<a id="login" href="/sus">Log In</a>
+			if !loggedIn {
+				<a id="login" href="/google-login">Log In</a>
+			} else {
+				<a id="login" hx-post="/logout" hx-target="header" hx-swap="outerHTML">Log Out</a>
+			}
 		</nav>
 	</header>
 }

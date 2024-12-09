@@ -17,6 +17,11 @@
 }
 
 @font-face {
+    font-family: "Ndot2";
+    src: url("/static/nothing-font.ttf");
+}
+
+@font-face {
     font-family: "Ntype";
     src: url("/static/NType82-Regular.otf");
 }
@@ -40,6 +45,7 @@ header {
 header nav a {
     text-decoration: none;
     color: var(--txt-color);
+    cursor: pointer;
 }
 
 header #logo {
@@ -49,6 +55,13 @@ header #logo {
     text-decoration: none;
     user-select: none;
     font-family: "Ndot";
+    display: flex;
+    flex-direction: column;
+}
+
+header #logo span {
+    font-size: 0.7em;
+    font-family: "Ndot2";
 }
 
 #filters {
