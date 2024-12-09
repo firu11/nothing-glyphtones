@@ -1,0 +1,26 @@
+package views
+
+import (
+	"gliphtones/database"
+	"gliphtones/templates/components"
+)
+
+templ Index(ringtones []database.RingtoneModel, phones []database.PhoneModel, effects []database.EffectModel) {
+	<!DOCTYPE html>
+	<html lang="cs">
+		@components.Head()
+		<body>
+			@components.Header()
+			<main>
+				<div class="g-signin2" data-onsuccess="onSignIn"></div>
+				<div id="filters">
+					@components.Search()
+					@components.PhoneSelect(phones)
+					@components.EffectSelect(effects)
+				</div>
+				@components.ListOfRingtones(ringtones)
+			</main>
+			<script src="/static/ringtone.js" type="module"></script>
+		</body>
+	</html>
+}

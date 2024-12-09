@@ -1,4 +1,4 @@
-package views
+package components
 
 templ Head() {
 	<head>
@@ -12,9 +12,11 @@ templ Head() {
 
 templ Header() {
 	<header>
-        <span id="logo">
-            Gliphtones
-        </span>
-		<nav></nav>
+		<a id="logo" href="/">
+			Gliphtones
+		</a>
+		<nav>
+			<a id="login" href="/sus">Log In</a>
+		</nav>
 	</header>
 }

@@ -1,0 +1,26 @@
+package components
+
+import (
+	"fmt"
+	"gliphtones/database"
+)
+
+templ Search() {
+	<input name="s" type="text" placeholder="Search..." hx-get="/" hx-trigger="input delay:250ms" hx-target="#list-of-ringtones" hx-swap="outerHTML" hx-push-url="true"/>
+}
+
+templ PhoneSelect(phones []database.PhoneModel) {
+	<select name="p">
+		for _, v := range phones {
+			<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+		}
+	</select>
+}
+
+templ EffectSelect(effects []database.EffectModel) {
+	<select name="p">
+		for _, v := range effects {
+			<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+		}
+	</select>
+}

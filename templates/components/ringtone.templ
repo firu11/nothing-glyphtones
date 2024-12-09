@@ -1,4 +1,4 @@
-package views
+package components
 
 import (
 	"fmt"
@@ -14,5 +14,17 @@ templ Ringtone(data database.RingtoneModel, index int) {
 			<div class="wave"></div>
 		</div>
 		<span>{ data.Name } { fmt.Sprintf("%d", data.Id) }</span>
+	</div>
+}
+
+templ ListOfRingtones(ringtones []database.RingtoneModel) {
+	<div id="list-of-ringtones">
+		for i, ring := range ringtones {
+			@Ringtone(ring, i)
+		}
+
+        if len(ringtones) == 0 {
+            <span>There are no gliphtones matching your search.</span>
+        }
 	</div>
 }

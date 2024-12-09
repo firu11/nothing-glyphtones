@@ -1,0 +1,17 @@
+package views
+
+import "gliphtones/templates/components"
+
+templ NotFound() {
+	<!DOCTYPE html>
+	<html lang="cs">
+		@components.Head()
+		<body>
+			@components.Header()
+			<main>
+                <h1>404 - not found</h1>
+                <p>Did you get lost?</p>
+			</main>
+		</body>
+	</html>
+}
