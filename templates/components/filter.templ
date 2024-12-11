@@ -5,22 +5,48 @@ import (
 	"gliphtones/database"
 )
 
-templ Search() {
-	<input name="s" type="text" placeholder="Search..."/>
+templ Search(value string) {
+	<input name="s" type="text" placeholder="Search..." value={ value }/>
 }
 
-templ PhoneSelect(phones []database.PhoneModel) {
+templ PhoneSelect(phones []database.PhoneModel, value string) {
 	<select name="p">
-		for _, v := range phones {
-			<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+		if value == "" {
+			<option value="" selected disabled hidden>Phone</option>
+			<option value="">All</option>
+			for _, v := range phones {
+				<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+			}
+		} else {
+			<option value="">All</option>
+			for _, v := range phones {
+				if fmt.Sprintf("%d", v.Id) == value {
+					<option value={ fmt.Sprintf("%d", v.Id) } selected>{ v.Name }</option>
+				} else {
+					<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+				}
+			}
 		}
 	</select>
 }
 
-templ EffectSelect(effects []database.EffectModel) {
-	<select name="p">
-		for _, v := range effects {
-			<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+templ EffectSelect(effects []database.EffectModel, value string) {
+	<select name="e">
+		if value == "" {
+			<option value="" selected disabled hidden>Effect</option>
+			<option value="">All</option>
+			for _, v := range effects {
+				<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+			}
+		} else {
+			<option value="">All</option>
+			for _, v := range effects {
+				if fmt.Sprintf("%d", v.Id) == value {
+					<option value={ fmt.Sprintf("%d", v.Id) } selected>{ v.Name }</option>
+				} else {
+					<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+				}
+			}
 		}
 	</select>
 }

@@ -14,9 +14,10 @@ templ Header(loggedIn bool) {
 	<header>
 		<a id="logo" href="/">
 			GLIPHTONES
-            <span>not by NOTHING</span>
+			<span>not by NOTHING</span>
 		</a>
 		<nav>
+            <a href="/upload">Upload</a>
 			if !loggedIn {
 				<a id="login" href="/google-login">Log In</a>
 			} else {
@@ -24,4 +25,10 @@ templ Header(loggedIn bool) {
 			}
 		</nav>
 	</header>
+}
+
+templ Footer() {
+	<footer>
+		<span>GLIPHTONES does not claim ownership of the audio files users provide. Uploading any audio files that are subject to copyright is prohibited.</span>
+	</footer>
 }

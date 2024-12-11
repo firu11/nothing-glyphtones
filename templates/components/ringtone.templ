@@ -13,7 +13,11 @@ templ Ringtone(data database.RingtoneModel, index int) {
 			</button>
 			<div class="wave"></div>
 		</div>
-		<span>{ data.Name } { fmt.Sprintf("%d", data.Id) }</span>
+		<div class="captions">
+			<span class="name">{ data.Name }</span>
+			<span>{ data.PhoneName }</span>
+            <span>{ data.EffectName }</span>
+		</div>
 	</div>
 }
 
@@ -22,9 +26,8 @@ templ ListOfRingtones(ringtones []database.RingtoneModel) {
 		for i, ring := range ringtones {
 			@Ringtone(ring, i)
 		}
-
-        if len(ringtones) == 0 {
-            <span>There are no gliphtones matching your search.</span>
-        }
+		if len(ringtones) == 0 {
+			<span>There are no gliphtones matching your search.</span>
+		}
 	</div>
 }

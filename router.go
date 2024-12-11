@@ -8,7 +8,10 @@ import (
 	"gliphtones/templates/components"
 	"gliphtones/templates/views"
 	"gliphtones/utils"
+	"maps"
 	"net/http"
+	"slices"
+	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -30,21 +33,37 @@ func setupRouter(e *echo.Echo) {
 }
 
 func index(c echo.Context) error {
-	searchName := c.QueryParam("s")
-	_ = c.QueryParam("p")
+	searchQuery := c.QueryParam("s")
+
+	phonesMap := make(map[int]bool)
+	effetsMap := make(map[int]bool)
+	for key, values := range c.QueryParams() {
+		if key == "p" {
+			for _, v := range values {
+				intId, err := strconv.Atoi(v)
+				if err == nil {
+					phonesMap[intId] = true
+				}
+			}
+		} else if key == "e" {
+			for _, v := range values {
+				intId, err := strconv.Atoi(v)
+				if err == nil {
+					effetsMap[intId] = true
+				}
+			}
+		}
+	}
+	phonesArr := slices.Collect(maps.Keys(phonesMap))
+	effectsArr := slices.Collect(maps.Keys(effetsMap))
 
 	// if it is a htmx request, render only one part
 	if c.Request().Header.Get("HX-Request") == "true" {
-		ringtones, err := database.GetRingtones(searchName, 0, 0)
+		ringtones, err := database.GetRingtones(searchQuery, phonesArr, effectsArr)
 		if err != nil {
 			return Render(c, views.OtherError(http.StatusInternalServerError, err))
 		}
 		return Render(c, components.ListOfRingtones(ringtones))
-	}
-
-	ringtones, err := database.GetRingtones(searchName, 0, 0)
-	if err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
 	phones, err := database.GetPhones()
@@ -56,8 +75,16 @@ func index(c echo.Context) error {
 		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
+	if len(phonesArr) == 0 && len(effectsArr) == 0 && searchQuery == "" {
+		//get maybe the most linked
+	}
+	ringtones, err := database.GetRingtones(searchQuery, phonesArr, effectsArr)
+	if err != nil {
+		return Render(c, views.OtherError(http.StatusInternalServerError, err))
+	}
+
 	_, err = c.Cookie(utils.CookieName)
-	return Render(c, views.Index(ringtones, phones, effects, err == nil))
+	return Render(c, views.Index(ringtones, phones, effects, searchQuery, phonesMap, effetsMap, err == nil))
 }
 
 func googleLogin(c echo.Context) error {
@@ -103,9 +130,6 @@ func googleCallback(c echo.Context) error {
 
 func logout(c echo.Context) error {
 	utils.RemoveAuthCookie(c)
-	/* c.Response().Header().Add("HX-Refresh", "true")
-	return c.NoContent(http.StatusOK) */
-
 	return Render(c, components.Header(false))
 }
 

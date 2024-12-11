@@ -23,7 +23,7 @@ func main() {
 	}
 
 	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  "http://localhost:1323/google-callback",
+		RedirectURL:  os.Getenv("GOOGLE_REDIRECT_URL"),
 		ClientID:     os.Getenv("GOOGLE_ID"),
 		ClientSecret: os.Getenv("GOOGLE_SECRET"),
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"},

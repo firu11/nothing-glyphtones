@@ -4,3 +4,5 @@ static/sounds/
 *_templ.go
 
 .env
+taskfile.yaml
+.air.toml

@@ -6,14 +6,15 @@ import (
 	"strings"
 
 	"github.com/blockloop/scan/v2"
+	"github.com/lib/pq"
 )
 
-func GetRingtones(search string, phone int, effect int) ([]RingtoneModel, error) {
+func GetRingtones(search string, phones []int, effects []int) ([]RingtoneModel, error) {
 	var ringtones []RingtoneModel
 	var rows *sql.Rows
 	var err error
 
-	rows, err = DB.Query(`SELECT * FROM ringtone WHERE name LIKE '%' || $1 || '%';`, search) //, phone, effect AND ($2 == 0 OR phone == $2) AND ($3 == 0 OR effect == $3);
+	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect FROM ringtone WHERE name LIKE '%' || $1 || '%' AND phone = ANY ($2) AND effect = ANY ($3) ) SELECT rm.id, rm.name, p.name as phone_name, e.name as effect_name FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id;`, search, pq.Array(phones), pq.Array(effects))
 	if err != nil {
 		log.Println(err.Error())
 		return ringtones, err

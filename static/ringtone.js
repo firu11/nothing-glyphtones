@@ -35,7 +35,9 @@ function click(e) {
     }
 }
 
-function main() {
+function main(e) {
+    if (e !== undefined && e.detail.elt.id !== "list-of-ringtones") return // only if the target is list of ringtones
+
     document.removeEventListener("click", click)
 
     listOfRingtones = document.querySelector("#list-of-ringtones")
