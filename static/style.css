@@ -275,3 +275,38 @@ footer {
     opacity: 0.8;
     font-size: 0.8em;
 }
+
+#pages {
+    display: flex;
+    padding: 0.6em 0;
+    justify-content: space-between;
+}
+
+#pages>span {
+    text-align: center;
+}
+
+#pages>button {
+    color: white;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: "Ntype";
+    font-size: 1em;
+    flex-basis: 5em;
+    transition: color 0.1s;
+}
+
+#pages>button:hover {
+    color: red;
+}
+
+#pages>button:disabled {
+    color: rgba(255, 255, 255, 0.4);
+    cursor: not-allowed;
+}
+
+#pages>button:last-child {
+    text-align: right;
+}

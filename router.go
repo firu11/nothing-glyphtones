@@ -34,6 +34,10 @@ func setupRouter(e *echo.Echo) {
 
 func index(c echo.Context) error {
 	searchQuery := c.QueryParam("s")
+	pageNumber, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil {
+		pageNumber = 1
+	}
 
 	phonesMap := make(map[int]bool)
 	effetsMap := make(map[int]bool)
@@ -59,11 +63,11 @@ func index(c echo.Context) error {
 
 	// if it is a htmx request, render only one part
 	if c.Request().Header.Get("HX-Request") == "true" {
-		ringtones, err := database.GetRingtones(searchQuery, phonesArr, effectsArr)
+		ringtones, numberOfPages, err := database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
 		if err != nil {
 			return Render(c, views.OtherError(http.StatusInternalServerError, err))
 		}
-		return Render(c, components.ListOfRingtones(ringtones))
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber))
 	}
 
 	phones, err := database.GetPhones()
@@ -78,13 +82,13 @@ func index(c echo.Context) error {
 	if len(phonesArr) == 0 && len(effectsArr) == 0 && searchQuery == "" {
 		//get maybe the most linked
 	}
-	ringtones, err := database.GetRingtones(searchQuery, phonesArr, effectsArr)
+	ringtones, numberOfPages, err := database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
 	_, err = c.Cookie(utils.CookieName)
-	return Render(c, views.Index(ringtones, phones, effects, searchQuery, phonesMap, effetsMap, err == nil))
+	return Render(c, views.Index(ringtones, phones, effects, searchQuery, phonesMap, effetsMap, numberOfPages, pageNumber, err == nil))
 }
 
 func googleLogin(c echo.Context) error {

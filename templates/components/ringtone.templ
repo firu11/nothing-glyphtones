@@ -16,12 +16,14 @@ templ Ringtone(data database.RingtoneModel, index int) {
 		<div class="captions">
 			<span class="name">{ data.Name }</span>
 			<span>{ data.PhoneName }</span>
-            <span>{ data.EffectName }</span>
+			<span>{ data.EffectName }</span>
 		</div>
 	</div>
 }
 
-templ ListOfRingtones(ringtones []database.RingtoneModel) {
+
+
+templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int) {
 	<div id="list-of-ringtones">
 		for i, ring := range ringtones {
 			@Ringtone(ring, i)
@@ -29,5 +31,6 @@ templ ListOfRingtones(ringtones []database.RingtoneModel) {
 		if len(ringtones) == 0 {
 			<span>There are no gliphtones matching your search.</span>
 		}
+        @Pages(numberOfPages, page)
 	</div>
 }

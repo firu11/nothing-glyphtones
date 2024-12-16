@@ -3,10 +3,11 @@ package database
 import "github.com/rickb777/date/v2"
 
 type RingtoneModel struct {
-	Id         int
-	Name       string
-	PhoneName  string `db:"phone_name"`
-	EffectName string `db:"effect_name"`
+	Id              int
+	Name            string
+	PhoneName       string `db:"phone_name"`
+	EffectName      string `db:"effect_name"`
+	NumberOfResults int    `db:"results"`
 }
 
 type PhoneModel struct {

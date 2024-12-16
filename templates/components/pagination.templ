@@ -1,0 +1,21 @@
+package components
+
+import "fmt"
+
+templ Pages(numberOfPages int, page int) {
+	<div id="pages">
+		if page == 1 {
+			<button disabled>&lt; Previous</button>
+		} else {
+			<button name="page" value={ fmt.Sprintf("%d", page-1) } hx-get="/" hx-include="#filters" hx-trigger="click" hx-target="#list-of-ringtones" hx-swap="outerHTML" hx-push-url="true">&lt; Previous</button>
+		}
+
+		<span>{ fmt.Sprintf("%d of %d", page, numberOfPages) }</span>
+		
+        if page == numberOfPages {
+			<button disabled>Next &gt;</button>
+		} else {
+			<button name="page" value={ fmt.Sprintf("%d", page+1) } hx-get="/" hx-include="#filters" hx-trigger="click" hx-target="#list-of-ringtones" hx-swap="outerHTML" hx-push-url="true">Next &gt;</button>
+		}
+	</div>
+}

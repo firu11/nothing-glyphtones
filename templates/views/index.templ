@@ -6,7 +6,7 @@ import (
 	"gliphtones/templates/components"
 )
 
-templ Index(ringtones []database.RingtoneModel, phones []database.PhoneModel, effects []database.EffectModel, searchQuery string, phonesMap map[int]bool, effectsMap map[int]bool, loggedIn bool) {
+templ Index(ringtones []database.RingtoneModel, phones []database.PhoneModel, effects []database.EffectModel, searchQuery string, phonesMap map[int]bool, effectsMap map[int]bool, numberOfPages int, page int, loggedIn bool) {
 	<!DOCTYPE html>
 	<html lang="cs">
 		@components.Head()
@@ -60,7 +60,7 @@ templ Index(ringtones []database.RingtoneModel, phones []database.PhoneModel, ef
 						</div>
 					</div>
 				</form>
-				@components.ListOfRingtones(ringtones)
+				@components.ListOfRingtones(ringtones, numberOfPages, page)
 			</main>
 			@components.Footer()
 			<script src="/static/ringtone.js" type="module"></script>
