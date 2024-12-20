@@ -1,5 +1,5 @@
 tmp/
-static/sounds/
+sounds/
 
 *_templ.go
 

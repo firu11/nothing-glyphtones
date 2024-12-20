@@ -10,14 +10,14 @@ import (
 	"github.com/lib/pq"
 )
 
-var resultsPerPage int = 20
+var resultsPerPage int = 2
 
 func GetRingtones(search string, phones []int, effects []int, page int) ([]RingtoneModel, int, error) {
 	var ringtones []RingtoneModel
 	var rows *sql.Rows
 	var err error
 
-	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect FROM ringtone WHERE LOWER(name) LIKE '%' || $1 || '%' AND phone = ANY ($2) AND effect = ANY ($3) ) SELECT rm.id, rm.name, p.name as phone_name, e.name as effect_name, COUNT(*) OVER () as results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id LIMIT $4 OFFSET $5;`, search, pq.Array(phones), pq.Array(effects), resultsPerPage, (page-1)*resultsPerPage)
+	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect FROM ringtone WHERE LOWER(name) LIKE '%' || LOWER($1) || '%' AND phone = ANY ($2) AND effect = ANY ($3) ) SELECT rm.id, rm.name, p.name as phone_name, e.name as effect_name, COUNT(*) OVER () as results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id LIMIT $4 OFFSET $5;`, search, pq.Array(phones), pq.Array(effects), resultsPerPage, (page-1)*resultsPerPage)
 	if err != nil {
 		return ringtones, 0, err
 	}
@@ -33,6 +33,15 @@ func GetRingtones(search string, phones []int, effects []int, page int) ([]Ringt
 	}
 
 	return ringtones, numberOfPages, nil
+}
+
+func CreateRingtone(name string, phone int, effect int, authorID int) (int, error) {
+	var ringtoneID int
+	err := DB.QueryRow(`INSERT INTO ringtone (name, phone, effect, author_id) VALUES ($1, $2, $3, $4) RETURNING id;`, name, phone, effect, authorID).Scan(&ringtoneID)
+	if err != nil {
+		return 0, err
+	}
+	return ringtoneID, nil
 }
 
 func GetPhones() ([]PhoneModel, error) {

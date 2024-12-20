@@ -18,7 +18,7 @@ function muteAllExcept(index) {
 }
 
 function click(e) {
-    if (e.target.tagName == "BUTTON") {
+    if (e.target.tagName == "BUTTON" && e.target.firstChild.tagName == "IMG") {
         const i = parseInt(e.target.parentElement.parentElement.getAttribute("data-i"))
 
         if (e.target.firstChild.getAttribute("src") == images[2]) return
@@ -51,7 +51,7 @@ function main(e) {
             container: all[i].querySelector(".wave"),
             waveColor: 'white',
             progressColor: 'red',
-            url: `/static/sounds/${id}.ogg`,
+            url: `/sounds/${id}.ogg`,
             barWidth: 5,
             barGap: 5,
             barRadius: 100,

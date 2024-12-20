@@ -1,32 +1,38 @@
 package views
 
-import "gliphtones/templates/components"
-import "fmt"
+import (
+	"fmt"
+	"gliphtones/templates/components"
+)
 
-templ NotFound(loggedIn bool) {
+templ NotFoundView(loggedIn bool) {
 	<!DOCTYPE html>
 	<html lang="cs">
 		@components.Head()
 		<body>
 			@components.Header(loggedIn)
 			<main>
-                <h1>404 - not found</h1>
-                <p>Did you get lost?</p>
+				<h1>404 - not found</h1>
+				<p>Did you get lost?</p>
 			</main>
 		</body>
 	</html>
 }
 
-templ OtherError(status int, err error) {
+templ OtherErrorView(status int, err error) {
 	<!DOCTYPE html>
 	<html lang="cs">
 		@components.Head()
 		<body>
 			@components.Header(false)
 			<main>
-                <h1>{ fmt.Sprintf("%d", status) } - { err.Error() }</h1>
-                <p>Whoops, something went wrong</p>
+				@OtherError(status, err)
 			</main>
 		</body>
 	</html>
+}
+
+templ OtherError(status int, err error) {
+	<h1>{ fmt.Sprintf("%d", status) } - { err.Error() }</h1>
+	<p>Whoops, something went wrong</p>
 }

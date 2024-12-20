@@ -10,7 +10,11 @@ require (
 
 require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
+	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8 // indirect
 	github.com/govalues/decimal v0.1.32 // indirect
+	github.com/jfreymuth/oggvorbis v1.0.5 // indirect
+	github.com/jfreymuth/vorbis v1.0.2 // indirect
+	github.com/pion/opus v0.0.0-20240826153031-e8536fe9e4ca // indirect
 	github.com/rickb777/period v1.0.7 // indirect
 	github.com/rickb777/plural v1.4.2 // indirect
 )

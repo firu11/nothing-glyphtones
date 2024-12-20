@@ -1,66 +1,43 @@
 package views
 
 import (
-	"fmt"
 	"gliphtones/database"
 	"gliphtones/templates/components"
 )
 
-templ Index(ringtones []database.RingtoneModel, phones []database.PhoneModel, effects []database.EffectModel, searchQuery string, phonesMap map[int]bool, effectsMap map[int]bool, numberOfPages int, page int, loggedIn bool) {
+type IndexData struct {
+	Ringtones     []database.RingtoneModel
+	Phones        []database.PhoneModel
+	Effects       []database.EffectModel
+	SearchQuery   string
+	PhonesMap     map[int]bool
+	EffectsMap    map[int]bool
+	NumberOfPages int
+	Page          int
+	LoggedIn      bool
+}
+
+templ Index(data IndexData) {
 	<!DOCTYPE html>
 	<html lang="cs">
 		@components.Head()
 		<body>
-			@components.Header(loggedIn)
+			@components.Header(data.LoggedIn)
 			<main>
 				<form id="filters" hx-get="/" hx-trigger="submit, input from:input[type='checkbox'] delay:10ms, input from:input[name='s'] delay:550ms" hx-target="#list-of-ringtones" hx-swap="outerHTML" hx-push-url="true">
-					@components.Search(searchQuery)
+					@components.Search(data.SearchQuery)
 					<div id="filter-container">
 						<button id="show-checkboxes" type="button">Show Filters</button>
 						<hr/>
 						<div class="filters-column">
-							<span>Phone Models</span>
-							<div id="checkboxes">
-								<label><input name="" type="checkbox" id="all-phones"/><span class="checkmark"></span><b>All phones</b></label>
-								for _, phone := range phones {
-									<label>
-										<input
-											name="p"
-											type="checkbox"
-											value={ fmt.Sprintf("%d", phone.Id) }
-											if phonesMap[phone.Id] {
-												checked
-											}
-										/>
-										<span class="checkmark"></span>
-										<span class="name">{ phone.Name }</span>
-									</label>
-								}
-							</div>
+							@components.PhonesCheckboxes(data.Phones, data.PhonesMap)
 						</div>
 						<div class="filters-column">
-							<span>Effects</span>
-							<div id="checkboxes">
-								<label><input name="" type="checkbox" id="all-effects"/><span class="checkmark"></span><b>All effects</b></label>
-								for _, effect := range effects {
-									<label>
-										<input
-											name="e"
-											type="checkbox"
-											value={ fmt.Sprintf("%d", effect.Id) }
-											if effectsMap[effect.Id] {
-												checked
-											}
-										/>
-										<span class="checkmark"></span>
-										<span class="name">{ effect.Name }</span>
-									</label>
-								}
-							</div>
+							@components.EffectsCheckboxes(data.Effects, data.EffectsMap)
 						</div>
 					</div>
 				</form>
-				@components.ListOfRingtones(ringtones, numberOfPages, page)
+				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page)
 			</main>
 			@components.Footer()
 			<script src="/static/ringtone.js" type="module"></script>

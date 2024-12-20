@@ -12,8 +12,7 @@ templ Search(value string) {
 templ PhoneSelect(phones []database.PhoneModel, value string) {
 	<select name="p">
 		if value == "" {
-			<option value="" selected disabled hidden>Phone</option>
-			<option value="">All</option>
+			<option value="" selected disabled hidden>Select phone</option>
 			for _, v := range phones {
 				<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
 			}
@@ -33,8 +32,7 @@ templ PhoneSelect(phones []database.PhoneModel, value string) {
 templ EffectSelect(effects []database.EffectModel, value string) {
 	<select name="e">
 		if value == "" {
-			<option value="" selected disabled hidden>Effect</option>
-			<option value="">All</option>
+			<option value="" selected disabled hidden>Select effect</option>
 			for _, v := range effects {
 				<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
 			}
@@ -49,4 +47,46 @@ templ EffectSelect(effects []database.EffectModel, value string) {
 			}
 		}
 	</select>
+}
+
+templ PhonesCheckboxes(phones []database.PhoneModel, phonesMap map[int]bool) {
+	<span>Phones</span>
+	<div id="checkboxes">
+		<label><input name="" type="checkbox" id="all-phones"/><span class="checkmark"></span><b>All phones</b></label>
+		for _, phone := range phones {
+			<label>
+				<input
+					name="p"
+					type="checkbox"
+					value={ fmt.Sprintf("%d", phone.Id) }
+					if phonesMap[phone.Id] {
+						checked
+					}
+				/>
+				<span class="checkmark"></span>
+				<span class="name">{ phone.Name }</span>
+			</label>
+		}
+	</div>
+}
+
+templ EffectsCheckboxes(effects []database.EffectModel, effectsMap map[int]bool) {
+	<span>Effects</span>
+	<div id="checkboxes">
+		<label><input name="" type="checkbox" id="all-effects"/><span class="checkmark"></span><b>All effects</b></label>
+		for _, effect := range effects {
+			<label>
+				<input
+					name="e"
+					type="checkbox"
+					value={ fmt.Sprintf("%d", effect.Id) }
+					if effectsMap[effect.Id] {
+						checked
+					}
+				/>
+				<span class="checkmark"></span>
+				<span class="name">{ effect.Name }</span>
+			</label>
+		}
+	</div>
 }

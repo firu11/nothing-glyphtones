@@ -36,6 +36,7 @@ func main() {
 	e := echo.New()
 
 	e.Static("/static", "static")
+	e.Static("/sounds", "sounds")
 	setupRouter(e)
 
 	port := fmt.Sprintf(":%s", os.Getenv("LISTEN_PORT"))

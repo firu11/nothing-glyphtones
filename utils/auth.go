@@ -14,7 +14,7 @@ var tokenTimeDuration time.Duration = time.Hour * 24 * 14 // 14 days
 var CookieName string = "GliphtonesCookie"
 
 type data struct {
-	Id int
+	Id int `json:"id"`
 	jwt.StandardClaims
 }
 
@@ -54,6 +54,22 @@ func WriteAuthCookie(c echo.Context, id int) error {
 	}
 	c.SetCookie(&cookie)
 	return nil
+}
+
+func GetIdFromCookie(c echo.Context) int {
+	cookie, err := c.Cookie(CookieName)
+	if err != nil {
+		return 0
+	}
+	valid, id, err := validateToken(cookie.Value)
+	if err != nil {
+		return 0
+	}
+	if !valid {
+		RemoveAuthCookie(c)
+		return 0
+	}
+	return id
 }
 
 func RemoveAuthCookie(c echo.Context) {

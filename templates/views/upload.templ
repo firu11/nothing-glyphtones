@@ -1,0 +1,55 @@
+package views
+
+import (
+	"gliphtones/database"
+	"gliphtones/templates/components"
+)
+
+templ Upload(loggedIn bool, phones []database.PhoneModel, phoneValue string, effects []database.EffectModel, effectsValue string) {
+	<!DOCTYPE html>
+	<html lang="cs">
+		@components.Head()
+		<body>
+			@components.Header(loggedIn)
+			<main>
+				<h1>Upload</h1>
+				if !loggedIn {
+					<h3 class="red-heading">Only logged-in users can upload files.</h3>
+				}
+				@UploadForm(phones, phoneValue, effects, effectsValue, loggedIn)
+			</main>
+			@components.Footer()
+			<script src="/static/upload.js" type="module"></script>
+		</body>
+	</html>
+}
+
+templ UploadForm(phones []database.PhoneModel, phoneValue string, effects []database.EffectModel, effectsValue string, loggedIn bool) {
+	<form id="upload" hx-put="/upload" hx-trigger="submit" hx-encoding="multipart/form-data">
+		<div id="main-container">
+			<label>
+				<span></span>
+				<img src="/static/icons/plus.svg"/>
+				<input type="file" name="ringtone" accept=".ogg"/>
+			</label>
+			<div id="inputs-container">
+				<input type="text" name="name" placeholder="Name your gliphtone"/>
+				<div id="selects-container">
+					@components.PhoneSelect(phones, phoneValue)
+					@components.EffectSelect(effects, effectsValue)
+				</div>
+			</div>
+		</div>
+		<button 
+            type="submit"
+            if (!loggedIn) {
+                disabled
+            }>
+            Submit file
+            </button>
+	</form>
+}
+
+templ SuccessfulUpload() {
+	<h2>Upload successful</h2>
+}
