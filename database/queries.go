@@ -10,14 +10,46 @@ import (
 	"github.com/lib/pq"
 )
 
-var resultsPerPage int = 2
+var resultsPerPage int = 10
 
 func GetRingtones(search string, phones []int, effects []int, page int) ([]RingtoneModel, int, error) {
 	var ringtones []RingtoneModel
 	var rows *sql.Rows
 	var err error
 
-	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect FROM ringtone WHERE LOWER(name) LIKE '%' || LOWER($1) || '%' AND phone = ANY ($2) AND effect = ANY ($3) ) SELECT rm.id, rm.name, p.name as phone_name, e.name as effect_name, COUNT(*) OVER () as results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id LIMIT $4 OFFSET $5;`, search, pq.Array(phones), pq.Array(effects), resultsPerPage, (page-1)*resultsPerPage)
+	log.Println(len(phones) == 0 && len(effects) == 0)
+	if len(phones) == 0 && len(effects) == 0 {
+		rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect, ( similarity (name, $1) * 0.7 + ( downloads::FLOAT / MAX(downloads) OVER () ) * 0.1 - not_working::FLOAT / MAX(not_working) OVER () * 0.2 ) AS score FROM ringtone WHERE similarity (name, $1) > 0.05 ) SELECT rm.id, rm.name, rm.score, p.name AS phone_name, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id ORDER BY score DESC LIMIT $2 OFFSET $3;`, search, resultsPerPage, (page-1)*resultsPerPage)
+	} else if len(phones) != 0 && len(effects) != 0 {
+		rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect FROM ringtone WHERE LOWER(name) LIKE '%' || LOWER($1) || '%' AND phone = ANY ($2) AND effect = ANY ($3) ) SELECT rm.id, rm.name, p.name as phone_name, e.name as effect_name, COUNT(*) OVER () as results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id LIMIT $4 OFFSET $5;`, search, pq.Array(phones), pq.Array(effects), resultsPerPage, (page-1)*resultsPerPage)
+	} else if len(effects) != 0 {
+		rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect FROM ringtone WHERE LOWER(name) LIKE '%' || LOWER($1) || '%' effect = ANY ($2) ) SELECT rm.id, rm.name, p.name as phone_name, e.name as effect_name, COUNT(*) OVER () as results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id LIMIT $3 OFFSET $4;`, search, pq.Array(effects), resultsPerPage, (page-1)*resultsPerPage)
+	} else /* if len(phones) != 0 */ {
+		rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect FROM ringtone WHERE LOWER(name) LIKE '%' || LOWER($1) || '%' phone = ANY ($2) ) SELECT rm.id, rm.name, p.name as phone_name, e.name as effect_name, COUNT(*) OVER () as results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id LIMIT $3 OFFSET $4;`, search, pq.Array(phones), resultsPerPage, (page-1)*resultsPerPage)
+	}
+	if err != nil {
+		return ringtones, 0, err
+	}
+
+	err = scan.Rows(&ringtones, rows)
+	if err != nil {
+		return ringtones, 0, err
+	}
+
+	var numberOfPages int = 0
+	if len(ringtones) != 0 {
+		numberOfPages = int(math.Ceil(float64(ringtones[0].NumberOfResults) / float64(resultsPerPage)))
+	}
+
+	return ringtones, numberOfPages, nil
+}
+
+func GetPopularRingtones(page int) ([]RingtoneModel, int, error) {
+	var ringtones []RingtoneModel
+	var rows *sql.Rows
+	var err error
+
+	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect, downloads::FLOAT / MAX(downloads) OVER () - 5 * not_working::FLOAT / MAX(not_working) OVER () AS score FROM ringtone ) SELECT rm.id, rm.name, rm.score, p.name AS phone_name, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id ORDER BY score DESC LIMIT $1 OFFSET $2;`, resultsPerPage, (page-1)*resultsPerPage)
 	if err != nil {
 		return ringtones, 0, err
 	}
@@ -42,6 +74,16 @@ func CreateRingtone(name string, phone int, effect int, authorID int) (int, erro
 		return 0, err
 	}
 	return ringtoneID, nil
+}
+
+func RingtoneIncreaseDownload(id int) error {
+	_, err := DB.Exec(`UPDATE ringtone SET downloaded = downloaded + 1 WHERE id = $1;`, id)
+	return err
+}
+
+func RingtoneIncreaseNotWorking(id int) error {
+	_, err := DB.Exec(`UPDATE ringtone SET not_working = not_working + 1 WHERE id = $1;`, id)
+	return err
 }
 
 func GetPhones() ([]PhoneModel, error) {

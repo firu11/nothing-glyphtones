@@ -1,0 +1,138 @@
+.red-heading {
+    color: red;
+    margin-top: 1em;
+}
+
+form#upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2em;
+    gap: 0.5em;
+}
+
+form#upload #main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form#upload #inputs-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    width: 100%;
+}
+
+form#upload #selects-container {
+    display: flex;
+    gap: 0.5em;
+}
+
+form#upload select {
+    width: 50%;
+    height: 40px;
+    background-color: black;
+    padding: 0.2em;
+    font-size: 1.2em;
+    border: 1px solid transparent;
+    border-radius: var(--base-border-radius);
+    color: white;
+    font-family: "Ntype", "Cascadia Code", sans-serif;
+    /* fallback for firefox which is broken */
+    transition: border 0.2s;
+}
+
+form#upload option {
+    font-weight: 300;
+}
+
+form#upload input[type="text"] {
+    width: 100%;
+    height: 40px;
+    background-color: black;
+    padding: 0.2em;
+    font-size: 1.3em;
+    border: 1px solid transparent;
+    border-radius: var(--base-border-radius);
+    color: white;
+    font-family: "Ntype";
+    text-align: center;
+    transition: border 0.2s;
+}
+
+form#upload button {
+    height: 40px;
+    background-color: black;
+    padding: 0.2em 0.5em;
+    margin-top: 1em;
+    font-size: 1.3em;
+    border: 1px solid transparent;
+    border-radius: var(--base-border-radius);
+    color: white;
+    font-family: "Ntype";
+    transition: border 0.2s;
+    cursor: pointer;
+}
+
+form#upload button:hover {
+    border: 1px solid red;
+}
+
+form#upload button:disabled {
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    border: 1px solid transparent !important;
+}
+
+form#upload input[type="file"] {
+    display: none;
+}
+
+form#upload select:focus,
+form#upload input:focus {
+    outline: none;
+    border: 1px solid red;
+}
+
+form#upload label:has(input[type="file"]) {
+    width: 12em;
+    aspect-ratio: 1/1;
+    background-color: black;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 1.4em;
+}
+
+form#upload label:has(input[type="file"]) img {
+    width: 36%;
+}
+
+form#upload label:has(input[type="file"]) span {
+    display: none;
+    max-width: 90%;
+    max-height: 70%;
+    word-wrap: break-word;
+}
+
+@media screen and (min-width: 700px) {
+    form#upload #main-container {
+        flex-direction: row;
+        align-items: center;
+        gap: 3em;
+        width: 80%;
+        max-width: 700px;
+    }
+
+    form#upload label:has(input[type="file"]),
+    form#upload>div {
+        width: 50%;
+    }
+
+    form#upload label:has(input[type="file"]) {
+        margin-bottom: 0;
+    }
+}

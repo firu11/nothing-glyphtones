@@ -1,12 +1,17 @@
 package components
 
-templ Head() {
+import "fmt"
+
+templ Head(stylesheetName string) {
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>Gliphtones</title>
-		<link rel="stylesheet" href="/static/style.css"/>
-		<script src="/static/htmx.min.js"></script>
+		<link rel="stylesheet" href="/static/styles/main.css"/>
+		if stylesheetName != "" {
+			<link rel="stylesheet" href={ fmt.Sprintf("/static/styles/%s", stylesheetName) }/>
+		}
+		<script src="/static/scripts/htmx.min.js"></script>
 	</head>
 }
 
@@ -17,11 +22,14 @@ templ Header(loggedIn bool) {
 			<span>not by NOTHING</span>
 		</a>
 		<nav>
-            <a href="/upload">Upload</a>
+			<a href="/upload">Upload</a>
 			if !loggedIn {
 				<a id="login" href="/google-login">Log In</a>
 			} else {
-				<a id="login" hx-post="/logout" hx-target="header" hx-swap="outerHTML">Log Out</a>
+				<a href="/profile">
+					<img src="/static/icons/user.svg"/>
+				</a>
+				/* <a id="login" hx-post="/logout" hx-target="header" hx-swap="outerHTML">Log Out</a> */
 			}
 		</nav>
 	</header>

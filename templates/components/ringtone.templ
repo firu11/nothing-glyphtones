@@ -1,36 +1,64 @@
 package components
 
 import (
+	"encoding/json"
 	"fmt"
 	"gliphtones/database"
 )
+
+func idToJson(id int) string {
+	m := map[string]int{
+		"id": id,
+	}
+	v, _ := json.Marshal(m)
+	return string(v)
+}
 
 templ Ringtone(data database.RingtoneModel, index int) {
 	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.Id) }>
 		<div class="audio">
 			<button type="button">
-				<img src="/static/icons/loading.svg"/>
+				<img class="red" src="/static/icons/loading.svg"/>
+				<img class="white" src="/static/icons/loading.svg"/>
 			</button>
 			<div class="wave"></div>
 		</div>
-		<div class="captions">
-			<span class="name">{ data.Name }</span>
-			<span>{ data.PhoneName }</span>
-			<span>{ data.EffectName }</span>
+		<div class="container">
+			<div class="captions">
+				<span class="name">{ data.Name }</span>
+				<span>{ data.PhoneName }</span>
+				<span>{ data.EffectName }</span>
+			</div>
+			<div class="captions">
+				<div class="icons">
+					<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%d.ogg", data.Id)) } download={ data.Name + " - " + data.PhoneName } title="Download">
+						<img src="/static/icons/download.svg"/>
+						<img src="/static/icons/download-red.svg"/>
+					</a>
+					<a hx-post={ fmt.Sprintf("/report/%d", data.Id) } hx-swap="none" title="Report (not working, not a ringtone)">
+						<img src="/static/icons/not-working.svg"/>
+						<img src="/static/icons/not-working-red.svg"/>
+					</a>
+				</div>
+				<span>12032 downloads</span>
+			</div>
 		</div>
 	</div>
 }
 
-
-
-templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int) {
+templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int, view string) {
 	<div id="list-of-ringtones">
 		for i, ring := range ringtones {
 			@Ringtone(ring, i)
 		}
 		if len(ringtones) == 0 {
-			<span>There are no gliphtones matching your search.</span>
+			if view == "profile" {
+				<span>You have not uploaded any Gliphtones yet!</span>
+			} else if view == "index" {
+				<span>There are no gliphtones matching your search.</span>
+			}
+		} else {
+			@Pages(numberOfPages, page)
 		}
-        @Pages(numberOfPages, page)
 	</div>
 }

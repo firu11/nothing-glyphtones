@@ -8,7 +8,7 @@ import (
 templ Upload(loggedIn bool, phones []database.PhoneModel, phoneValue string, effects []database.EffectModel, effectsValue string) {
 	<!DOCTYPE html>
 	<html lang="cs">
-		@components.Head()
+		@components.Head("upload.css")
 		<body>
 			@components.Header(loggedIn)
 			<main>
@@ -19,7 +19,7 @@ templ Upload(loggedIn bool, phones []database.PhoneModel, phoneValue string, eff
 				@UploadForm(phones, phoneValue, effects, effectsValue, loggedIn)
 			</main>
 			@components.Footer()
-			<script src="/static/upload.js" type="module"></script>
+			<script src="/static/scripts/upload.js" type="module"></script>
 		</body>
 	</html>
 }
@@ -40,13 +40,14 @@ templ UploadForm(phones []database.PhoneModel, phoneValue string, effects []data
 				</div>
 			</div>
 		</div>
-		<button 
-            type="submit"
-            if (!loggedIn) {
-                disabled
-            }>
-            Submit file
-            </button>
+		<button
+			type="submit"
+			if (!loggedIn) {
+				disabled
+			}
+		>
+			Submit file
+		</button>
 	</form>
 }
 

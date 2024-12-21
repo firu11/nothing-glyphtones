@@ -1,0 +1,143 @@
+#list-of-ringtones {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 0.5em 0;
+    text-align: left;
+}
+
+#list-of-ringtones>span {
+    text-align: center;
+}
+
+.ringtone {
+    background-color: var(--menu-bg-color);
+    border: 1px solid black;
+    border-radius: var(--base-border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+    height: 152px;
+    transition: border .2s;
+}
+
+.ringtone:hover {
+    border: 1px solid rgb(190, 0, 0);
+}
+
+.ringtone .audio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ringtone .audio .wave {
+    width: calc(100% - 48px - 17px);
+    height: 3em;
+}
+
+.ringtone .audio button {
+    background-color: transparent;
+    border: none;
+    border-radius: 1000px;
+    width: 48px;
+    height: 48px;
+    aspect-ratio: 1/1;
+    cursor: pointer;
+    position: relative;
+}
+
+.ringtone .audio button img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.1s;
+}
+
+.ringtone .audio button:hover img.white {
+    opacity: 0;
+}
+
+.ringtone .container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ringtone .captions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ringtone .captions span:not(.name) {
+    opacity: 0.8;
+    font-size: 0.8em;
+}
+
+.ringtone .icons {
+    display: flex;
+    justify-content: right;
+    gap: 0.3em;
+}
+
+.ringtone .icons a {
+    width: 30px;
+    height: 30px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ringtone .icons a img {
+    position: absolute;
+}
+
+.ringtone .icons a img:last-of-type {
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+.ringtone .icons a:hover img:last-of-type {
+    opacity: 1;
+}
+
+#pages {
+    display: flex;
+    padding: 0.6em 0;
+    justify-content: space-between;
+}
+
+#pages>span {
+    text-align: center;
+}
+
+#pages>button {
+    color: white;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: "Ntype";
+    font-size: 1em;
+    flex-basis: 5em;
+    transition: color 0.1s;
+}
+
+#pages>button:hover {
+    color: red;
+}
+
+#pages>button:disabled {
+    color: rgba(255, 255, 255, 0.4);
+    cursor: not-allowed;
+}
+
+#pages>button:last-child {
+    text-align: right;
+}

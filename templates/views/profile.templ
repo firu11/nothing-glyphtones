@@ -1,0 +1,34 @@
+package views
+
+import (
+	"gliphtones/database"
+	"gliphtones/templates/components"
+)
+
+type ProfileData struct {
+	Ringtones     []database.RingtoneModel
+	NumberOfPages int
+	Page          int
+	UserID        int
+}
+
+templ Profile(data ProfileData) {
+	<!DOCTYPE html>
+	<html lang="cs">
+		@components.Head("profile.css")
+		<body>
+			@components.Header(data.UserID != 0)
+			<main>
+				<div>
+                    <span>Firu</span>
+                    <span>firu@post.cz</span>
+                    <a id="logout" hx-post="/logout" hx-target="header" hx-swap="outerHTML">Log Out</a>
+                </div>
+				<h1>Your uploads</h1>
+				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, "profile")
+			</main>
+			@components.Footer()
+			<script src="/static/scripts/ringtone.js" type="module"></script>
+		</body>
+	</html>
+}

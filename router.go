@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"slices"
 	"strconv"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -28,8 +29,10 @@ func setupRouter(e *echo.Echo) {
 	e.RouteNotFound("/*", notFound)
 
 	e.GET("/", index)
+	e.GET("/profile", profile)
 	e.GET("/upload", uploadView)
 	e.PUT("/upload", uploadFile)
+	e.POST("/report/:id", reportRingtone)
 	e.GET("/google-login", googleLogin)
 	e.GET("/google-callback", googleCallback)
 	e.POST("/logout", logout)
@@ -44,33 +47,31 @@ func index(c echo.Context) error {
 
 	phonesMap := make(map[int]bool)
 	effetsMap := make(map[int]bool)
-	for key, values := range c.QueryParams() {
-		if key == "p" {
-			for _, v := range values {
-				intId, err := strconv.Atoi(v)
-				if err == nil {
-					phonesMap[intId] = true
-				}
-			}
-		} else if key == "e" {
-			for _, v := range values {
-				intId, err := strconv.Atoi(v)
-				if err == nil {
-					effetsMap[intId] = true
-				}
-			}
+	var phonesQuery []string = strings.Split(c.QueryParam("p"), ",")
+	var effectsQuery []string = strings.Split(c.QueryParam("e"), ",")
+	for _, v := range phonesQuery {
+		phoneID, err := strconv.Atoi(v)
+		if err == nil {
+			phonesMap[phoneID] = true
 		}
 	}
+	for _, v := range effectsQuery {
+		effectID, err := strconv.Atoi(v)
+		if err == nil {
+			effetsMap[effectID] = true
+		}
+	}
+
 	phonesArr := slices.Collect(maps.Keys(phonesMap))
 	effectsArr := slices.Collect(maps.Keys(effetsMap))
 
-	// if it is a htmx request, render only one part
+	// if it is a htmx request, render only the new results
 	if c.Request().Header.Get("HX-Request") == "true" {
 		ringtones, numberOfPages, err := database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
 		if err != nil {
 			return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("sus")))
 		}
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber))
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, "index"))
 	}
 
 	phones, err := database.GetPhones()
@@ -82,10 +83,13 @@ func index(c echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
+	var ringtones []database.RingtoneModel
+	var numberOfPages int
 	if len(phonesArr) == 0 && len(effectsArr) == 0 && searchQuery == "" {
-		//get maybe the most linked
+		ringtones, numberOfPages, err = database.GetPopularRingtones(pageNumber)
+	} else {
+		ringtones, numberOfPages, err = database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
 	}
-	ringtones, numberOfPages, err := database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
@@ -97,13 +101,31 @@ func index(c echo.Context) error {
 		Phones:        phones,
 		Effects:       effects,
 		SearchQuery:   searchQuery,
-		PhonesMap:     phonesMap,
-		EffectsMap:    effetsMap,
 		NumberOfPages: numberOfPages,
 		Page:          pageNumber,
 		LoggedIn:      err == nil,
 	}
 	return Render(c, views.Index(data))
+}
+
+func profile(c echo.Context) error {
+	pageNumber, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil {
+		pageNumber = 1
+	}
+
+	ringtones, numberOfPages, err := database.GetRingtones("", []int{}, []int{}, pageNumber)
+	if err != nil {
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+	}
+
+	var data views.ProfileData = views.ProfileData{
+		Ringtones:     ringtones,
+		NumberOfPages: numberOfPages,
+		Page:          pageNumber,
+		UserID:        utils.GetIdFromCookie(c),
+	}
+	return Render(c, views.Profile(data))
 }
 
 func uploadView(c echo.Context) error {
@@ -171,6 +193,18 @@ func uploadFile(c echo.Context) error {
 	}
 
 	return Render(c, views.SuccessfulUpload())
+}
+
+func reportRingtone(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	err = database.RingtoneIncreaseNotWorking(id)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	return c.NoContent(http.StatusOK)
 }
 
 func googleLogin(c echo.Context) error {

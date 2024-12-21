@@ -10,8 +10,6 @@ type IndexData struct {
 	Phones        []database.PhoneModel
 	Effects       []database.EffectModel
 	SearchQuery   string
-	PhonesMap     map[int]bool
-	EffectsMap    map[int]bool
 	NumberOfPages int
 	Page          int
 	LoggedIn      bool
@@ -20,7 +18,7 @@ type IndexData struct {
 templ Index(data IndexData) {
 	<!DOCTYPE html>
 	<html lang="cs">
-		@components.Head()
+		@components.Head("index.css")
 		<body>
 			@components.Header(data.LoggedIn)
 			<main>
@@ -30,18 +28,20 @@ templ Index(data IndexData) {
 						<button id="show-checkboxes" type="button">Show Filters</button>
 						<hr/>
 						<div class="filters-column">
-							@components.PhonesCheckboxes(data.Phones, data.PhonesMap)
+							@components.PhonesCheckboxes(data.Phones)
 						</div>
 						<div class="filters-column">
-							@components.EffectsCheckboxes(data.Effects, data.EffectsMap)
+							@components.EffectsCheckboxes(data.Effects)
 						</div>
 					</div>
+                    <input type="hidden" name="p" id="aggregated-phones">
+                    <input type="hidden" name="e" id="aggregated-effects">
 				</form>
-				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page)
+				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, "index")
 			</main>
 			@components.Footer()
-			<script src="/static/ringtone.js" type="module"></script>
-			<script src="/static/filters-dropdown.js" type="module"></script>
+			<script src="/static/scripts/ringtone.js" type="module"></script>
+			<script src="/static/scripts/filters-dropdown.js" type="module"></script>
 		</body>
 	</html>
 }

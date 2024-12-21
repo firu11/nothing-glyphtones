@@ -49,19 +49,16 @@ templ EffectSelect(effects []database.EffectModel, value string) {
 	</select>
 }
 
-templ PhonesCheckboxes(phones []database.PhoneModel, phonesMap map[int]bool) {
+templ PhonesCheckboxes(phones []database.PhoneModel) {
 	<span>Phones</span>
 	<div id="checkboxes">
-		<label><input name="" type="checkbox" id="all-phones"/><span class="checkmark"></span><b>All phones</b></label>
 		for _, phone := range phones {
 			<label>
 				<input
-					name="p"
+					id="phone"
 					type="checkbox"
 					value={ fmt.Sprintf("%d", phone.Id) }
-					if phonesMap[phone.Id] {
-						checked
-					}
+					checked?={ phone.Selected }
 				/>
 				<span class="checkmark"></span>
 				<span class="name">{ phone.Name }</span>
@@ -70,19 +67,16 @@ templ PhonesCheckboxes(phones []database.PhoneModel, phonesMap map[int]bool) {
 	</div>
 }
 
-templ EffectsCheckboxes(effects []database.EffectModel, effectsMap map[int]bool) {
+templ EffectsCheckboxes(effects []database.EffectModel) {
 	<span>Effects</span>
 	<div id="checkboxes">
-		<label><input name="" type="checkbox" id="all-effects"/><span class="checkmark"></span><b>All effects</b></label>
 		for _, effect := range effects {
 			<label>
 				<input
-					name="e"
+					id="effect"
 					type="checkbox"
 					value={ fmt.Sprintf("%d", effect.Id) }
-					if effectsMap[effect.Id] {
-						checked
-					}
+					checked?={ effect.Selected }
 				/>
 				<span class="checkmark"></span>
 				<span class="name">{ effect.Name }</span>

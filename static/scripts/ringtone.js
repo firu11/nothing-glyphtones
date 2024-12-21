@@ -1,6 +1,7 @@
-import WaveSurfer from "/static/wavesurfer.esm.js"
+import WaveSurfer from "/static/scripts/wavesurfer.esm.js"
 
 const images = ["/static/icons/play.svg", "/static/icons/pause.svg", "/static/icons/loading.svg"]
+const imagesRed = ["/static/icons/play-red.svg", "/static/icons/pause-red.svg", "/static/icons/loading.svg"]
 let allWaveSurfers = []
 let listOfRingtones = []
 let all = []
@@ -8,11 +9,13 @@ let all = []
 document.addEventListener("htmx:afterSwap", main)
 
 function muteAllExcept(index) {
-    const imgElements = listOfRingtones.querySelectorAll(".audio button img")
+    const imgElements = listOfRingtones.querySelectorAll(".audio button img.white")
+    const imgRedElements = listOfRingtones.querySelectorAll(".audio button img.red")
     for (let i = 0; i < allWaveSurfers.length; i++) {
         if (i != index) {
             allWaveSurfers[i].pause()
             if (imgElements[i].getAttribute("src") === images[1]) imgElements[i].src = images[0]
+            if (imgRedElements[i].getAttribute("src") === imagesRed[1]) imgRedElements[i].src = imagesRed[0]
         }
     }
 }
@@ -25,12 +28,14 @@ function click(e) {
 
         if (allWaveSurfers[i].isPlaying()) {
             allWaveSurfers[i].pause()
-            e.target.firstChild.src = images[0]
+            e.target.querySelector(".white").src = images[0]
+            e.target.querySelector(".red").src = imagesRed[0]
         } else {
             muteAllExcept(i)
             allWaveSurfers[i].play()
 
-            e.target.firstChild.src = images[1]
+            e.target.querySelector(".white").src = images[1]
+            e.target.querySelector(".red").src = imagesRed[1]
         }
     }
 }
@@ -52,8 +57,8 @@ function main(e) {
             waveColor: 'white',
             progressColor: 'red',
             url: `/sounds/${id}.ogg`,
-            barWidth: 5,
-            barGap: 5,
+            barWidth: 4,
+            barGap: 4,
             barRadius: 100,
             cursorWidth: 2,
             dragToSeek: true,
@@ -62,11 +67,13 @@ function main(e) {
         })
 
         wavesurfer.on("ready", () => {
-            all[i].querySelector(".audio button img").src = images[0]
+            all[i].querySelector(".audio button img.white").src = images[0]
+            all[i].querySelector(".audio button img.red").src = imagesRed[0]
         })
 
         wavesurfer.on("finish", () => {
-            all[i].querySelector(".audio button img").src = images[0]
+            all[i].querySelector(".audio button img.white").src = images[0]
+            all[i].querySelector(".audio button img.red").src = imagesRed[0]
         })
 
         allWaveSurfers.push(wavesurfer)
