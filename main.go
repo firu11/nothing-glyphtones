@@ -5,6 +5,7 @@ import (
 	"gliphtones/database"
 	"log"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -16,6 +17,9 @@ import (
 
 var googleOauthConfig *oauth2.Config
 var myCache *cache.Cache
+
+var ringtoneNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{2,30}$")
+var userNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{3,20}$")
 
 func main() {
 	if err := godotenv.Load(); err != nil {

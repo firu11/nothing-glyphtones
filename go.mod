@@ -17,6 +17,7 @@ require (
 	github.com/pion/opus v0.0.0-20240826153031-e8536fe9e4ca // indirect
 	github.com/rickb777/period v1.0.7 // indirect
 	github.com/rickb777/plural v1.4.2 // indirect
+	gopkg.in/Regis24GmbH/go-diacritics.v2 v2.0.3 // indirect
 )
 
 require (

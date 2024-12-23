@@ -6,10 +6,12 @@ import (
 )
 
 type ProfileData struct {
-	Ringtones     []database.RingtoneModel
-	NumberOfPages int
-	Page          int
-	UserID        int
+	Ringtones         []database.RingtoneModel
+	NumberOfPages     int
+	Page              int
+	User              database.UserModel
+	LoggedIn          bool
+	ItsADifferentUser bool
 }
 
 templ Profile(data ProfileData) {
@@ -17,15 +19,15 @@ templ Profile(data ProfileData) {
 	<html lang="cs">
 		@components.Head("profile.css")
 		<body>
-			@components.Header(data.UserID != 0)
+			@components.Header(data.LoggedIn)
 			<main>
-				<div>
-                    <span>Firu</span>
-                    <span>firu@post.cz</span>
-                    <a id="logout" hx-post="/logout" hx-target="header" hx-swap="outerHTML">Log Out</a>
-                </div>
-				<h1>Your uploads</h1>
-				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, "profile")
+				if !data.ItsADifferentUser {
+					@components.UserProfile(data.User.Name, data.User.Email)
+                    <h1>Your uploads</h1>
+				} else {
+					<h1>{ data.User.Name }'s uploads</h1>
+				}
+				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentUser, "profile")
 			</main>
 			@components.Footer()
 			<script src="/static/scripts/ringtone.js" type="module"></script>

@@ -48,12 +48,12 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     overflow: hidden;
-    transition: 0.1s;
+    transition: border 0.1s, max-height 0.4s;
     max-height: calc(1.8em + 0.6em);
 }
 
 #filter-container.open {
-    max-height: 24em;
+    max-height: 20.5em;
     border-color: red;
 }
 

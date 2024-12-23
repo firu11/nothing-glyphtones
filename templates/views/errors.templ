@@ -12,8 +12,10 @@ templ NotFoundView(loggedIn bool) {
 		<body>
 			@components.Header(loggedIn)
 			<main>
-				<h1>404 - not found</h1>
-				<p>Did you get lost?</p>
+				<div>
+					<h1>404 - not found</h1>
+					<p>Did you get lost?</p>
+				</div>
 			</main>
 		</body>
 	</html>
@@ -33,6 +35,8 @@ templ OtherErrorView(status int, err error) {
 }
 
 templ OtherError(status int, err error) {
-	<h1>{ fmt.Sprintf("%d", status) } - { err.Error() }</h1>
-	<p>Whoops, something went wrong</p>
+	<div>
+		<h1>{ fmt.Sprintf("%d", status) } - { err.Error() }</h1>
+		<p>Whoops, something went wrong</p>
+	</div>
 }

@@ -1,3 +1,108 @@
-#logout {
+#user {
+    background-color: var(--menu-bg-color);
+    padding: 1em;
+    margin-top: 2em;
+    border-radius: var(--base-border-radius);
+    display: grid;
+    grid-template-columns: 5em 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+        "img name"
+        "img email"
+        "line line"
+        "buttons buttons";
+    gap: 0em 1em;
+}
+
+#user:has(form) {
+    display: block;
+}
+
+#user span#name {
+    grid-area: name;
+    align-self: end;
+    font-size: 1.3em;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 1em;
+}
+
+#user #email {
+    grid-area: email;
+    align-self: start;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 1em;
+}
+
+#user img {
+    width: 100%;
+    padding: 5%;
+    margin-left: 1.2em;
+    grid-area: img;
+}
+
+#user hr {
+    grid-area: line;
+    justify-self: center;
+    width: 100%;
+    margin-top: 1em;
+    border-width: 1px;
+    border-style: solid;
+}
+
+#user div {
+    grid-area: buttons;
+    display: flex;
+    justify-content: space-around;
+    padding: 1em 10% 0 10%;
+}
+
+#user div>a {
     cursor: pointer;
+    transition: color 0.1s;
+}
+
+#user div>a:hover {
+    color: red;
+}
+
+#user form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5em;
+    justify-content: center;
+}
+
+#user form input {
+    width: 100%;
+    background-color: black;
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    font-size: 1.4em;
+    height: 40px;
+    text-align: center;
+    border-radius: var(--base-border-radius);
+    transition: border 0.1s;
+    margin-bottom: -1.1em;
+}
+
+#user form input:focus {
+    border: 1px solid red;
+}
+
+#user form button, #user form a {
+    background-color: transparent;
+    color: var(--white);
+    font-size: 1em;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.1s;
+}
+
+#user form button:hover, #user form a:hover {
+    color: red;
 }

@@ -14,8 +14,8 @@ func idToJson(id int) string {
 	return string(v)
 }
 
-templ Ringtone(data database.RingtoneModel, index int) {
-	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.Id) }>
+templ Ringtone(data database.RingtoneModel, index int, loggedInUsersRingtones bool) {
+	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.ID) }>
 		<div class="audio">
 			<button type="button">
 				<img class="red" src="/static/icons/loading.svg"/>
@@ -26,34 +26,53 @@ templ Ringtone(data database.RingtoneModel, index int) {
 		<div class="container">
 			<div class="captions">
 				<span class="name">{ data.Name }</span>
-				<span>{ data.PhoneName }</span>
-				<span>{ data.EffectName }</span>
+				<a href={ templ.SafeURL(fmt.Sprintf("/user/%d", data.AuthorID)) }>{ data.AuthorName } sus</a>
+				<div class="tags">
+					<span>{ data.PhoneName }</span>
+					<span>{ data.EffectName }</span>
+				</div>
 			</div>
 			<div class="captions">
 				<div class="icons">
-					<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%d.ogg", data.Id)) } download={ data.Name + " - " + data.PhoneName } title="Download">
+					<a href={ templ.SafeURL(fmt.Sprintf("/download/%d", data.ID)) } title="Download">
 						<img src="/static/icons/download.svg"/>
 						<img src="/static/icons/download-red.svg"/>
 					</a>
-					<a hx-post={ fmt.Sprintf("/report/%d", data.Id) } hx-swap="none" title="Report (not working, not a ringtone)">
-						<img src="/static/icons/not-working.svg"/>
-						<img src="/static/icons/not-working-red.svg"/>
-					</a>
+					if !loggedInUsersRingtones {
+						<a hx-post={ fmt.Sprintf("/report/%d", data.ID) } hx-swap="none" title="Report (not working, not a ringtone etc.)">
+							<img src="/static/icons/not-working.svg"/>
+							<img src="/static/icons/not-working-red.svg"/>
+						</a>
+					} else {
+						<a
+							hx-post={ fmt.Sprintf("/delete-ringtone/%d", data.ID) }
+							hx-swap="none"
+							hx-confirm={ fmt.Sprintf("Do you really want to delete \"%s\" glyphtone?", data.Name) }
+							title="Delete"
+						>
+							<img src="/static/icons/remove.svg"/>
+							<img src="/static/icons/remove-red.svg"/>
+						</a>
+					}
 				</div>
-				<span>12032 downloads</span>
+				if data.Downloads == 1 {
+					<span>{ fmt.Sprintf("%d", data.Downloads) } download</span>
+				} else {
+					<span>{ fmt.Sprintf("%d", data.Downloads) } downloads</span>
+				}
 			</div>
 		</div>
 	</div>
 }
 
-templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int, view string) {
+templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int, loggedInUsersRingtones bool, view string) {
 	<div id="list-of-ringtones">
 		for i, ring := range ringtones {
-			@Ringtone(ring, i)
+			@Ringtone(ring, i, loggedInUsersRingtones)
 		}
 		if len(ringtones) == 0 {
 			if view == "profile" {
-				<span>You have not uploaded any Gliphtones yet!</span>
+				<span>There aren't any uploaded Gliphtones yet!</span>
 			} else if view == "index" {
 				<span>There are no gliphtones matching your search.</span>
 			}

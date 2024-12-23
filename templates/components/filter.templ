@@ -14,15 +14,15 @@ templ PhoneSelect(phones []database.PhoneModel, value string) {
 		if value == "" {
 			<option value="" selected disabled hidden>Select phone</option>
 			for _, v := range phones {
-				<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+				<option value={ fmt.Sprintf("%d", v.ID) }>{ v.Name }</option>
 			}
 		} else {
 			<option value="">All</option>
 			for _, v := range phones {
-				if fmt.Sprintf("%d", v.Id) == value {
-					<option value={ fmt.Sprintf("%d", v.Id) } selected>{ v.Name }</option>
+				if fmt.Sprintf("%d", v.ID) == value {
+					<option value={ fmt.Sprintf("%d", v.ID) } selected>{ v.Name }</option>
 				} else {
-					<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+					<option value={ fmt.Sprintf("%d", v.ID) }>{ v.Name }</option>
 				}
 			}
 		}
@@ -34,15 +34,15 @@ templ EffectSelect(effects []database.EffectModel, value string) {
 		if value == "" {
 			<option value="" selected disabled hidden>Select effect</option>
 			for _, v := range effects {
-				<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+				<option value={ fmt.Sprintf("%d", v.ID) }>{ v.Name }</option>
 			}
 		} else {
 			<option value="">All</option>
 			for _, v := range effects {
-				if fmt.Sprintf("%d", v.Id) == value {
-					<option value={ fmt.Sprintf("%d", v.Id) } selected>{ v.Name }</option>
+				if fmt.Sprintf("%d", v.ID) == value {
+					<option value={ fmt.Sprintf("%d", v.ID) } selected>{ v.Name }</option>
 				} else {
-					<option value={ fmt.Sprintf("%d", v.Id) }>{ v.Name }</option>
+					<option value={ fmt.Sprintf("%d", v.ID) }>{ v.Name }</option>
 				}
 			}
 		}
@@ -57,7 +57,7 @@ templ PhonesCheckboxes(phones []database.PhoneModel) {
 				<input
 					id="phone"
 					type="checkbox"
-					value={ fmt.Sprintf("%d", phone.Id) }
+					value={ fmt.Sprintf("%d", phone.ID) }
 					checked?={ phone.Selected }
 				/>
 				<span class="checkmark"></span>
@@ -75,7 +75,7 @@ templ EffectsCheckboxes(effects []database.EffectModel) {
 				<input
 					id="effect"
 					type="checkbox"
-					value={ fmt.Sprintf("%d", effect.Id) }
+					value={ fmt.Sprintf("%d", effect.ID) }
 					checked?={ effect.Selected }
 				/>
 				<span class="checkmark"></span>

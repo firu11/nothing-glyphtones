@@ -6,7 +6,7 @@ templ Head(stylesheetName string) {
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Gliphtones</title>
+		<title>Glyphtones</title>
 		<link rel="stylesheet" href="/static/styles/main.css"/>
 		if stylesheetName != "" {
 			<link rel="stylesheet" href={ fmt.Sprintf("/static/styles/%s", stylesheetName) }/>
@@ -18,7 +18,7 @@ templ Head(stylesheetName string) {
 templ Header(loggedIn bool) {
 	<header>
 		<a id="logo" href="/">
-			GLIPHTONES
+			GLYPHTONES
 			<span>not by NOTHING</span>
 		</a>
 		<nav>
@@ -26,7 +26,7 @@ templ Header(loggedIn bool) {
 			if !loggedIn {
 				<a id="login" href="/google-login">Log In</a>
 			} else {
-				<a href="/profile">
+				<a href="/user">
 					<img src="/static/icons/user.svg"/>
 				</a>
 				/* <a id="login" hx-post="/logout" hx-target="header" hx-swap="outerHTML">Log Out</a> */
@@ -37,6 +37,6 @@ templ Header(loggedIn bool) {
 
 templ Footer() {
 	<footer>
-		<span>GLIPHTONES does not claim ownership of the audio files users provide. Uploading any audio files that are subject to copyright or are not meant to be a Nothing Phone ringtone is prohibited.</span>
+		<span>GLYPHTONES does not claim ownership of the audio files users provide. Uploading any audio files that are subject to copyright or are not meant to be a Nothing Phone ringtone is prohibited.</span>
 	</footer>
 }

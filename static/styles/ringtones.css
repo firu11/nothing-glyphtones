@@ -18,7 +18,7 @@
     flex-direction: column;
     gap: 1em;
     padding: 1em;
-    height: 152px;
+    min-height: 152px;
     transition: border .2s;
 }
 
@@ -74,28 +74,58 @@
     justify-content: space-between;
 }
 
-.ringtone .captions span:not(.name) {
+.ringtone .captions span.name {
+    margin-bottom: 0.2em;
+}
+
+.ringtone .captions *:not(.name) {
+    font-size: 0.9em;
+}
+
+.ringtone .captions:has(.icons) span {
+    text-align: right;
+}
+
+.ringtone .captions>a {
+    text-decoration: none;
+    color: var(--white);
     opacity: 0.8;
-    font-size: 0.8em;
+}
+
+.ringtone .captions .tags {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+}
+
+.ringtone .captions .tags span {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.85em;
+    border-radius: 20px;
 }
 
 .ringtone .icons {
     display: flex;
     justify-content: right;
-    gap: 0.3em;
+    gap: 0.2em;
+    position: relative;
+    right: -5px;
 }
 
 .ringtone .icons a {
-    width: 30px;
-    height: 30px;
-    padding: 3px;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    position: relative;
 }
 
 .ringtone .icons a img {
     position: absolute;
+    width: 80%;
 }
 
 .ringtone .icons a img:last-of-type {
