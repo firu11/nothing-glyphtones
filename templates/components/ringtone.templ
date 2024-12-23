@@ -26,7 +26,7 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInUsersRingtones bo
 		<div class="container">
 			<div class="captions">
 				<span class="name">{ data.Name }</span>
-				<a href={ templ.SafeURL(fmt.Sprintf("/user/%d", data.AuthorID)) }>{ data.AuthorName }</a>
+				<span>by <a href={ templ.SafeURL(fmt.Sprintf("/user/%d", data.AuthorID)) }>{ data.AuthorName }</a></span>
 				<div class="tags">
 					<span>{ data.PhoneName }</span>
 					<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">

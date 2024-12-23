@@ -131,6 +131,8 @@
             "email email"
             "line line"
             "buttons buttons";
+        position: sticky;
+        top: 2em;
     }
 
     #user img {

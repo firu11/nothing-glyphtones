@@ -90,7 +90,7 @@
     margin-bottom: 0.2em;
 }
 
-.ringtone .captions *:not(.name) {
+.ringtone .captions span:not(.name) {
     font-size: 0.9em;
 }
 
@@ -103,13 +103,18 @@
     top: 2px;
 }
 
-.ringtone .captions>a {
+.ringtone .captions>span:has(a) {
+    color: color-mix(in srgb, var(--txt-color) 80%, transparent);
+    font-size: 0.9em;
+}
+
+.ringtone .captions>span>a {
     text-decoration: none;
     color: color-mix(in srgb, var(--txt-color) 80%, transparent);
     transition: 0.1s;
 }
 
-.ringtone .captions>a:hover {
+.ringtone .captions>span>a:hover {
     color: red;
 }
 
@@ -129,7 +134,6 @@
 .ringtone .captions .tags span {
     color: color-mix(in srgb, var(--txt-color) 70%, transparent);
     font-size: 0.85em;
-    border-radius: 20px;
 }
 
 .ringtone .icons {

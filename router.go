@@ -75,9 +75,15 @@ func index(c echo.Context) error {
 
 	// if it is a htmx request, render only the new results
 	if c.Request().Header.Get("HX-Request") == "true" {
-		ringtones, numberOfPages, err := database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
+		var ringtones []database.RingtoneModel
+		var numberOfPages int
+		if len(phonesArr) == 0 && len(effectsArr) == 0 && searchQuery == "" {
+			ringtones, numberOfPages, err = database.GetPopularRingtones(pageNumber)
+		} else {
+			ringtones, numberOfPages, err = database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
+		}
 		if err != nil {
-			return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("sus")))
+			return Render(c, views.OtherError(http.StatusInternalServerError, err))
 		}
 		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, false, "index"))
 	}
@@ -102,8 +108,14 @@ func index(c echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	_, err = c.Cookie(utils.CookieName)
+	for i := range phones {
+		phones[i].Selected = phonesMap[phones[i].ID]
+	}
+	for i := range effects {
+		effects[i].Selected = effetsMap[effects[i].ID]
+	}
 
+	_, err = c.Cookie(utils.CookieName)
 	var data views.IndexData = views.IndexData{
 		Ringtones:     ringtones,
 		Phones:        phones,
