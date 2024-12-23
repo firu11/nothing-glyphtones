@@ -80,7 +80,7 @@
     background-color: black;
     outline: none;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--white);
+    color: var(--txt-color);
     font-size: 1.4em;
     height: 40px;
     text-align: center;
@@ -93,9 +93,10 @@
     border: 1px solid red;
 }
 
-#user form button, #user form a {
+#user form button,
+#user form a {
     background-color: transparent;
-    color: var(--white);
+    color: var(--txt-color);
     font-size: 1em;
     border: none;
     text-decoration: none;
@@ -103,6 +104,61 @@
     transition: color 0.1s;
 }
 
-#user form button:hover, #user form a:hover {
+#user form button:hover,
+#user form a:hover {
     color: red;
+}
+
+@media screen and (min-width: 700px) {
+    main:has(#user) {
+        display: grid;
+        column-gap: 2em;
+        grid-template-columns: 350px auto;
+        grid-template-areas:
+            "user heading"
+            "user ringtones";
+    }
+
+    #user {
+        grid-area: user;
+        align-self: start;
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto auto auto;
+        grid-template-areas:
+            "img img"
+            "name name"
+            "email email"
+            "line line"
+            "buttons buttons";
+    }
+
+    #user img {
+        margin: 0;
+        width: 50%;
+        padding-top: 10px;
+        justify-self: center;
+    }
+
+    main:not(:has(#user)) {
+        display: grid;
+        grid-template-areas:
+            "heading"
+            "ringtones";
+        padding: 0 20%;
+    }
+
+    main>h1 {
+        grid-area: heading;
+    }
+
+    #list-of-ringtones {
+        grid-area: ringtones;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    main:has(#user) {
+        grid-template-columns: 250px auto;
+    }
 }

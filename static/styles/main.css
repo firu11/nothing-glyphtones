@@ -108,5 +108,7 @@ h1 {
 @media screen and (min-width: 1200px) {
     main {
         padding: 0 15%;
+        /* for footer */
+        padding-bottom: 6em;
     }
 }

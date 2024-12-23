@@ -50,7 +50,7 @@ func GetPopularRingtones(page int) ([]RingtoneModel, int, error) {
 	var rows *sql.Rows
 	var err error
 
-	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect, downloads, downloads::FLOAT / MAX(downloads) OVER () - 5 * not_working::FLOAT / MAX(not_working) OVER () AS score FROM ringtone ) SELECT rm.id, rm.name, rm.score, rm.downloads, p.name AS phone_name, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id ORDER BY score DESC LIMIT $1 OFFSET $2;`, resultsPerPage, (page-1)*resultsPerPage)
+	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, phone, effect, author_id, downloads, (downloads::FLOAT - 2 * not_working::FLOAT) / MAX(downloads) OVER () AS score FROM ringtone ) SELECT rm.id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, p.name AS phone_name, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN phone p ON rm.phone = p.id INNER JOIN effect e ON rm.effect = e.id INNER JOIN "user" u ON rm.author_id = u.id ORDER BY score DESC LIMIT $1 OFFSET $2;`, resultsPerPage, (page-1)*resultsPerPage)
 	if err != nil {
 		return ringtones, 0, err
 	}

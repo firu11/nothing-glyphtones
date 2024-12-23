@@ -74,6 +74,18 @@
     justify-content: space-between;
 }
 
+.ringtone .captions:first-of-type {
+    align-items: start;
+    max-width: 65%;
+}
+
+.ringtone .captions * {
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
 .ringtone .captions span.name {
     margin-bottom: 0.2em;
 }
@@ -86,10 +98,19 @@
     text-align: right;
 }
 
+.ringtone .captions:has(.icons) span img {
+    position: relative;
+    top: 2px;
+}
+
 .ringtone .captions>a {
     text-decoration: none;
-    color: var(--white);
-    opacity: 0.8;
+    color: color-mix(in srgb, var(--txt-color) 80%, transparent);
+    transition: 0.1s;
+}
+
+.ringtone .captions>a:hover {
+    color: red;
 }
 
 .ringtone .captions .tags {
@@ -97,10 +118,16 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.3em;
+    align-items: center;
+}
+
+.ringtone .captions .tags svg {
+    fill: color-mix(in srgb, var(--txt-color) 70%, transparent);
+    width: 5px;
 }
 
 .ringtone .captions .tags span {
-    color: rgba(255, 255, 255, 0.65);
+    color: color-mix(in srgb, var(--txt-color) 70%, transparent);
     font-size: 0.85em;
     border-radius: 20px;
 }

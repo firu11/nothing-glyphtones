@@ -26,9 +26,12 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInUsersRingtones bo
 		<div class="container">
 			<div class="captions">
 				<span class="name">{ data.Name }</span>
-				<a href={ templ.SafeURL(fmt.Sprintf("/user/%d", data.AuthorID)) }>{ data.AuthorName } sus</a>
+				<a href={ templ.SafeURL(fmt.Sprintf("/user/%d", data.AuthorID)) }>{ data.AuthorName }</a>
 				<div class="tags">
 					<span>{ data.PhoneName }</span>
+					<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="50" cy="50" r="50"></circle>
+					</svg>
 					<span>{ data.EffectName }</span>
 				</div>
 			</div>
@@ -55,11 +58,7 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInUsersRingtones bo
 						</a>
 					}
 				</div>
-				if data.Downloads == 1 {
-					<span>{ fmt.Sprintf("%d", data.Downloads) } download</span>
-				} else {
-					<span>{ fmt.Sprintf("%d", data.Downloads) } downloads</span>
-				}
+				<span title="The number of downloads"><img src="/static/icons/download-mini.svg" width="14"/> { fmt.Sprintf("%d", data.Downloads) }</span>
 			</div>
 		</div>
 	</div>
