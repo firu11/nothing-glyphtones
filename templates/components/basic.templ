@@ -7,11 +7,22 @@ templ Head(stylesheetName string) {
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>Glyphtones</title>
+		<meta name="description" content="A simple audio-sharing platform for Nothing Phone users."/>
+		<meta name="keywords" content="nothing, phone, tech, glyph, ringtone, interface, composer"/>
+		<meta name="author" content="Firu (mail: firu-glyphtones@proton.me, github: firu115)"/>
 		<link rel="stylesheet" href="/static/styles/main.css"/>
 		if stylesheetName != "" {
 			<link rel="stylesheet" href={ fmt.Sprintf("/static/styles/%s", stylesheetName) }/>
 		}
 		<script src="/static/scripts/htmx.min.js"></script>
+        <meta name="google-site-verification" content="1ydvf9Gm0D2YSvnwdpJgPgSc0QpXNRz1pdAgqgjwNFM" />
+		/* -------------------------------------- FAVICONS --------------------------------------- */
+		<link rel="icon" type="image/png" href="/static/favicons/favicon-96x96.png" sizes="96x96"/>
+		<link rel="icon" type="image/svg+xml" href="/static/favicons/favicon.svg"/>
+		<link rel="shortcut icon" href="/static/favicons/favicon.ico"/>
+		<link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png"/>
+		<meta name="apple-mobile-web-app-title" content="Glyphtones"/>
+		<link rel="manifest" href="/static/favicons/site.webmanifest"/>
 	</head>
 }
 
@@ -38,8 +49,8 @@ templ Header(loggedIn bool) {
 templ Footer() {
 	<footer>
 		<span>GLYPHTONES does not claim ownership of the audio files users provide. Uploading any audio files that are subject to copyright or are not meant to be a Nothing Phone ringtone is prohibited.</span>
-        <a href="https://github.com/Firu115/nothing_glyphtones">
-            <img src="/static/icons/github.svg">
-        </a>
+		<a href="https://github.com/Firu115/nothing_glyphtones">
+			<img src="/static/icons/github.svg"/>
+		</a>
 	</footer>
 }

@@ -1,0 +1,3 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="100" height="100"><svg clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2" version="1.1" viewBox="0 0 100 100" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="m50 0c27.612 0 50 22.388 50 50s-22.388 50-50 50-50-22.388-50-50 22.388-50 50-50zm0 39.922c-5.562 0-10.078 4.516-10.078 10.078s4.516 10.078 10.078 10.078 10.078-4.516 10.078-10.078-4.516-10.078-10.078-10.078z" fill="#fff"></path></svg><style>@media (prefers-color-scheme: light) { :root { filter: contrast(1) brightness(0.1); } }
+@media (prefers-color-scheme: dark) { :root { filter: none; } }
+</style></svg>

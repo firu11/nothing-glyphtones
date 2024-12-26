@@ -156,6 +156,7 @@
 
     #list-of-ringtones {
         grid-area: ringtones;
+        margin-bottom: 6em;
     }
 }
 

@@ -110,7 +110,7 @@
 }
 
 .ringtone .captions>span>a {
-    text-decoration: none;
+    text-decoration: underline;
     color: inherit;
     transition: 0.1s;
 }

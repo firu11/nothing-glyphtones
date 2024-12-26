@@ -153,6 +153,6 @@
 
     #list-of-ringtones {
         width: calc(100% - 350px - 2em);
-        padding-top: 2em;
+        padding-top: 1em;
     }
 }
