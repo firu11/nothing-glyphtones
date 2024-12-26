@@ -3,7 +3,7 @@ package components
 import (
 	"encoding/json"
 	"fmt"
-	"gliphtones/database"
+	"glyphtones/database"
 )
 
 func idToJson(id int) string {
@@ -73,7 +73,7 @@ templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, pag
 			if view == "profile" {
 				<span>There aren't any uploaded Gliphtones yet!</span>
 			} else if view == "index" {
-				<span>There are no gliphtones matching your search.</span>
+				<span>There are no glyphtones matching your search.</span>
 			}
 		} else {
 			@Pages(numberOfPages, page)

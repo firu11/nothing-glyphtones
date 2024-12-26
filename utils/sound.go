@@ -27,6 +27,9 @@ func CheckFile(file *os.File) (bool, error) {
 		return false, nil
 	}
 
+	if m.Raw()["author"] == nil {
+		return false, nil
+	}
 	author := m.Raw()["author"].(string)
 
 	// im not sure what the difference between StdEncoding and RawStdEncoding is, but sometimes the file doesn't decode with the normal one so I have to try raw too...

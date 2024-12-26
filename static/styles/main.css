@@ -44,7 +44,7 @@ header {
     width: 100%;
     height: 4em;
     background-color: var(--menu-bg-color);
-    padding: 0.4em 1.2em;
+    padding: 0.4em 1.8em;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -99,6 +99,23 @@ footer {
     margin-top: 4em;
     height: 6em;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4em;
+}
+
+footer>span {
+    max-width: 80%;
+}
+
+footer>a {
+    width: 3em;
+    height: 3em;
+}
+
+footer>a>img {
+    width: 100%;
 }
 
 h1 {
@@ -110,5 +127,10 @@ h1 {
         padding: 0 15%;
         /* for footer */
         padding-bottom: 6em;
+    }
+
+    header {
+        padding-left: 5em;
+        padding-right: 5em;
     }
 }

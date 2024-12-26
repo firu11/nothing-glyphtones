@@ -1,23 +1,20 @@
-module gliphtones
+module glyphtones
 
 go 1.23.4
 
 require (
 	github.com/a-h/templ v0.2.793
-	github.com/labstack/echo/v4 v4.13.0
+	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
+	github.com/labstack/echo/v4 v4.13.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	gopkg.in/Regis24GmbH/go-diacritics.v2 v2.0.3
 )
 
 require (
-	cloud.google.com/go/compute/metadata v0.3.0 // indirect
-	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8 // indirect
-	github.com/govalues/decimal v0.1.32 // indirect
-	github.com/jfreymuth/oggvorbis v1.0.5 // indirect
-	github.com/jfreymuth/vorbis v1.0.2 // indirect
-	github.com/pion/opus v0.0.0-20240826153031-e8536fe9e4ca // indirect
+	cloud.google.com/go/compute/metadata v0.6.0 // indirect
+	github.com/govalues/decimal v0.1.33 // indirect
 	github.com/rickb777/period v1.0.7 // indirect
 	github.com/rickb777/plural v1.4.2 // indirect
-	gopkg.in/Regis24GmbH/go-diacritics.v2 v2.0.3 // indirect
 )
 
 require (
@@ -31,9 +28,9 @@ require (
 	github.com/rickb777/date/v2 v2.1.4
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.28.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.24.0
-	golang.org/x/sys v0.26.0 // indirect
-	golang.org/x/text v0.19.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 )

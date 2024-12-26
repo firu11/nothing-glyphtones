@@ -127,12 +127,12 @@ form#upload label:has(input[type="file"]) span {
         max-width: 700px;
     }
 
-    form#upload label:has(input[type="file"]),
-    form#upload>div {
-        width: 50%;
-    }
-
     form#upload label:has(input[type="file"]) {
         margin-bottom: 0;
+        width: 35% !important;
+    }
+
+    form#upload #inputs-container  {
+        width: calc(100% - 35% - 3em);
     }
 }

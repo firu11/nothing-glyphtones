@@ -93,6 +93,11 @@ func CreateRingtone(name string, phone int, effect int, authorID int) (int, erro
 	return ringtoneID, nil
 }
 
+func DeleteRingtone(ringtoneID int, userID int) error {
+	_, err := DB.Exec(`DELETE FROM ringtone WHERE id = $1 AND author_id = $2`, ringtoneID, userID)
+	return err
+}
+
 func RingtoneIncreaseDownload(id int) (string, error) {
 	var name string
 	var phone string

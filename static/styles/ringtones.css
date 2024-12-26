@@ -72,11 +72,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    max-width: 4.5em;
 }
 
 .ringtone .captions:first-of-type {
     align-items: start;
-    max-width: 65%;
+    max-width: calc(100% - 4.5em);
 }
 
 .ringtone .captions * {
@@ -104,13 +105,13 @@
 }
 
 .ringtone .captions>span:has(a) {
-    color: color-mix(in srgb, var(--txt-color) 80%, transparent);
+    color: color-mix(in srgb, var(--txt-color) 70%, transparent);
     font-size: 0.9em;
 }
 
 .ringtone .captions>span>a {
     text-decoration: none;
-    color: color-mix(in srgb, var(--txt-color) 80%, transparent);
+    color: inherit;
     transition: 0.1s;
 }
 
@@ -119,9 +120,9 @@
 }
 
 .ringtone .captions .tags {
-    margin-top: 8px;
+    margin-top: 6px;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 0.3em;
     align-items: center;
 }
@@ -129,11 +130,16 @@
 .ringtone .captions .tags svg {
     fill: color-mix(in srgb, var(--txt-color) 70%, transparent);
     width: 5px;
+    height: 5px;
 }
 
 .ringtone .captions .tags span {
     color: color-mix(in srgb, var(--txt-color) 70%, transparent);
-    font-size: 0.85em;
+    font-size: 0.75em;
+}
+
+.ringtone .captions .tags span:first-of-type {
+    overflow: visible;
 }
 
 .ringtone .icons {
@@ -201,4 +207,10 @@
 
 #pages>button:last-child {
     text-align: right;
+}
+
+@media screen and (min-width: 900px) {
+    #list-of-ringtones>span {
+        font-size: 1.4em;
+    }
 }

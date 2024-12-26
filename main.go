@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gliphtones/database"
+	"glyphtones/database"
 	"log"
 	"os"
 	"regexp"
@@ -17,6 +17,8 @@ import (
 
 var googleOauthConfig *oauth2.Config
 var myCache *cache.Cache
+
+const maxRingtoneSize = 2 * 1024 * 1024 // 2MB
 
 var ringtoneNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{2,30}$")
 var userNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{3,20}$")

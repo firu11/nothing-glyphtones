@@ -6,10 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gliphtones/database"
-	"gliphtones/templates/components"
-	"gliphtones/templates/views"
-	"gliphtones/utils"
+	"glyphtones/database"
+	"glyphtones/templates/components"
+	"glyphtones/templates/views"
+	"glyphtones/utils"
+	"io"
 	"log"
 	"maps"
 	"math/rand/v2"
@@ -41,6 +42,7 @@ func setupRouter(e *echo.Echo) {
 	e.PUT("/upload", uploadFile)
 	e.POST("/report/:id", reportRingtone)
 	e.GET("/download/:id", downloadRingtone)
+	e.POST("/delete-ringtone/:id", deleteRingtone)
 	e.GET("/google-login", googleLogin)
 	e.GET("/google-callback", googleCallback)
 	e.POST("/logout", logout)
@@ -260,6 +262,18 @@ func uploadFile(c echo.Context) error {
 	}
 	defer src.Close()
 
+	// check the file size
+	limitedReader := io.LimitReader(src, maxRingtoneSize+1) // +1 to detect files larger than maxFileSize
+	buffer := make([]byte, maxRingtoneSize+1)
+	n, err := limitedReader.Read(buffer)
+	if err != nil && !errors.Is(err, io.EOF) {
+		return Render(c, views.OtherError(http.StatusInternalServerError, err))
+	}
+	if n > maxRingtoneSize {
+		return errorHandler(errors.New("The file is too large! (2MB limit)"))
+	}
+	src.Seek(0, 0)
+
 	tmpFile, err := utils.CreateTemporaryFile(src)
 	if err != nil {
 		log.Println(err)
@@ -273,10 +287,10 @@ func uploadFile(c echo.Context) error {
 
 	ok, err := utils.CheckFile(tmpFile)
 	if err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
+		return errorHandler(err)
 	}
 	if !ok {
-		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("It seems that the file provided is not a Nothing Gliphtone.")))
+		return errorHandler(errors.New("It seems that the file provided is not a Nothing Gliphtone."))
 	}
 
 	ringtoneID, err := database.CreateRingtone(name, phone, effect, userID)
@@ -310,6 +324,26 @@ func downloadRingtone(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	return c.Attachment(fmt.Sprintf("./sounds/%d.ogg", id), filename)
+}
+
+func deleteRingtone(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	userID := utils.GetIDFromCookie(c)
+	if userID == 0 {
+		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in users can upload Gliphtones")))
+	}
+
+	err = database.DeleteRingtone(id, userID)
+	if err != nil {
+		return Render(c, views.OtherError(http.StatusBadRequest, err))
+	}
+
+	c.Response().Header().Set("HX-Refresh", "true")
+	return c.NoContent(http.StatusOK)
 }
 
 func googleLogin(c echo.Context) error {
