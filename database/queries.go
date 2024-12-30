@@ -179,7 +179,7 @@ func CreateAuthor(name string, email string) (int, error) {
 
 	email = strings.ToLower(email)
 
-	err := DB.QueryRow(`INSERT INTO author (name, email) VALUES ($1, $2) RETURNING id;`, name, email).Scan(&authorID)
+	err := DB.QueryRow(`WITH res AS (INSERT INTO author (name, email) VALUES ($1, $2) ON CONFLICT(email) DO NOTHING RETURNING id) SELECT id FROM res UNION ALL SELECT id FROM author WHERE email = $2 LIMIT 1;`, name, email).Scan(&authorID)
 	if err != nil {
 		return 0, err
 	}

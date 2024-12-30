@@ -18,6 +18,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -313,10 +314,23 @@ func reportRingtone(c echo.Context) error {
 	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
+	_, err = c.Cookie(fmt.Sprintf("Glyphtone_%d_reported", id))
+	if err == nil {
+		// already reported this glyphtone
+		return c.NoContent(http.StatusOK)
+	}
+
 	err = database.RingtoneIncreaseNotWorking(id)
 	if err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
+	cookie := http.Cookie{
+		Name:    fmt.Sprintf("Glyphtone_%d_reported", id),
+		Value:   "true",
+		Expires: time.Now().Add(time.Hour * 1_000_000), // ~ 100 years
+		Path:    "/",
+	}
+	c.SetCookie(&cookie)
 	return c.NoContent(http.StatusOK)
 }
 

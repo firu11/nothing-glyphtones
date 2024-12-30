@@ -51,6 +51,7 @@ func WriteAuthCookie(c echo.Context, id int) error {
 		Name:    CookieName,
 		Value:   jwt,
 		Expires: time.Now().Add(tokenTimeDuration),
+		Path:    "/",
 	}
 	c.SetCookie(&cookie)
 	return nil
