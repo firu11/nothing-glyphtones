@@ -35,7 +35,7 @@ templ UploadForm(phones []database.PhoneModel, phoneValue string, effects []data
 			<div id="inputs-container">
 				<input type="text" name="name" placeholder="Name your glyphtone" value={ nameValue }/>
 				<div id="selects-container">
-					@components.CategorySelect(phoneValue)
+					@components.CategorySelectUpload(phoneValue)
 					@components.EffectSelect(effects, effectsValue)
 				</div>
 			</div>

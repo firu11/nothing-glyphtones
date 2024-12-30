@@ -48,7 +48,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     overflow: hidden;
-    transition: border 0.1s, max-height 0.4s;
+    transition: border 0.1s, max-height 0.2s;
     max-height: calc(1.8em + 0.6em);
 }
 
@@ -79,9 +79,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.5em;
-}
-
-.filters-column:first-of-type {
     padding: 0.6em 0.6em 1em 1em;
 }
 
@@ -127,6 +124,26 @@
 .filters-column input[type="checkbox"]:checked+.checkmark {
     background-color: red;
     border: none;
+}
+
+#filters>select {
+    width: 50%;
+    height: 40px;
+    background-color: black;
+    padding: 0.2em;
+    font-size: 1.2em;
+    border: 1px solid transparent;
+    border-radius: var(--base-border-radius);
+    color: white;
+    font-family: "Ntype", "Cascadia Code", sans-serif;
+    /* fallback for firefox which is broken */
+    transition: border 0.2s;
+    width: 100%;
+}
+
+#filters>select:focus {
+    outline: none;
+    border: 1px solid red;
 }
 
 @media screen and (min-width: 900px) {

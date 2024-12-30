@@ -50,6 +50,11 @@ func setupRouter(e *echo.Echo) {
 
 func index(c echo.Context) error {
 	searchQuery := c.QueryParam("s")
+	category, err := strconv.Atoi(c.QueryParam("c"))
+	if err != nil {
+		category = 0
+	}
+	sortBy := c.QueryParam("o")
 	pageNumber, err := strconv.Atoi(c.QueryParam("page"))
 	if err != nil {
 		pageNumber = 1
@@ -79,11 +84,8 @@ func index(c echo.Context) error {
 	if c.Request().Header.Get("HX-Request") == "true" {
 		var ringtones []database.RingtoneModel
 		var numberOfPages int
-		if len(phonesArr) == 0 && len(effectsArr) == 0 && searchQuery == "" {
-			ringtones, numberOfPages, err = database.GetPopularRingtones(pageNumber)
-		} else {
-			ringtones, numberOfPages, err = database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
-		}
+
+		ringtones, numberOfPages, err = database.GetRingtones(searchQuery, category, sortBy, phonesArr, effectsArr, pageNumber)
 		if err != nil {
 			return Render(c, views.OtherError(http.StatusInternalServerError, err))
 		}
@@ -101,11 +103,8 @@ func index(c echo.Context) error {
 
 	var ringtones []database.RingtoneModel
 	var numberOfPages int
-	if len(phonesArr) == 0 && len(effectsArr) == 0 && searchQuery == "" {
-		ringtones, numberOfPages, err = database.GetPopularRingtones(pageNumber)
-	} else {
-		ringtones, numberOfPages, err = database.GetRingtones(searchQuery, phonesArr, effectsArr, pageNumber)
-	}
+
+	ringtones, numberOfPages, err = database.GetRingtones(searchQuery, category, sortBy, phonesArr, effectsArr, pageNumber)
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
@@ -122,6 +121,8 @@ func index(c echo.Context) error {
 		Ringtones:     ringtones,
 		Phones:        phones,
 		Effects:       effects,
+		Category:      category,
+		SortBy:        sortBy,
 		SearchQuery:   searchQuery,
 		NumberOfPages: numberOfPages,
 		Page:          pageNumber,

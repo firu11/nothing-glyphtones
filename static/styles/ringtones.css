@@ -16,8 +16,8 @@
     border-radius: var(--base-border-radius);
     display: flex;
     flex-direction: column;
-    gap: 1em;
-    padding: 1em;
+    gap: 0.8em;
+    padding: 0.8em;
     min-height: 152px;
     transition: border .2s;
 }

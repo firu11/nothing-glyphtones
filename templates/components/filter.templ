@@ -3,6 +3,7 @@ package components
 import (
 	"fmt"
 	"glyphtones/database"
+	"strings"
 )
 
 templ Search(value string) {
@@ -10,11 +11,13 @@ templ Search(value string) {
 }
 
 var categories map[int]string = map[int]string{
-	1: "Ringtone",
-	2: "Notification",
+	1: "Ringtones",
+	2: "Notifications",
 }
 
-templ CategorySelect(value string) {
+var sortOptions []string = []string{"Popular", "Latest", "Name (A-Z)"}
+
+templ CategorySelectUpload(value string) {
 	<select name="c">
 		if value == "" {
 			<option value="" selected disabled hidden>Choose category</option>
@@ -23,6 +26,25 @@ templ CategorySelect(value string) {
 			<option
 				value={ fmt.Sprintf("%d", i) }
 				if string(i) == value {
+					selected
+				}
+			>{ v }</option>
+		}
+	</select>
+}
+
+templ CategorySelect(value int) {
+	<select name="c">
+		<option
+			value="0"
+			if value == 0 {
+				selected
+			}
+		>All categories</option>
+		for i, v := range categories {
+			<option
+				value={ fmt.Sprintf("%d", i) }
+				if i == value {
 					selected
 				}
 			>{ v }</option>
@@ -102,4 +124,17 @@ templ EffectsCheckboxes(effects []database.EffectModel) {
 			</label>
 		}
 	</div>
+}
+
+templ Sort(value string) {
+	<select name="o">
+		for _, v := range sortOptions {
+			<option
+				value={ strings.ToLower(v) }
+				if strings.ToLower(v) == value {
+					selected
+				}
+			>{ v }</option>
+		}
+	</select>
 }
