@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"compress/zlib"
 	"encoding/base64"
+	"encoding/csv"
 	"fmt"
+	"glyphtones/database"
 	"io"
 	"log"
 	"os"
@@ -14,21 +16,23 @@ import (
 
 var ringtonesDir string = "./sounds"
 
-func CheckFile(file *os.File) (bool, error) {
+func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, bool) {
+	var phonesResult []int
+
 	m, err := tag.ReadFrom(file)
 	if err != nil {
-		return false, err
+		return phonesResult, false
 	}
 
 	if m.Format() != tag.VORBIS {
-		return false, nil
+		return phonesResult, false
 	}
 	if m.FileType() != tag.OGG {
-		return false, nil
+		return phonesResult, false
 	}
 
 	if m.Raw()["author"] == nil {
-		return false, nil
+		return phonesResult, false
 	}
 	author := m.Raw()["author"].(string)
 
@@ -37,39 +41,46 @@ func CheckFile(file *os.File) (bool, error) {
 	if err != nil {
 		decoded, err = base64.RawStdEncoding.DecodeString(author) // decode from base64 to bytes
 		if err != nil {
-			return false, nil
+			return phonesResult, false
 		}
 	}
 	reader, err := zlib.NewReader(bytes.NewReader(decoded)) // decode zlib compression
 	if err != nil {
-		return false, nil
+		return phonesResult, false
 	}
 	defer reader.Close()
 
 	var decompressed bytes.Buffer
 	_, err = io.Copy(&decompressed, reader) // copy the result to buffer
 	if err != nil {
-		return false, nil
+		return phonesResult, false
 	}
 
-	// i can read the csv but no need now
-	/* csvReader := csv.NewReader(&decompressed)
-	for {
-		record, err := csvReader.Read()
-		if err == io.EOF {
+	csvReader := csv.NewReader(&decompressed)
+	csvReader.TrimLeadingSpace = true
+	record, err := csvReader.Read()
+	if err != nil {
+		return phonesResult, false
+	}
+	columns := len(record)
+	for i := len(record) - 1; i >= 0; i-- {
+		if record[i] == "" {
+			columns -= 1
+		} else {
 			break
 		}
-		if err != nil {
-			log.Fatal(err)
-		}
+	}
 
-		fmt.Println(record)
-	} */
+	for _, v := range phones {
+		if v.NumberOfColumns == columns || v.NumberOfColumns2 == columns {
+			phonesResult = append(phonesResult, v.ID)
+		}
+	}
 
 	file.Seek(0, 0)
 
 	// finally if everything is ok, return true
-	return true, nil
+	return phonesResult, true
 }
 
 func CreateRingtoneFile(src *os.File, ringtoneID int) error {

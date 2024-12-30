@@ -21,7 +21,7 @@ var myCache *cache.Cache
 const maxRingtoneSize = 2 * 1024 * 1024 // 2MB
 
 var ringtoneNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{2,30}$")
-var userNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{3,20}$")
+var authorNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{3,20}$")
 
 func main() {
 	if err := godotenv.Load(); err != nil {

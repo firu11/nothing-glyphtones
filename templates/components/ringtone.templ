@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"glyphtones/database"
+	"strings"
 )
 
 func idToJson(id int) string {
@@ -14,7 +15,7 @@ func idToJson(id int) string {
 	return string(v)
 }
 
-templ Ringtone(data database.RingtoneModel, index int, loggedInUsersRingtones bool) {
+templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones bool) {
 	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.ID) }>
 		<div class="audio">
 			<button type="button">
@@ -26,9 +27,9 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInUsersRingtones bo
 		<div class="container">
 			<div class="captions">
 				<span class="name">{ data.Name }</span>
-				<span>by <a href={ templ.SafeURL(fmt.Sprintf("/user/%d", data.AuthorID)) }>{ data.AuthorName }</a></span>
+				<span>by <a href={ templ.SafeURL(fmt.Sprintf("/author/%d", data.AuthorID)) }>{ data.AuthorName }</a></span>
 				<div class="tags">
-					<span>{ data.PhoneName }</span>
+					<span>Phone { strings.Join(data.PhoneNames, " / ") }</span>
 					<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 						<circle cx="50" cy="50" r="50"></circle>
 					</svg>
@@ -37,12 +38,12 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInUsersRingtones bo
 			</div>
 			<div class="captions">
 				<div class="icons">
-					<a href={ templ.SafeURL(fmt.Sprintf("/download/%d", data.ID)) } title="Download">
-						<img src="/static/icons/download.svg"/>
-						<img src="/static/icons/download-red.svg"/>
+					<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%d.ogg", data.ID)) } title="Download" download={ fmt.Sprintf("%s - Phone %s.ogg", data.Name, strings.Join(data.PhoneNames, ", ")) }>
+						<img src="/static/icons/download.svg" hx-post={ fmt.Sprintf("/download/%d", data.ID) } hx-swap="none"/>
+						<img src="/static/icons/download-red.svg" hx-post={ fmt.Sprintf("/download/%d", data.ID) } hx-swap="none"/>
 					</a>
-					if !loggedInUsersRingtones {
-						<a hx-post={ fmt.Sprintf("/report/%d", data.ID) } hx-swap="none" title="Report (not working, not a ringtone etc.)">
+					if !loggedInAuthorsRingtones {
+						<a hx-post={ fmt.Sprintf("/report/%d", data.ID) } hx-swap="none" title="Report (not working, not a ringtone etc.)" hx-confirm="Are you sure you want to report this ringtone as not working, not a Nothing ringtone etc.?">
 							<img src="/static/icons/not-working.svg"/>
 							<img src="/static/icons/not-working-red.svg"/>
 						</a>
@@ -64,14 +65,14 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInUsersRingtones bo
 	</div>
 }
 
-templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int, loggedInUsersRingtones bool, view string) {
+templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int, loggedInAuthorsRingtones bool, view string) {
 	<div id="list-of-ringtones">
 		for i, ring := range ringtones {
-			@Ringtone(ring, i, loggedInUsersRingtones)
+			@Ringtone(ring, i, loggedInAuthorsRingtones)
 		}
 		if len(ringtones) == 0 {
 			if view == "profile" {
-				<span>There aren't any uploaded Gliphtones yet!</span>
+				<span>There aren't any uploaded Glyphtones yet!</span>
 			} else if view == "index" {
 				<span>There are no glyphtones matching your search.</span>
 			}
@@ -79,4 +80,5 @@ templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, pag
 			@Pages(numberOfPages, page)
 		}
 	</div>
+	<script src="/static/scripts/ringtone.js" type="module"></script>
 }

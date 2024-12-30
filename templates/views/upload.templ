@@ -33,9 +33,9 @@ templ UploadForm(phones []database.PhoneModel, phoneValue string, effects []data
 				<input type="file" name="ringtone" accept=".ogg"/>
 			</label>
 			<div id="inputs-container">
-				<input type="text" name="name" placeholder="Name your gliphtone" value={ nameValue }/>
+				<input type="text" name="name" placeholder="Name your glyphtone" value={ nameValue }/>
 				<div id="selects-container">
-					@components.PhoneSelect(phones, phoneValue)
+					@components.CategorySelect(phoneValue)
 					@components.EffectSelect(effects, effectsValue)
 				</div>
 			</div>

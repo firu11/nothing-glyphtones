@@ -37,7 +37,7 @@ templ Header(loggedIn bool) {
 			if !loggedIn {
 				<a id="login" href="/google-login">Log In</a>
 			} else {
-				<a href="/user">
+				<a href="/author">
 					<img src="/static/icons/user.svg"/>
 				</a>
 				/* <a id="login" hx-post="/logout" hx-target="header" hx-swap="outerHTML">Log Out</a> */

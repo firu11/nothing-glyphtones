@@ -11,7 +11,7 @@ import (
 
 var privateKey []byte = []byte(os.Getenv("TOKEN_KEY"))
 var tokenTimeDuration time.Duration = time.Hour * 24 * 14 // 14 days
-var CookieName string = "GliphtonesCookie"
+var CookieName string = "GlyphtonesCookie"
 
 type data struct {
 	ID int `json:"id"`

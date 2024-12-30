@@ -9,9 +9,9 @@ type ProfileData struct {
 	Ringtones         []database.RingtoneModel
 	NumberOfPages     int
 	Page              int
-	User              database.UserModel
+	Author              database.AuthorModel
 	LoggedIn          bool
-	ItsADifferentUser bool
+	ItsADifferentAuthor bool
 }
 
 templ Profile(data ProfileData) {
@@ -21,16 +21,15 @@ templ Profile(data ProfileData) {
 		<body>
 			@components.Header(data.LoggedIn)
 			<main>
-				if !data.ItsADifferentUser {
-					@components.UserProfile(data.User.Name, data.User.Email)
+				if !data.ItsADifferentAuthor {
+					@components.AuthorProfile(data.Author.Name, data.Author.Email)
                     <h1>Your uploads</h1>
 				} else {
-					<h1>{ data.User.Name }'s uploads</h1>
+					<h1>{ data.Author.Name }'s uploads</h1>
 				}
-				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentUser, "profile")
+				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentAuthor, "profile")
 			</main>
 			@components.Footer()
-			<script src="/static/scripts/ringtone.js" type="module"></script>
 		</body>
 	</html>
 }

@@ -1,24 +1,24 @@
 package components
 
-templ UserProfile(name string, email string) {
+templ AuthorProfile(name string, email string) {
 	<div id="user">
 		<img src="/static/icons/user.svg"/>
 		<span id="name">{ name }</span>
 		<span id="email">{ email }</span>
 		<hr/>
 		<div>
-			<a id="logout" hx-get="/rename-user" hx-target="#user" hx-swap="outerHTML">Edit name</a>
+			<a id="logout" hx-get="/rename-author" hx-target="#user" hx-swap="outerHTML">Edit name</a>
 			<a id="logout" hx-post="/logout" hx-target="header" hx-swap="none" hx-replace-url="/">Log Out</a>
 		</div>
 	</div>
 }
 
 templ EditName(name string) {
-	<div id="user">
-		<form hx-post="/rename-user" hx-target="#user" hx-swap="outerHTML">
+	<div id="author">
+		<form hx-post="/rename-author" hx-target="#user" hx-swap="outerHTML">
 			<input id="name" name="name" value={ name }/>
             <button type="submit">Save</button>
-            <a href="/user">Cancel</a>
+            <a href="/author">Cancel</a>
 		</form>
 	</div>
 }

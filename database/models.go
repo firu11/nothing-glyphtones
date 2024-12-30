@@ -1,22 +1,29 @@
 package database
 
-import "github.com/rickb777/date/v2"
+import (
+	"github.com/lib/pq"
+	"github.com/rickb777/date/v2"
+)
 
 type RingtoneModel struct {
-	ID              int    `db:"id"`
-	Name            string `db:"name"`
-	PhoneName       string `db:"phone_name"`
-	EffectName      string `db:"effect_name"`
-	Downloads       int    `db:"downloads"`
-	AuthorName      string `db:"author_name"`
-	AuthorID        int    `db:"author_id"`
-	NumberOfResults int    `db:"results"`
+	ID              int            `db:"id"`
+	Name            string         `db:"name"`
+	PhoneNames      pq.StringArray `db:"phone_names"`
+	EffectName      string         `db:"effect_name"`
+	Category        int            `db:"category"`
+	Downloads       int            `db:"downloads"`
+	AuthorName      string         `db:"author_name"`
+	AuthorID        int            `db:"author_id"`
+	NumberOfResults int            `db:"results"`
+	Score           float32        `db:"score"`
 }
 
 type PhoneModel struct {
-	ID       int    `db:"id"`
-	Name     string `db:"name"`
-	Selected bool   `db:""`
+	ID               int    `db:"id"`
+	Name             string `db:"name"`
+	NumberOfColumns  int    `db:"cols"`
+	NumberOfColumns2 int    `db:"cols2"`
+	Selected         bool   `db:""`
 }
 
 type EffectModel struct {
@@ -25,7 +32,7 @@ type EffectModel struct {
 	Selected bool   `db:""`
 }
 
-type UserModel struct {
+type AuthorModel struct {
 	ID         int       `db:"id"`
 	Name       string    `db:"name"`
 	Email      string    `db:"email"`

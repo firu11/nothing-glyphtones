@@ -111,6 +111,7 @@
 
 .ringtone .captions>span>a {
     text-decoration: underline;
+    text-underline-offset: 0.2em;
     color: inherit;
     transition: 0.1s;
 }
@@ -162,7 +163,8 @@
 
 .ringtone .icons a img {
     position: absolute;
-    width: 80%;
+    width: 100%;
+    padding: 10%;
 }
 
 .ringtone .icons a img:last-of-type {

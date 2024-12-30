@@ -34,14 +34,14 @@ func setupRouter(e *echo.Echo) {
 	e.RouteNotFound("/*", notFound)
 
 	e.GET("/", index)
-	e.GET("/user", user)
-	e.GET("/user/:id", user)
-	e.GET("/rename-user", userRenameView)
-	e.POST("/rename-user", userRename)
+	e.GET("/author", author)
+	e.GET("/author/:id", author)
+	e.GET("/rename-author", authorRenameView)
+	e.POST("/rename-author", authorRename)
 	e.GET("/upload", uploadView)
 	e.PUT("/upload", uploadFile)
 	e.POST("/report/:id", reportRingtone)
-	e.GET("/download/:id", downloadRingtone)
+	e.POST("/download/:id", downloadRingtone)
 	e.POST("/delete-ringtone/:id", deleteRingtone)
 	e.GET("/google-login", googleLogin)
 	e.GET("/google-callback", googleCallback)
@@ -130,32 +130,32 @@ func index(c echo.Context) error {
 	return Render(c, views.Index(data))
 }
 
-func user(c echo.Context) error {
+func author(c echo.Context) error {
 	pageNumber, err := strconv.Atoi(c.QueryParam("page"))
 	if err != nil {
 		pageNumber = 1
 	}
 
-	var itsADifferentUser bool
-	userStr := c.Param("id")
-	var userID int
-	if userStr != "" {
-		userID, err = strconv.Atoi(userStr)
+	var itsADifferentAuthor bool
+	authorStr := c.Param("id")
+	var authorID int
+	if authorStr != "" {
+		authorID, err = strconv.Atoi(authorStr)
 		if err != nil {
 			return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("Bad url.")))
 		}
-		loggedInUserID := utils.GetIDFromCookie(c)
+		loggedInAuthorID := utils.GetIDFromCookie(c)
 
-		itsADifferentUser = userID != loggedInUserID
+		itsADifferentAuthor = authorID != loggedInAuthorID
 	} else {
-		userID = utils.GetIDFromCookie(c)
-		if userID == 0 {
+		authorID = utils.GetIDFromCookie(c)
+		if authorID == 0 {
 			return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("You're not logged in.")))
 		}
-		itsADifferentUser = false
+		itsADifferentAuthor = false
 	}
 
-	user, err := database.GetUser(userID)
+	author, err := database.GetAuthor(authorID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.RemoveAuthCookie(c)
@@ -163,51 +163,51 @@ func user(c echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	ringtones, numberOfPages, err := database.GetRingtonesByUser(userID, pageNumber)
+	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorID, pageNumber)
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
 	_, err = c.Cookie(utils.CookieName)
 	var data views.ProfileData = views.ProfileData{
-		Ringtones:         ringtones,
-		NumberOfPages:     numberOfPages,
-		Page:              pageNumber,
-		User:              user,
-		LoggedIn:          err == nil,
-		ItsADifferentUser: itsADifferentUser,
+		Ringtones:           ringtones,
+		NumberOfPages:       numberOfPages,
+		Page:                pageNumber,
+		Author:              author,
+		LoggedIn:            err == nil,
+		ItsADifferentAuthor: itsADifferentAuthor,
 	}
 	return Render(c, views.Profile(data))
 }
 
-func userRenameView(c echo.Context) error {
-	userID := utils.GetIDFromCookie(c)
-	if userID == 0 {
+func authorRenameView(c echo.Context) error {
+	authorID := utils.GetIDFromCookie(c)
+	if authorID == 0 {
 		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("You're not logged in.")))
 	}
-	user, err := database.GetUser(userID)
+	author, err := database.GetAuthor(authorID)
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	return Render(c, components.EditName(user.Name))
+	return Render(c, components.EditName(author.Name))
 }
 
-func userRename(c echo.Context) error {
-	userID := utils.GetIDFromCookie(c)
-	if userID == 0 {
+func authorRename(c echo.Context) error {
+	authorID := utils.GetIDFromCookie(c)
+	if authorID == 0 {
 		return errors.New("You're not logged in.")
 	}
 	newName := c.FormValue("name")
-	if !userNameR.MatchString(newName) {
+	if !authorNameR.MatchString(newName) {
 		return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("Invalid name. Maximal length is 20 letters. Only ASCII characters are allowed (a-z and some special characters).")))
 	}
-	email, err := database.RenameUser(userID, newName)
+	email, err := database.RenameAuthor(authorID, newName)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("Something went wrong")))
 	}
 
-	return Render(c, components.UserProfile(newName, email))
+	return Render(c, components.AuthorProfile(newName, email))
 }
 
 func uploadView(c echo.Context) error {
@@ -225,28 +225,29 @@ func uploadView(c echo.Context) error {
 }
 
 func uploadFile(c echo.Context) error {
-	userID := utils.GetIDFromCookie(c)
-	if userID == 0 {
-		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in users can upload Gliphtones")))
+	authorID := utils.GetIDFromCookie(c)
+	if authorID == 0 {
+		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in authorors can upload Glyphtones")))
+	}
+
+	phones, err := database.GetPhones()
+	if err != nil {
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
 	errorHandler := func(mainErr error) error {
-		phones, err := database.GetPhones()
-		if err != nil {
-			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
-		}
 		effects, err := database.GetEffects()
 		if err != nil {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
-		return Render(c, views.UploadForm(phones, c.FormValue("p"), effects, c.FormValue("e"), c.FormValue("name"), userID != 0, mainErr))
+		return Render(c, views.UploadForm(phones, c.FormValue("p"), effects, c.FormValue("e"), c.FormValue("name"), authorID != 0, mainErr))
 	}
 
 	name := c.FormValue("name")
 	if !ringtoneNameR.MatchString(name) {
 		return errorHandler(errors.New("Name must be 2-30 characters long and without diacritics."))
 	}
-	phone, err1 := strconv.Atoi(c.FormValue("p"))
+	category, err1 := strconv.Atoi(c.FormValue("c"))
 	effect, err2 := strconv.Atoi(c.FormValue("e"))
 	if err1 != nil || err2 != nil {
 		return errorHandler(errors.New("Missing form values."))
@@ -254,6 +255,10 @@ func uploadFile(c echo.Context) error {
 	file, err := c.FormFile("ringtone")
 	if err != nil {
 		return errorHandler(errors.New("Missing the file."))
+	}
+	split := strings.Split(file.Filename, ".")
+	if len(split) == 0 || split[len(split)-1] != "ogg" {
+		return errorHandler(errors.New("It seems that the file provided is not a Nothing Glyphtone."))
 	}
 
 	src, err := file.Open()
@@ -285,15 +290,15 @@ func uploadFile(c echo.Context) error {
 		utils.DeleteTemporaryFile(name)
 	}()
 
-	ok, err := utils.CheckFile(tmpFile)
-	if err != nil {
-		return errorHandler(err)
-	}
+	phonesCompatibleIDs, ok := utils.CheckFile(tmpFile, phones)
 	if !ok {
-		return errorHandler(errors.New("It seems that the file provided is not a Nothing Gliphtone."))
+		return errorHandler(errors.New("It seems that the file provided is not a Nothing Glyphtone."))
 	}
 
-	ringtoneID, err := database.CreateRingtone(name, phone, effect, userID)
+	ringtoneID, err := database.CreateRingtone(name, category, phonesCompatibleIDs, effect, authorID)
+	if err != nil {
+		return Render(c, views.OtherError(http.StatusInternalServerError, err))
+	}
 	err = utils.CreateRingtoneFile(tmpFile, ringtoneID)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusInternalServerError, err))
@@ -319,11 +324,11 @@ func downloadRingtone(c echo.Context) error {
 	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	filename, err := database.RingtoneIncreaseDownload(id)
+	err = database.RingtoneIncreaseDownload(id)
 	if err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
-	return c.Attachment(fmt.Sprintf("./sounds/%d.ogg", id), filename)
+	return c.NoContent(http.StatusOK)
 }
 
 func deleteRingtone(c echo.Context) error {
@@ -332,12 +337,12 @@ func deleteRingtone(c echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	userID := utils.GetIDFromCookie(c)
-	if userID == 0 {
-		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in users can upload Gliphtones")))
+	authorID := utils.GetIDFromCookie(c)
+	if authorID == 0 {
+		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in authors can upload Glyphtones")))
 	}
 
-	err = database.DeleteRingtone(id, userID)
+	err = database.DeleteRingtone(id, authorID)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusBadRequest, err))
 	}
@@ -373,26 +378,26 @@ func googleCallback(c echo.Context) error {
 	defer resp.Body.Close()
 
 	// decode the user information
-	var userInfo map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to decode user info")))
+	var authorInfo map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&authorInfo); err != nil {
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to decode author info")))
 	}
 
-	name := userInfo["name"].(string)
+	name := authorInfo["name"].(string)
 	name = godiacritics.Normalize(name)
 	if len(name) > 30 {
 		name = name[0:30]
 	}
-	if !userNameR.MatchString(name) {
-		name = fmt.Sprintf("User%d", rand.IntN(10000))
+	if !authorNameR.MatchString(name) {
+		name = fmt.Sprintf("Author%d", rand.IntN(10000))
 	}
 
-	userID, err := database.CreateUser(name, userInfo["email"].(string))
+	authorID, err := database.CreateAuthor(name, authorInfo["email"].(string))
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	utils.WriteAuthCookie(c, userID)
+	utils.WriteAuthCookie(c, authorID)
 	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }
 

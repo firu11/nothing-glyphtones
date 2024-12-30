@@ -1,8 +1,4 @@
-const fileInputLabelElement = document.querySelector("label:has(input[type='file'])")
-const fileInputElement = fileInputLabelElement.querySelector("input[type='file']")
-const fileInputImageElement = fileInputLabelElement.querySelector("img")
-const fileInputSpanElement = fileInputLabelElement.querySelector("span")
-fileInputElement.addEventListener("change", handleFile)
+let form, fileInputElement, fileInputImageElement, fileInputSpanElement
 
 function handleFile(e) {
     let file = e.srcElement.files[0]
@@ -15,5 +11,27 @@ function handleFile(e) {
         fileInputImageElement.style.display = "none"
         fileInputSpanElement.style.display = "block"
     }
-    console.log(file)
 }
+
+function formChange(e) {
+    const errorMsg = form.querySelector("h3.red-heading")
+    if (errorMsg !== null) errorMsg.remove()
+}
+
+function reloadSelectors() {
+    form = document.querySelector("form#upload")
+    if (form == null) {
+        return
+    }
+    
+    fileInputElement = form.querySelector("input[type='file']")
+    fileInputImageElement = form.querySelector("img")
+    fileInputSpanElement = form.querySelector("span")
+
+    form.addEventListener("change", formChange)
+    fileInputElement.addEventListener("change", handleFile)
+
+}
+
+reloadSelectors()
+document.addEventListener("htmx:afterSettle", reloadSelectors)
