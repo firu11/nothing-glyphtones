@@ -37,10 +37,10 @@ CREATE TABLE phone_and_ringtone (
 CREATE EXTENSION pg_trgm;
 
 INSERT INTO
-    phone (name)
-VALUES ('(1)', 5),
-    ('(2)', 33),
-    ('(2a)', 26);
+    phone (name, cols, cols2)
+VALUES ('(1)', 5, 15),
+    ('(2)', 33, 5),
+    ('(2a)', 26, -1);
 
 INSERT INTO
     effect (name)

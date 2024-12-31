@@ -1,13 +1,13 @@
 package components
 
 templ AuthorProfile(name string, email string) {
-	<div id="user">
+	<div id="author">
 		<img src="/static/icons/user.svg"/>
 		<span id="name">{ name }</span>
 		<span id="email">{ email }</span>
 		<hr/>
 		<div>
-			<a id="logout" hx-get="/rename-author" hx-target="#user" hx-swap="outerHTML">Edit name</a>
+			<a id="logout" hx-get="/rename-author" hx-target="#author" hx-swap="outerHTML">Edit name</a>
 			<a id="logout" hx-post="/logout" hx-target="header" hx-swap="none" hx-replace-url="/">Log Out</a>
 		</div>
 	</div>
@@ -15,7 +15,7 @@ templ AuthorProfile(name string, email string) {
 
 templ EditName(name string) {
 	<div id="author">
-		<form hx-post="/rename-author" hx-target="#user" hx-swap="outerHTML">
+		<form hx-post="/rename-author" hx-target="#author" hx-swap="outerHTML">
 			<input id="name" name="name" value={ name }/>
             <button type="submit">Save</button>
             <a href="/author">Cancel</a>

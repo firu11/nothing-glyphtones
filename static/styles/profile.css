@@ -1,4 +1,4 @@
-#user {
+#author {
     background-color: var(--menu-bg-color);
     padding: 1em;
     margin-top: 2em;
@@ -14,11 +14,11 @@
     gap: 0em 1em;
 }
 
-#user:has(form) {
+#author:has(form) {
     display: block;
 }
 
-#user span#name {
+#author span#name {
     grid-area: name;
     align-self: end;
     font-size: 1.3em;
@@ -28,7 +28,7 @@
     padding: 0 1em;
 }
 
-#user #email {
+#author #email {
     grid-area: email;
     align-self: start;
     overflow: hidden;
@@ -36,14 +36,14 @@
     padding: 0 1em;
 }
 
-#user img {
+#author img {
     width: 100%;
     padding: 5%;
     margin-left: 1.2em;
     grid-area: img;
 }
 
-#user hr {
+#author hr {
     grid-area: line;
     justify-self: center;
     width: 100%;
@@ -52,30 +52,30 @@
     border-style: solid;
 }
 
-#user div {
+#author div {
     grid-area: buttons;
     display: flex;
     justify-content: space-around;
     padding: 1em 10% 0 10%;
 }
 
-#user div>a {
+#author div>a {
     cursor: pointer;
     transition: color 0.1s;
 }
 
-#user div>a:hover {
+#author div>a:hover {
     color: red;
 }
 
-#user form {
+#author form {
     display: flex;
     flex-wrap: wrap;
     gap: 2.5em;
     justify-content: center;
 }
 
-#user form input {
+#author form input {
     width: 100%;
     background-color: black;
     outline: none;
@@ -89,12 +89,12 @@
     margin-bottom: -1.1em;
 }
 
-#user form input:focus {
+#author form input:focus {
     border: 1px solid red;
 }
 
-#user form button,
-#user form a {
+#author form button,
+#author form a {
     background-color: transparent;
     color: var(--txt-color);
     font-size: 1em;
@@ -104,23 +104,23 @@
     transition: color 0.1s;
 }
 
-#user form button:hover,
-#user form a:hover {
+#author form button:hover,
+#author form a:hover {
     color: red;
 }
 
 @media screen and (min-width: 700px) {
-    main:has(#user) {
+    main:has(#author) {
         display: grid;
         column-gap: 2em;
         grid-template-columns: 350px auto;
         grid-template-areas:
-            "user heading"
-            "user ringtones";
+            "author heading"
+            "author ringtones";
     }
 
-    #user {
-        grid-area: user;
+    #author {
+        grid-area: author;
         align-self: start;
         width: 100%;
         grid-template-columns: 1fr 1fr;
@@ -135,14 +135,14 @@
         top: 2em;
     }
 
-    #user img {
+    #author img {
         margin: 0;
         width: 50%;
         padding-top: 10px;
         justify-self: center;
     }
 
-    main:not(:has(#user)) {
+    main:not(:has(#author)) {
         display: grid;
         grid-template-areas:
             "heading"
@@ -161,7 +161,7 @@
 }
 
 @media screen and (max-width: 900px) {
-    main:has(#user) {
+    main:has(#author) {
         grid-template-columns: 250px auto;
     }
 }
