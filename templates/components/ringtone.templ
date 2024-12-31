@@ -38,7 +38,7 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones 
 			</div>
 			<div class="captions">
 				<div class="icons">
-					<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%d.ogg", data.ID)) } title="Download" download={ fmt.Sprintf("%s - Phone %s.ogg", data.Name, strings.Join(data.PhoneNames, ", ")) }>
+					<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%d.ogg", data.ID)) } title="Download" download={ fmt.Sprintf("%s - Phone %s.ogg", data.Name, strings.Join(data.PhoneNames, ", ")) } rel="nofollow">
 						<img src="/static/icons/download.svg" hx-post={ fmt.Sprintf("/download/%d", data.ID) } hx-swap="none"/>
 						<img src="/static/icons/download-red.svg" hx-post={ fmt.Sprintf("/download/%d", data.ID) } hx-swap="none"/>
 					</a>

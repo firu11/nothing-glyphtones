@@ -1,0 +1,54 @@
+package views
+
+import "glyphtones/templates/components"
+
+templ Guide(loggedIn bool) {
+	<!DOCTYPE html>
+	<html lang="cs">
+		@components.Head("guide.css")
+		<body>
+			@components.Header(loggedIn)
+			<main>
+				<nav id="table-of-contents">
+					<span>Table of contents</span>
+					<hr/>
+					<div>
+						<a href="#importing-glyphtones">Importing Glyphtones</a>
+						<a href="#creating-glyphtones">Creating Glyphtones</a>
+						<a href="#technical-details">How does it work?</a>
+					</div>
+				</nav>
+				/* -------- */
+				<section id="importing-glyphtones">
+					<h2>Importing Glyphtones</h2>
+					<span>(2 min read)</span>
+					<p>To import the downloaded .ogg file, head to the official <a href="https://play.google.com/store/apps/details?id=com.nothing.glyph.composer" rel="external" target="_blank">Glyph Composer</a> app and open library with a hamburger menu on the top left. From there, click on the three dots and then "Import". Select the downloaded file and you should be good to go.</p>
+					<img src="/static/guide-composer.png" alt="A screenshot showing how to import a Glyphtone" width="1179"/>
+					<p>Alternatively, you can move the files from your <i>Download</i> folder to <i>Internal storage > Ringtones > Compositions</i>.</p>
+					<p>This approach is great when importing multiple Glyphtones and HAS to be used if your import has failed! (Importing a glyphtone that was made for Phone (1) on Phone (2) shows an error, but works like a charm when moved by hand.)</p>
+				</section>
+				/* -------- */
+				<section id="creating-glyphtones">
+					<h2>Creating Glyphtones</h2>
+					<span>(1 min read)</span>
+					<p>A great way to create Nothing Glyphtones is with <a href="https://better-nothing-glyph-composer.pages.dev" rel="external" target="_blank">Better Nothing Glyph Composer</a> an open-source community project developed by <a href="https://github.com/Krishnagopal-Sinha" rel="external" target="_blank">Krishnagopal-Sinha</a>.</p>
+					<p>The second way to make your dream Glyphtones is with <a href="https://play.google.com/store/apps/details?id=com.frank.glyphify" rel="external" target="_blank">Nothing Glyphify</a>. Another great, although paid, app by <a href="https://github.com/Fr4nKB" rel="external" target="_blank">Fr4nKB</a>.</p>
+				</section>
+				/* -------- */
+				<section id="technical-details">
+					<h2>How does it work?</h2>
+					<span>(3 min read)</span>
+					<p>A glyphtone, as I like to call it, is a simple audio file. However, the glyph data is stored in it's metadata. Among other meta tags, there is "AUTHOR" tag, which contains a Base64 encoded and then Zlib compressed csv data. This is how it could look like:</p>
+					<pre>
+						<code>
+							@templ.Raw("0,0,4095,0,0,\r\n0,0,4095,0,2032,\r\n0,0,0,0,0,\r\n0,0,0,0,0,\r\n0,0,4095,0,0,\r\n")
+						</code>
+					</pre>
+					<p>Where each line represents 16.666ms (60Hz). Each column represents one light strip (predefined for every phone model) and the value itself is the brightness of the particular light (0 to 4095).</p>
+					<p>If you want to learn more, check out <a href="https://github.com/SebiAi/custom-nothing-glyph-tools/blob/main/docs/8_Technical%20Details.md" rel="external" target="_blank">this</a> document by <a href="https://github.com/SebiAi" rel="external" target="_blank">SebiAi</a>, where he described everything into detail. Also, many thanks to him for helping me develop this website.</p>
+				</section>
+			</main>
+			@components.Footer()
+		</body>
+	</html>
+}

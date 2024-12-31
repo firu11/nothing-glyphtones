@@ -44,6 +44,7 @@ func setupRouter(e *echo.Echo) {
 	e.POST("/report/:id", reportRingtone)
 	e.POST("/download/:id", downloadRingtone)
 	e.POST("/delete-ringtone/:id", deleteRingtone)
+	e.GET("/guide", guide)
 	e.GET("/google-login", googleLogin)
 	e.GET("/google-callback", googleCallback)
 	e.POST("/logout", logout)
@@ -364,6 +365,11 @@ func deleteRingtone(c echo.Context) error {
 
 	c.Response().Header().Set("HX-Refresh", "true")
 	return c.NoContent(http.StatusOK)
+}
+
+func guide(c echo.Context) error {
+	_, err := c.Cookie(utils.CookieName)
+	return Render(c, views.Guide(err == nil))
 }
 
 func googleLogin(c echo.Context) error {

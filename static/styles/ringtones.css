@@ -18,7 +18,8 @@
     flex-direction: column;
     gap: 0.8em;
     padding: 0.8em;
-    min-height: 152px;
+    padding-bottom: 0.65em;
+    min-height: 149px;
     transition: border .2s;
 }
 

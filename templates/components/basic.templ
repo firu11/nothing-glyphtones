@@ -15,7 +15,7 @@ templ Head(stylesheetName string) {
 			<link rel="stylesheet" href={ fmt.Sprintf("/static/styles/%s", stylesheetName) }/>
 		}
 		<script src="/static/scripts/htmx.min.js"></script>
-        <meta name="google-site-verification" content="1ydvf9Gm0D2YSvnwdpJgPgSc0QpXNRz1pdAgqgjwNFM" />
+		<meta name="google-site-verification" content="1ydvf9Gm0D2YSvnwdpJgPgSc0QpXNRz1pdAgqgjwNFM"/>
 		/* -------------------------------------- FAVICONS --------------------------------------- */
 		<link rel="icon" type="image/png" href="/static/favicons/favicon-96x96.png" sizes="96x96"/>
 		<link rel="icon" type="image/svg+xml" href="/static/favicons/favicon.svg"/>
@@ -33,6 +33,7 @@ templ Header(loggedIn bool) {
 			<span>not by NOTHING</span>
 		</a>
 		<nav>
+			<a href="/guide">Guide</a>
 			<a href="/upload">Upload</a>
 			if !loggedIn {
 				<a id="login" href="/google-login">Log In</a>
@@ -40,7 +41,6 @@ templ Header(loggedIn bool) {
 				<a href="/author">
 					<img src="/static/icons/user.svg"/>
 				</a>
-				/* <a id="login" hx-post="/logout" hx-target="header" hx-swap="outerHTML">Log Out</a> */
 			}
 		</nav>
 	</header>
@@ -49,7 +49,7 @@ templ Header(loggedIn bool) {
 templ Footer() {
 	<footer>
 		<span>GLYPHTONES does not claim ownership of the audio files users provide. Uploading any audio files that are subject to copyright or are not meant to be a Nothing Phone ringtone is prohibited.</span>
-		<a href="https://github.com/Firu115/nothing_glyphtones">
+		<a href="https://github.com/Firu115/nothing_glyphtones" rel="external">
 			<img src="/static/icons/github.svg"/>
 		</a>
 	</footer>

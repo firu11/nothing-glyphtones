@@ -97,7 +97,8 @@ footer {
     padding: 1em;
     font-size: 0.7em;
     margin-top: 4em;
-    height: 6em;
+    min-height: 4em;
+    max-height: 9em;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -106,7 +107,7 @@ footer {
 }
 
 footer>span {
-    max-width: 80%;
+    max-width: calc(100% - 4em - 3em);
 }
 
 footer>a {
