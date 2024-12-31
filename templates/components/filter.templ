@@ -10,11 +10,7 @@ templ Search(value string) {
 	<input name="s" type="text" placeholder="Search..." value={ value }/>
 }
 
-var categories map[int]string = map[int]string{
-	1: "Ringtones",
-	2: "Notifications",
-}
-
+var categories []string = []string{"Ringtones", "Notifications"}
 var sortOptions []string = []string{"Popular", "Latest", "Name (A-Z)"}
 
 templ CategorySelectUpload(value string) {
@@ -24,8 +20,8 @@ templ CategorySelectUpload(value string) {
 		}
 		for i, v := range categories {
 			<option
-				value={ fmt.Sprintf("%d", i) }
-				if string(i) == value {
+				value={ fmt.Sprintf("%d", i + 1) }
+				if string(i + 1) == value {
 					selected
 				}
 			>{ v }</option>
@@ -43,8 +39,8 @@ templ CategorySelect(value int) {
 		>All categories</option>
 		for i, v := range categories {
 			<option
-				value={ fmt.Sprintf("%d", i) }
-				if i == value {
+				value={ fmt.Sprintf("%d", i + 1) }
+				if i + 1 == value {
 					selected
 				}
 			>{ v }</option>
