@@ -3,8 +3,7 @@ module glyphtones
 go 1.23.4
 
 require (
-	github.com/a-h/templ v0.2.793
-	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
+	github.com/a-h/templ v0.3.819
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	gopkg.in/Regis24GmbH/go-diacritics.v2 v2.0.3
@@ -12,7 +11,7 @@ require (
 
 require (
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
-	github.com/govalues/decimal v0.1.33 // indirect
+	github.com/govalues/decimal v0.1.34 // indirect
 	github.com/rickb777/period v1.0.7 // indirect
 	github.com/rickb777/plural v1.4.2 // indirect
 )
