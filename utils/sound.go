@@ -5,36 +5,55 @@ import (
 	"compress/zlib"
 	"encoding/base64"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"glyphtones/database"
 	"io"
 	"log"
 	"os"
-
-	"github.com/dhowden/tag"
+	"os/exec"
 )
 
-var ringtonesDir string = "./sounds"
+var RingtonesDir string = "./sounds"
 
 func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, bool) {
 	var phonesResult []int
 
-	m, err := tag.ReadFrom(file)
-	if err != nil {
+	cmd := exec.Command("ffprobe", "-i", file.Name(), "-show_streams", "-select_streams", "a", "-v", "quiet", "-of", "json")
+
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	if err := cmd.Run(); err != nil {
+		fmt.Println("Error running FFprobe:", err)
 		return phonesResult, false
 	}
 
-	if m.Format() != tag.VORBIS {
-		return phonesResult, false
-	}
-	if m.FileType() != tag.OGG {
+	var result map[string]interface{}
+	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
+		fmt.Println("Error running Json Unmarshal:", err)
 		return phonesResult, false
 	}
 
-	if m.Raw()["author"] == nil {
+	streams, ok := result["streams"].([]interface{})
+	if !ok || len(streams) == 0 {
 		return phonesResult, false
 	}
-	author := m.Raw()["author"].(string)
+	firstStream, ok := streams[0].(map[string]interface{})
+	if !ok {
+		return phonesResult, false
+	}
+	if firstStream["codec_name"] != "opus" {
+		return phonesResult, false
+	}
+	tags, ok := firstStream["tags"].(map[string]interface{})
+	if !ok {
+		return phonesResult, false
+	}
+
+	author, ok := tags["AUTHOR"].(string)
+	if !ok {
+		return phonesResult, false
+	}
 
 	// im not sure what the difference between StdEncoding and RawStdEncoding is, but sometimes the file doesn't decode with the normal one so I have to try raw too...
 	decoded, err := base64.StdEncoding.DecodeString(author) // decode from base64 to bytes
@@ -84,7 +103,7 @@ func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, bool) {
 }
 
 func CreateRingtoneFile(src *os.File, ringtoneID int) error {
-	dst, err := os.Create(fmt.Sprintf("%s/%d.ogg", ringtonesDir, ringtoneID))
+	dst, err := os.Create(fmt.Sprintf("%s/%d.ogg", RingtonesDir, ringtoneID))
 	if err != nil {
 		return err
 	}
@@ -112,6 +131,8 @@ func CreateTemporaryFile(src io.Reader) (*os.File, error) {
 	return dst, nil
 }
 
-func DeleteTemporaryFile(name string) {
-	log.Println(os.Remove(name))
+func DeleteFile(name string) {
+	if err := os.Remove(name); err != nil {
+		log.Println(err)
+	}
 }

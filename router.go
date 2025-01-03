@@ -10,11 +10,11 @@ import (
 	"glyphtones/templates/components"
 	"glyphtones/templates/views"
 	"glyphtones/utils"
-	"io"
 	"log"
 	"maps"
 	"math/rand/v2"
 	"net/http"
+	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -214,17 +214,13 @@ func authorRename(c echo.Context) error {
 }
 
 func uploadView(c echo.Context) error {
-	phones, err := database.GetPhones()
-	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
-	}
 	effects, err := database.GetEffects()
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
 	_, err = c.Cookie(utils.CookieName)
-	return Render(c, views.Upload(err == nil, phones, "", effects, "", "", nil))
+	return Render(c, views.Upload(err == nil, c.FormValue("c"), effects, "", "", nil))
 }
 
 func uploadFile(c echo.Context) error {
@@ -243,7 +239,7 @@ func uploadFile(c echo.Context) error {
 		if err != nil {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
-		return Render(c, views.UploadForm(phones, c.FormValue("p"), effects, c.FormValue("e"), c.FormValue("name"), authorID != 0, mainErr))
+		return Render(c, views.UploadForm(c.FormValue("c"), effects, c.FormValue("e"), c.FormValue("name"), authorID != 0, mainErr))
 	}
 
 	name := c.FormValue("name")
@@ -270,18 +266,6 @@ func uploadFile(c echo.Context) error {
 	}
 	defer src.Close()
 
-	// check the file size
-	limitedReader := io.LimitReader(src, maxRingtoneSize+1) // +1 to detect files larger than maxFileSize
-	buffer := make([]byte, maxRingtoneSize+1)
-	n, err := limitedReader.Read(buffer)
-	if err != nil && !errors.Is(err, io.EOF) {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
-	}
-	if n > maxRingtoneSize {
-		return errorHandler(errors.New("The file is too large! (2MB limit)"))
-	}
-	src.Seek(0, 0)
-
 	tmpFile, err := utils.CreateTemporaryFile(src)
 	if err != nil {
 		log.Println(err)
@@ -290,8 +274,16 @@ func uploadFile(c echo.Context) error {
 	defer func() {
 		name := tmpFile.Name()
 		tmpFile.Close()
-		utils.DeleteTemporaryFile(name)
+		utils.DeleteFile(name)
 	}()
+
+	stats, err := os.Stat(tmpFile.Name())
+	if err != nil {
+		return Render(c, views.OtherError(http.StatusInternalServerError, err))
+	}
+	if stats.Size() > maxRingtoneSize {
+		return errorHandler(errors.New("The file is too large! (2MB limit)"))
+	}
 
 	phonesCompatibleIDs, ok := utils.CheckFile(tmpFile, phones)
 	if !ok {
@@ -355,13 +347,15 @@ func deleteRingtone(c echo.Context) error {
 
 	authorID := utils.GetIDFromCookie(c)
 	if authorID == 0 {
-		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in authors can upload Glyphtones")))
+		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("You're not logged in.")))
 	}
 
 	err = database.DeleteRingtone(id, authorID)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusBadRequest, err))
 	}
+
+	utils.DeleteFile(fmt.Sprintf("%s/%d.ogg", utils.RingtonesDir, id))
 
 	c.Response().Header().Set("HX-Refresh", "true")
 	return c.NoContent(http.StatusOK)

@@ -5,7 +5,7 @@ import (
 	"glyphtones/templates/components"
 )
 
-templ Upload(loggedIn bool, phones []database.PhoneModel, phoneValue string, effects []database.EffectModel, effectsValue string, nameValue string, err error) {
+templ Upload(loggedIn bool, categoryValue string, effects []database.EffectModel, effectsValue string, nameValue string, err error) {
 	<!DOCTYPE html>
 	<html lang="cs">
 		@components.Head("upload.css")
@@ -16,7 +16,7 @@ templ Upload(loggedIn bool, phones []database.PhoneModel, phoneValue string, eff
 				if !loggedIn {
 					<h3 class="red-heading">Only logged-in users can upload files.</h3>
 				}
-				@UploadForm(phones, phoneValue, effects, effectsValue, nameValue, loggedIn, err)
+				@UploadForm(categoryValue, effects, effectsValue, nameValue, loggedIn, err)
 			</main>
 			@components.Footer()
 			<script src="/static/scripts/upload.js" type="module"></script>
@@ -24,7 +24,7 @@ templ Upload(loggedIn bool, phones []database.PhoneModel, phoneValue string, eff
 	</html>
 }
 
-templ UploadForm(phones []database.PhoneModel, phoneValue string, effects []database.EffectModel, effectsValue string, nameValue string, loggedIn bool, err error) {
+templ UploadForm(categoryValue string, effects []database.EffectModel, effectsValue string, nameValue string, loggedIn bool, err error) {
 	<form id="upload" hx-put="/upload" hx-trigger="submit" hx-encoding="multipart/form-data" hx-swap="outerHTML">
 		<div id="main-container">
 			<label>
@@ -35,7 +35,7 @@ templ UploadForm(phones []database.PhoneModel, phoneValue string, effects []data
 			<div id="inputs-container">
 				<input type="text" name="name" placeholder="Name your glyphtone" value={ nameValue }/>
 				<div id="selects-container">
-					@components.CategorySelectUpload(phoneValue)
+					@components.CategorySelectUpload(categoryValue)
 					@components.EffectSelect(effects, effectsValue)
 				</div>
 			</div>
