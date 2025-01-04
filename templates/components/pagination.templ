@@ -28,7 +28,7 @@ templ Pages(view string, authorID int, numberOfPages int, page int) {
 				}
 				hx-trigger="click"
 				hx-target="#list-of-ringtones"
-				hx-swap="outerHTML"
+				hx-swap="outerHTML show:window:top"
 				hx-push-url="true"
 			>&lt; Previous</button>
 		}
@@ -49,7 +49,7 @@ templ Pages(view string, authorID int, numberOfPages int, page int) {
 				}
 				hx-trigger="click"
 				hx-target="#list-of-ringtones"
-				hx-swap="outerHTML"
+				hx-swap="outerHTML show:window:top"
 				hx-push-url="true"
 			>Next &gt;</button>
 		}
