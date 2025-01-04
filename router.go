@@ -91,7 +91,7 @@ func index(c echo.Context) error {
 		if err != nil {
 			return Render(c, views.OtherError(http.StatusInternalServerError, err))
 		}
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, false, "index"))
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, false, 0, "index"))
 	}
 
 	phones, err := database.GetPhones()
@@ -169,6 +169,11 @@ func author(c echo.Context) error {
 	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorID, pageNumber)
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+	}
+
+	// if it is a htmx request, render only the new results
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, !itsADifferentAuthor, author.ID, "profile"))
 	}
 
 	_, err = c.Cookie(utils.CookieName)

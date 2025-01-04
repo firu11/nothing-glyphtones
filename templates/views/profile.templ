@@ -6,11 +6,11 @@ import (
 )
 
 type ProfileData struct {
-	Ringtones         []database.RingtoneModel
-	NumberOfPages     int
-	Page              int
+	Ringtones           []database.RingtoneModel
+	NumberOfPages       int
+	Page                int
 	Author              database.AuthorModel
-	LoggedIn          bool
+	LoggedIn            bool
 	ItsADifferentAuthor bool
 }
 
@@ -23,11 +23,11 @@ templ Profile(data ProfileData) {
 			<main>
 				if !data.ItsADifferentAuthor {
 					@components.AuthorProfile(data.Author.Name, data.Author.Email)
-                    <h1>Your uploads</h1>
+					<h1>Your uploads</h1>
 				} else {
 					<h1>{ data.Author.Name }'s uploads</h1>
 				}
-				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentAuthor, "profile")
+				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentAuthor, data.Author.ID, "profile")
 			</main>
 			@components.Footer()
 		</body>
