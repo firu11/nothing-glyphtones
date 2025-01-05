@@ -27,7 +27,7 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones 
 		<div class="container">
 			<div class="captions">
 				<span class="name">{ data.Name }</span>
-				<span>by <a href={ templ.SafeURL(fmt.Sprintf("/author/%d", data.AuthorID)) }>{ data.AuthorName }</a></span>
+				<span>by <a href={ templ.SafeURL(fmt.Sprintf("/author/%s", data.AuthorName)) }>{ data.AuthorName }</a></span>
 				<div class="tags">
 					<span>Phone { strings.Join(data.PhoneNames, " / ") }</span>
 					<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -65,7 +65,7 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones 
 	</div>
 }
 
-templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int, loggedInAuthorsRingtones bool, authorID int, view string) {
+templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, page int, loggedInAuthorsRingtones bool, authorName string, view string) {
 	<div id="list-of-ringtones">
 		for i, ring := range ringtones {
 			@Ringtone(ring, i, loggedInAuthorsRingtones)
@@ -77,7 +77,7 @@ templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, pag
 				<span>There are no glyphtones matching your search.</span>
 			}
 		} else {
-			@Pages(view, authorID, numberOfPages, page)
+			@Pages(view, authorName, numberOfPages, page)
 		}
 	</div>
 	<script src="/static/scripts/ringtone.js" type="module"></script>

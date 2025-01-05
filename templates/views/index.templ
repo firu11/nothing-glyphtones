@@ -41,7 +41,7 @@ templ Index(data IndexData) {
 					<input type="hidden" name="p" id="aggregated-phones"/>
 					<input type="hidden" name="e" id="aggregated-effects"/>
 				</form>
-				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, false, 0, "index")
+				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, false, "", "index")
 			</main>
 			@components.Footer()
 			<script src="/static/scripts/filters-dropdown.js" type="module"></script>

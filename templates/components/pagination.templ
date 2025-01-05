@@ -2,14 +2,14 @@ package components
 
 import "fmt"
 
-templ Pages(view string, authorID int, numberOfPages int, page int) {
+templ Pages(view string, authorName string, numberOfPages int, page int) {
 	{{
 	var url string
 	if view == "profile" {
-		if authorID != 0 {
-			url = fmt.Sprintf("/author/%d", authorID)
+		if authorName != "" {
+			url = fmt.Sprintf("/author/%s", authorName)
 		} else {
-			url = "/author"
+			url = "/me"
 		}
 	} else if view == "index" {
 		url = "/"

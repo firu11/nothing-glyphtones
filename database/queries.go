@@ -49,36 +49,12 @@ func GetRingtones(search string, category int, sortBy string, phones []int, effe
 	return ringtones, numberOfPages, nil
 }
 
-/* func GetPopularRingtones(page int) ([]RingtoneModel, int, error) {
+func GetRingtonesByAuthor(authorName string, page int) ([]RingtoneModel, int, error) {
 	var ringtones []RingtoneModel
 	var rows *sql.Rows
 	var err error
 
-	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, ARRAY( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, effect_id, author_id, downloads, ( downloads::FLOAT - 2 * not_working::FLOAT ) / GREATEST(MAX(downloads) OVER (), 1) AS score FROM ringtone ) SELECT rm.id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id ORDER BY score DESC LIMIT $1 OFFSET $2;`, resultsPerPage, (page-1)*resultsPerPage)
-	if err != nil {
-		return ringtones, 0, err
-	}
-
-	err = scan.Rows(&ringtones, rows)
-	if err != nil {
-		log.Println(err)
-		return ringtones, 0, err
-	}
-
-	var numberOfPages int = 0
-	if len(ringtones) != 0 {
-		numberOfPages = int(math.Ceil(float64(ringtones[0].NumberOfResults) / float64(resultsPerPage)))
-	}
-
-	return ringtones, numberOfPages, nil
-} */
-
-func GetRingtonesByAuthor(authorID int, page int) ([]RingtoneModel, int, error) {
-	var ringtones []RingtoneModel
-	var rows *sql.Rows
-	var err error
-
-	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, ARRAY( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, effect_id, author_id, downloads, ( downloads::FLOAT - 2 * not_working::FLOAT ) / GREATEST(MAX(downloads) OVER (), 1) AS score FROM ringtone WHERE author_id = $1 ) SELECT rm.id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id ORDER BY score DESC LIMIT $2 OFFSET $3;`, authorID, resultsPerPage, (page-1)*resultsPerPage)
+	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, ARRAY( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, effect_id, author_id, downloads, ( downloads::FLOAT - 2 * not_working::FLOAT ) / GREATEST(MAX(downloads) OVER (), 1) AS score FROM ringtone WHERE author_id = ( SELECT id FROM author WHERE name = $1 ) ) SELECT rm.id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id ORDER BY score DESC LIMIT $2 OFFSET $3;`, authorName, resultsPerPage, (page-1)*resultsPerPage)
 	if err != nil {
 		return ringtones, 0, err
 	}

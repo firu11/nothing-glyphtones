@@ -35,8 +35,8 @@ func setupRouter(e *echo.Echo) {
 	e.RouteNotFound("/*", notFound)
 
 	e.GET("/", index)
-	e.GET("/author", author)
-	e.GET("/author/:id", author)
+	e.GET("/me", author)
+	e.GET("/author/:name", author)
 	e.GET("/rename-author", authorRenameView)
 	e.POST("/rename-author", authorRename)
 	e.GET("/upload", uploadView)
@@ -82,8 +82,9 @@ func index(c echo.Context) error {
 	phonesArr := slices.Collect(maps.Keys(phonesMap))
 	effectsArr := slices.Collect(maps.Keys(effetsMap))
 
+	log.Println(c.Request().Header)
 	// if it is a htmx request, render only the new results
-	if c.Request().Header.Get("HX-Request") == "true" {
+	if c.Request().Header.Get("HX-Request") == "true" && c.Request().Header.Get("Referer") != "" {
 		var ringtones []database.RingtoneModel
 		var numberOfPages int
 
@@ -91,7 +92,9 @@ func index(c echo.Context) error {
 		if err != nil {
 			return Render(c, views.OtherError(http.StatusInternalServerError, err))
 		}
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, false, 0, "index"))
+		c.Response().Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+		c.Response().Header().Set("Pragma", "no-cache")
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, false, "", "index"))
 	}
 
 	phones, err := database.GetPhones()
@@ -140,23 +143,9 @@ func author(c echo.Context) error {
 	}
 
 	var itsADifferentAuthor bool
-	authorStr := c.Param("id")
-	var authorID int
-	if authorStr != "" {
-		authorID, err = strconv.Atoi(authorStr)
-		if err != nil {
-			return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("Bad url.")))
-		}
-		loggedInAuthorID := utils.GetIDFromCookie(c)
+	authorName := c.Param("name")
 
-		itsADifferentAuthor = authorID != loggedInAuthorID
-	} else {
-		authorID = utils.GetIDFromCookie(c)
-		if authorID == 0 {
-			return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("You're not logged in.")))
-		}
-		itsADifferentAuthor = false
-	}
+	authorID := utils.GetIDFromCookie(c)
 
 	author, err := database.GetAuthor(authorID)
 	if err != nil {
@@ -166,14 +155,20 @@ func author(c echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorID, pageNumber)
+	if authorName == "" {
+		authorName = author.Name
+	}
+
+	itsADifferentAuthor = author.Name != authorName
+
+	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorName, pageNumber)
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
 	// if it is a htmx request, render only the new results
-	if c.Request().Header.Get("HX-Request") == "true" {
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, !itsADifferentAuthor, author.ID, "profile"))
+	if c.Request().Header.Get("HX-Request") == "true" && c.Request().Header.Get("Referer") != "" {
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, !itsADifferentAuthor, author.Name, "profile"))
 	}
 
 	_, err = c.Cookie(utils.CookieName)
@@ -413,12 +408,15 @@ func googleCallback(c echo.Context) error {
 	}
 
 	authorID, err := database.CreateAuthor(name, authorInfo["email"].(string))
+	if strings.Contains(err.Error(), "unique_name") {
+		authorID, err = database.CreateAuthor(fmt.Sprintf("%s%d", name, rand.IntN(10000)), authorInfo["email"].(string))
+	}
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
 	utils.WriteAuthCookie(c, authorID)
-	return c.Redirect(http.StatusTemporaryRedirect, "/")
+	return c.Redirect(http.StatusTemporaryRedirect, "/me")
 }
 
 func logout(c echo.Context) error {

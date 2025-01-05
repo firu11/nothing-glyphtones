@@ -21,7 +21,7 @@ function muteAllExcept(index) {
 function click(e) {
     if (e.target.tagName == "BUTTON" && e.target.firstChild.tagName == "IMG") {
         const i = parseInt(e.target.parentElement.parentElement.getAttribute("data-i"))
-        
+
         if (e.target.firstChild.getAttribute("src") == images[2]) return
 
         if (allWaveSurfers[i].isPlaying()) {
@@ -31,7 +31,7 @@ function click(e) {
         } else {
             muteAllExcept(i)
             allWaveSurfers[i].play()
-            
+
             e.target.querySelector(".white").src = images[1]
             e.target.querySelector(".red").src = imagesRed[1]
         }
@@ -40,16 +40,16 @@ function click(e) {
 
 function main(e) {
     if (e !== undefined && e.detail.elt.id !== "list-of-ringtones") return // only if the target is list of ringtones
-    
+
     document.removeEventListener("click", click)
-    
+
     listOfRingtones = document.querySelector("#list-of-ringtones")
     all = document.querySelectorAll(".ringtone")
     allWaveSurfers = []
-    
+
     for (let i = 0; i < all.length; i++) {
         const id = all[i].getAttribute("data-id")
-        
+
         const wavesurfer = WaveSurfer.create({
             container: all[i].querySelector(".wave"),
             waveColor: 'white',
@@ -63,20 +63,20 @@ function main(e) {
             height: 'auto',
             normalize: true,
         })
-        
+
         wavesurfer.on("ready", () => {
             all[i].querySelector(".audio button img.white").src = images[0]
             all[i].querySelector(".audio button img.red").src = imagesRed[0]
         })
-        
+
         wavesurfer.on("finish", () => {
             all[i].querySelector(".audio button img.white").src = images[0]
             all[i].querySelector(".audio button img.red").src = imagesRed[0]
         })
-        
+
         allWaveSurfers.push(wavesurfer)
     }
-    
+
     listOfRingtones.addEventListener("click", click)
 }
 

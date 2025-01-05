@@ -5,9 +5,11 @@ CREATE TABLE author (
     date_joined timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE INDEX name_idx ON author (name);
+
 CREATE TABLE phone (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name CHARACTER VARYING(255) NOT NULL,
+    name CHARACTER VARYING(255) NOT NULL UNIQUE,
     cols INTEGER NOT NULL,
     cols2 INTEGER NOT NULL DEFAULT -1
 );

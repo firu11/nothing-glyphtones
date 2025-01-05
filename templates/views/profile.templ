@@ -27,7 +27,7 @@ templ Profile(data ProfileData) {
 				} else {
 					<h1>{ data.Author.Name }'s uploads</h1>
 				}
-				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentAuthor, data.Author.ID, "profile")
+				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentAuthor, data.Author.Name, "profile")
 			</main>
 			@components.Footer()
 		</body>
