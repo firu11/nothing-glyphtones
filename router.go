@@ -82,9 +82,8 @@ func index(c echo.Context) error {
 	phonesArr := slices.Collect(maps.Keys(phonesMap))
 	effectsArr := slices.Collect(maps.Keys(effetsMap))
 
-	log.Println(c.Request().Header)
 	// if it is a htmx request, render only the new results
-	if c.Request().Header.Get("HX-Request") == "true" && c.Request().Header.Get("Referer") != "" {
+	if c.Request().Header.Get("HX-Request") == "true" {
 		var ringtones []database.RingtoneModel
 		var numberOfPages int
 
@@ -145,9 +144,9 @@ func author(c echo.Context) error {
 	var itsADifferentAuthor bool
 	authorName := c.Param("name")
 
-	authorID := utils.GetIDFromCookie(c)
+	userID := utils.GetIDFromCookie(c)
 
-	author, err := database.GetAuthor(authorID)
+	user, err := database.GetAuthor(userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.RemoveAuthCookie(c)
@@ -156,10 +155,10 @@ func author(c echo.Context) error {
 	}
 
 	if authorName == "" {
-		authorName = author.Name
+		authorName = user.Name
 	}
 
-	itsADifferentAuthor = author.Name != authorName
+	itsADifferentAuthor = user.Name != authorName
 
 	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorName, pageNumber)
 	if err != nil {
@@ -167,8 +166,17 @@ func author(c echo.Context) error {
 	}
 
 	// if it is a htmx request, render only the new results
-	if c.Request().Header.Get("HX-Request") == "true" && c.Request().Header.Get("Referer") != "" {
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, !itsADifferentAuthor, author.Name, "profile"))
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, !itsADifferentAuthor, authorName, "profile"))
+	}
+
+	var author database.AuthorModel
+	if itsADifferentAuthor {
+		author = database.AuthorModel{
+			Name: authorName,
+		}
+	} else {
+		author = user
 	}
 
 	_, err = c.Cookie(utils.CookieName)
