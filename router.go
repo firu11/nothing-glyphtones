@@ -45,6 +45,7 @@ func setupRouter(e *echo.Echo) {
 	e.POST("/download/:id", downloadRingtone)
 	e.POST("/delete-ringtone/:id", deleteRingtone)
 	e.GET("/guide", guide)
+	e.GET("/dmca", dmca)
 	e.GET("/google-login", googleLogin)
 	e.GET("/google-callback", googleCallback)
 	e.POST("/logout", logout)
@@ -372,6 +373,11 @@ func deleteRingtone(c echo.Context) error {
 func guide(c echo.Context) error {
 	_, err := c.Cookie(utils.CookieName)
 	return Render(c, views.Guide(err == nil))
+}
+
+func dmca(c echo.Context) error {
+	_, err := c.Cookie(utils.CookieName)
+	return Render(c, views.Dmca(err == nil))
 }
 
 func googleLogin(c echo.Context) error {

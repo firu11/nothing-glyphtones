@@ -119,6 +119,10 @@ footer>a>img {
     width: 100%;
 }
 
+footer>span>a {
+    color: red;
+}
+
 h1 {
     margin: 1em 0 0.5em 0;
 }
