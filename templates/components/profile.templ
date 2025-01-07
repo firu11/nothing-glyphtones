@@ -18,7 +18,7 @@ templ EditName(name string) {
 		<form hx-post="/rename-author" hx-target="#author" hx-swap="outerHTML">
 			<input id="name" name="name" value={ name }/>
             <button type="submit">Save</button>
-            <a href="/author">Cancel</a>
+            <a href="/me">Cancel</a>
 		</form>
 	</div>
 }

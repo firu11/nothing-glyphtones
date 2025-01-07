@@ -142,24 +142,27 @@ func author(c echo.Context) error {
 		pageNumber = 1
 	}
 
-	var itsADifferentAuthor bool
+	var itsADifferentAuthor bool = true
 	authorName := c.Param("name")
 
 	userID := utils.GetIDFromCookie(c)
 
-	user, err := database.GetAuthor(userID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			utils.RemoveAuthCookie(c)
+	var user database.AuthorModel
+	if userID != 0 {
+		user, err = database.GetAuthor(userID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				utils.RemoveAuthCookie(c)
+			}
+			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
-	}
 
-	if authorName == "" {
-		authorName = user.Name
-	}
+		if authorName == "" {
+			authorName = user.Name
+		}
 
-	itsADifferentAuthor = user.Name != authorName
+		itsADifferentAuthor = user.Name != authorName
+	}
 
 	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorName, pageNumber)
 	if err != nil {
@@ -395,6 +398,7 @@ func googleCallback(c echo.Context) error {
 	// exchange the code for a token
 	token, err := googleOauthConfig.Exchange(context.Background(), code)
 	if err != nil {
+		log.Println(err)
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to exchange token")))
 	}
 
@@ -422,11 +426,12 @@ func googleCallback(c echo.Context) error {
 	}
 
 	authorID, err := database.CreateAuthor(name, authorInfo["email"].(string))
-	if strings.Contains(err.Error(), "unique_name") {
-		authorID, err = database.CreateAuthor(fmt.Sprintf("%s%d", name, rand.IntN(10000)), authorInfo["email"].(string))
-	}
 	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+		if strings.Contains(err.Error(), "unique_name") {
+			authorID, err = database.CreateAuthor(fmt.Sprintf("%s%d", name, rand.IntN(10000)), authorInfo["email"].(string))
+		} else {
+			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+		}
 	}
 
 	utils.WriteAuthCookie(c, authorID)
