@@ -23,9 +23,9 @@ templ Profile(data ProfileData) {
 			<main>
 				if !data.ItsADifferentAuthor {
 					@components.AuthorProfile(data.Author.Name, data.Author.Email)
-					<h1>Your uploads</h1>
+					<h1>Your glyphtones</h1>
 				} else {
-					<h1>{ data.Author.Name }'s uploads</h1>
+					<h1>{ data.Author.Name }</h1>
 				}
 				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentAuthor, data.Author.Name, "profile")
 			</main>

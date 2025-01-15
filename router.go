@@ -344,10 +344,22 @@ func downloadRingtone(c echo.Context) error {
 	if err != nil {
 		return c.NoContent(http.StatusBadRequest)
 	}
+	_, err = c.Cookie(fmt.Sprintf("Glyphtone_%d_downloaded", id))
+	if err == nil {
+		// already downloaded this glyphtone
+		return c.NoContent(http.StatusOK)
+	}
 	err = database.RingtoneIncreaseDownload(id)
 	if err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
+	cookie := http.Cookie{
+		Name:    fmt.Sprintf("Glyphtone_%d_downloaded", id),
+		Value:   "true",
+		Expires: time.Now().Add(time.Hour * 1_000_000), // ~ 100 years
+		Path:    "/",
+	}
+	c.SetCookie(&cookie)
 	return c.NoContent(http.StatusOK)
 }
 
