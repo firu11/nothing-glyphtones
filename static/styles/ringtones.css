@@ -76,7 +76,7 @@
     max-width: 4.5em;
 }
 
-.ringtone .captions:first-of-type {
+.ringtone .captions:first-of-type:has(+ div) {
     align-items: start;
     max-width: calc(100% - 4.5em);
 }
@@ -90,6 +90,11 @@
 
 .ringtone .captions span.name {
     margin-bottom: 0.2em;
+}
+
+.ringtone .captions span.name img {
+    padding-top: 1px;
+    cursor: pointer;
 }
 
 .ringtone .captions span:not(.name) {
@@ -142,6 +147,42 @@
 
 .ringtone .captions .tags span:first-of-type {
     overflow: visible;
+}
+
+.ringtone form.captions {
+    width: 100%;
+}
+
+.ringtone form.captions div {
+    display: flex;
+    width: 90%;
+}
+
+.ringtone form.captions p {
+    text-wrap: wrap;
+    color: red;
+    height: calc(63.6px - 20.8px - 0.5px);
+}
+
+.ringtone form.captions div>input {
+    background-color: transparent;
+    color: var(--txt-color);
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-family: "Ntype";
+    border-bottom: 1px solid rgba(255, 255, 255, 1);
+    padding-right: 3px;
+    width: 210px;
+}
+
+.ringtone form.captions div>button {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    padding-top: 3px;
+    width: 20px;
 }
 
 .ringtone .icons {

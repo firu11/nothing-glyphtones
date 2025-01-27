@@ -43,6 +43,8 @@ func setupRouter(e *echo.Echo) {
 	e.PUT("/upload", uploadFile)
 	e.POST("/report/:id", reportRingtone)
 	e.POST("/download/:id", downloadRingtone)
+	e.GET("/rename/:id", renameView)
+	e.POST("/rename/:id", rename)
 	e.POST("/delete-ringtone/:id", deleteRingtone)
 	e.GET("/guide", guide)
 	e.GET("/dmca", dmca)
@@ -52,6 +54,8 @@ func setupRouter(e *echo.Echo) {
 }
 
 func index(c echo.Context) error {
+	authorID := utils.GetIDFromCookie(c)
+
 	searchQuery := c.QueryParam("s")
 	category, err := strconv.Atoi(c.QueryParam("c"))
 	if err != nil {
@@ -94,7 +98,7 @@ func index(c echo.Context) error {
 		}
 		c.Response().Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		c.Response().Header().Set("Pragma", "no-cache")
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, false, "", "index"))
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, authorID == 1, "", "index"))
 	}
 
 	phones, err := database.GetPhones()
@@ -121,7 +125,6 @@ func index(c echo.Context) error {
 		effects[i].Selected = effetsMap[effects[i].ID]
 	}
 
-	_, err = c.Cookie(utils.CookieName)
 	var data views.IndexData = views.IndexData{
 		Ringtones:     ringtones,
 		Phones:        phones,
@@ -131,7 +134,8 @@ func index(c echo.Context) error {
 		SearchQuery:   searchQuery,
 		NumberOfPages: numberOfPages,
 		Page:          pageNumber,
-		LoggedIn:      err == nil,
+		LoggedIn:      authorID != 0,
+		Admin:         authorID == 1,
 	}
 	return Render(c, views.Index(data))
 }
@@ -193,6 +197,58 @@ func author(c echo.Context) error {
 		ItsADifferentAuthor: itsADifferentAuthor,
 	}
 	return Render(c, views.Profile(data))
+}
+
+func renameView(c echo.Context) error {
+	authorID := utils.GetIDFromCookie(c)
+	if authorID == 0 {
+		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("You're not logged in.")))
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	ringtone, err := database.GetRingtone(id)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	return Render(c, components.Rename(ringtone, nil))
+}
+
+func rename(c echo.Context) error {
+	authorID := utils.GetIDFromCookie(c)
+	if authorID == 0 {
+		return errors.New("You're not logged in.")
+	}
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	newName := c.FormValue("name")
+	if !ringtoneNameR.MatchString(newName) {
+		ringtone, err := database.GetRingtone(id)
+		if err != nil {
+			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+		}
+		ringtone.Name = newName
+		return Render(c, components.Rename(ringtone, errors.New("The name must be 2-20 letters and only a-z and some special characters.")))
+	}
+	err = database.RenameRingtone(id, newName, authorID)
+	if err != nil {
+		ringtone, err := database.GetRingtone(id)
+		if err != nil {
+			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+		}
+		return Render(c, components.Rename(ringtone, errors.New("Something went wrong")))
+	}
+	ringtone, err := database.GetRingtone(id)
+	if err != nil {
+		return Render(c, components.Rename(ringtone, errors.New("Something went wrong")))
+	}
+
+	return Render(c, components.Captions(ringtone, true))
 }
 
 func authorRenameView(c echo.Context) error {

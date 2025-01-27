@@ -17,6 +17,7 @@ templ Upload(loggedIn bool, categoryValue string, effects []database.EffectModel
 					<h3 class="red-heading">Only logged-in users can upload files.</h3>
 				}
 				@UploadForm(categoryValue, effects, effectsValue, nameValue, loggedIn, err)
+                <p>Please do not include the <s>author's name</s> or the <s>phone model</s> in the title, as they are both taken care of.</p>
 			</main>
 			@components.Footer()
 			<script src="/static/scripts/upload.js" type="module"></script>

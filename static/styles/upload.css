@@ -118,6 +118,12 @@ form#upload label:has(input[type="file"]) span {
     word-wrap: break-word;
 }
 
+p {
+    margin: 2em 0;
+    text-align: center;
+    padding: 0 6%;
+}
+
 @media screen and (min-width: 700px) {
     form#upload #main-container {
         flex-direction: row;
@@ -134,5 +140,9 @@ form#upload label:has(input[type="file"]) span {
 
     form#upload #inputs-container  {
         width: calc(100% - 35% - 3em);
+    }
+
+    p {
+        padding: 0 20%;
     }
 }
