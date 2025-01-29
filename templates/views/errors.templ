@@ -7,7 +7,7 @@ import (
 
 templ NotFoundView(loggedIn bool) {
 	<!DOCTYPE html>
-	<html lang="cs">
+	<html lang="en">
 		@components.Head("")
 		<body>
 			@components.Header(loggedIn)
@@ -23,7 +23,7 @@ templ NotFoundView(loggedIn bool) {
 
 templ OtherErrorView(status int, err error) {
 	<!DOCTYPE html>
-	<html lang="cs">
+	<html lang="en">
 		@components.Head("")
 		<body>
 			@components.Header(false)
