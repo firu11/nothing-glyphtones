@@ -1,4 +1,6 @@
 const form = document.querySelector("form#filters")
+const search = form.querySelector("input[name='s']")
+const sort = form.querySelector("select[name='o']")
 const button = form.querySelector("button#show-checkboxes")
 const container = form.querySelector("#filter-container")
 const allCheckboxes = container.querySelectorAll(`label>input#effect, label>input#phone`)
@@ -23,6 +25,16 @@ function updateHiddenInputs() {
     hiddenEffects.value = effects.join(",")
 }
 
+function enableAndDisableSort() {
+    if (search.value === "") {
+        sort.disabled = false
+    } else {
+        sort.disabled = true
+    }
+}
+
 button.addEventListener("click", toggleFiltersVisibility)
 document.addEventListener("DOMContentLoaded", updateHiddenInputs)
 form.addEventListener("change", updateHiddenInputs)
+search.addEventListener("input", enableAndDisableSort)
+window.addEventListener("load", enableAndDisableSort)

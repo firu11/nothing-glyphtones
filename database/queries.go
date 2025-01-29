@@ -17,19 +17,10 @@ func GetRingtones(search string, category int, sortBy string, phones []int, effe
 	var rows *sql.Rows
 	var err error
 
-	query := `WITH all_ringtones AS ( SELECT id, name, ARRAY( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, ARRAY( SELECT par.phone_id FROM phone_and_ringtone par WHERE par.ringtone_id = ringtone.id ) as phone_ids, effect_id, author_id, downloads, time_added, category, ( CASE WHEN $1 = '' THEN ( downloads::FLOAT - 2 * not_working::FLOAT ) / GREATEST(MAX(downloads) OVER (), 1) ELSE similarity (name, $1) * 0.7 + ( downloads::FLOAT / GREATEST(MAX(downloads) OVER (), 1) ) * 0.1 - not_working::FLOAT / GREATEST( MAX(not_working) OVER () * 0.2, 1 ) END ) AS score FROM ringtone ), ringtones_matched AS ( SELECT * FROM all_ringtones WHERE ( similarity (name, $1) > 0.05 OR $1 = '' ) AND ( phone_ids && $2 OR COALESCE(array_length($2, 1), 0) = 0 ) AND ( effect_id = ANY ($3) OR COALESCE(array_length($3, 1), 0) = 0 ) AND ( $4 = 0 OR category = $4 ) ) SELECT rm.id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, rm.category, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id`
+	query := `WITH all_ringtones AS ( SELECT id, name, ARRAY( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, ARRAY( SELECT par.phone_id FROM phone_and_ringtone par WHERE par.ringtone_id = ringtone.id ) as phone_ids, effect_id, author_id, downloads, time_added, category, ( CASE WHEN $1 = '' THEN ( downloads::FLOAT - 2 * not_working::FLOAT ) / GREATEST(MAX(downloads) OVER (), 1) ELSE similarity (name, $1) END ) AS score FROM ringtone ), ringtones_matched AS ( SELECT * FROM all_ringtones WHERE ( similarity (name, $1) > 0.05 OR $1 = '' ) AND ( phone_ids && $2 OR COALESCE(array_length($2, 1), 0) = 0 ) AND ( effect_id = ANY ($3) OR COALESCE(array_length($3, 1), 0) = 0 ) AND ( $4 = 0 OR category = $4 ) ) SELECT rm.id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, rm.category, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id`
 
 	if search != "" {
-		switch sortBy {
-		case "popular":
-			query += ` ORDER BY rm.score DESC, rm.name`
-		case "latest":
-			query += ` ORDER BY rm.score DESC, rm.time_added DESC, rm.name`
-		case "name (a-z)":
-			query += ` ORDER BY rm.score DESC, rm.name`
-		default:
-			query += ` ORDER BY rm.score DESC, rm.name`
-		}
+		query += ` ORDER BY rm.score DESC, rm.name`
 	} else {
 		switch sortBy {
 		case "popular":
