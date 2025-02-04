@@ -141,6 +141,13 @@
     width: 100%;
 }
 
+/* firefox specific padding for Fr4nKB xd */
+@supports (-moz-appearance:button) and (contain:paint) {
+    #filters>select {
+        padding: 0.2em 0.5em;
+    }
+}
+
 #filters>select:focus {
     outline: none;
     border: 1px solid red;
@@ -164,7 +171,8 @@
         border: 1px solid transparent !important;
     }
 
-    #show-checkboxes, #show-checkboxes + hr {
+    #show-checkboxes,
+    #show-checkboxes+hr {
         display: none;
     }
 
