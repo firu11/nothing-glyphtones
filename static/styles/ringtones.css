@@ -211,6 +211,7 @@
 
 .ringtone .icons a:not([title='Download']):not([title='Delete']) img {
     padding: 12%;
+    max-height: 100%;
 }
 
 .ringtone .icons a img:last-of-type {

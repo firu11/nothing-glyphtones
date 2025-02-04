@@ -103,7 +103,7 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 4em;
+    gap: 3em;
 }
 
 footer>span {

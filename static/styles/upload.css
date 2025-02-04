@@ -15,6 +15,8 @@ form#upload #main-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    max-width: 30em;
 }
 
 form#upload #inputs-container {
@@ -34,7 +36,7 @@ form#upload select {
     height: 40px;
     background-color: black;
     padding: 0.2em;
-    font-size: 1.2em;
+    font-size: 1.05em;
     border: 1px solid transparent;
     border-radius: var(--base-border-radius);
     color: white;
@@ -52,7 +54,7 @@ form#upload input[type="text"] {
     height: 40px;
     background-color: black;
     padding: 0.2em;
-    font-size: 1.3em;
+    font-size: 1.2em;
     border: 1px solid transparent;
     border-radius: var(--base-border-radius);
     color: white;
@@ -61,12 +63,12 @@ form#upload input[type="text"] {
     transition: border 0.2s;
 }
 
-form#upload button {
+form#upload button[type="submit"] {
     height: 40px;
     background-color: black;
     padding: 0.2em 0.5em;
     margin-top: 1em;
-    font-size: 1.3em;
+    font-size: 1.2em;
     border: 1px solid transparent;
     border-radius: var(--base-border-radius);
     color: white;
@@ -75,11 +77,11 @@ form#upload button {
     cursor: pointer;
 }
 
-form#upload button:hover {
+form#upload button[type="submit"]:hover {
     border: 1px solid red;
 }
 
-form#upload button:disabled {
+form#upload button[type="submit"]:disabled {
     color: rgba(255, 255, 255, 0.5);
     cursor: not-allowed;
     border: 1px solid transparent !important;
@@ -96,23 +98,101 @@ form#upload input:focus {
 }
 
 form#upload label:has(input[type="file"]) {
-    width: 12em;
-    aspect-ratio: 1/1;
-    background-color: black;
-    border-radius: 50%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5em;
+
+    border: 1px solid transparent;
+    transition: 0.2s;
+}
+
+form#upload #image {
+    position: relative;
+    width: 5em;
+    height: 3em;
+    margin-bottom: 1em;
+    align-self: center;
+    justify-self: center;
+}
+
+form#upload label:has(input[type="file"]) #image img:last-of-type {
+    opacity: 0;
+    transition: 0.2s;
+}
+
+form#upload label:has(input[type="file"]):hover #image img:last-of-type {
+    opacity: 1;
+}
+
+form#upload #file-container {
+    display: flex;
+    gap: 1em;
+    flex-direction: column;
+    background-color: black;
+    width: 100%;
+    height: calc((3em + 0.8em) * 2);
+    padding: 0.8em;
     margin-bottom: 1.4em;
+    border: 1px solid transparent;
+    transition: 0.2s;
+}
+
+form#upload #file-container:hover {
+    border: 1px solid red;
+}
+
+#audio {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#audio .wave {
+    width: calc(100% - 48px - 17px);
+    height: 3em;
+}
+
+#audio button {
+    background-color: transparent;
+    border: none;
+    border-radius: 1000px;
+    width: 48px;
+    height: 48px;
+    aspect-ratio: 1/1;
+    cursor: pointer;
+    position: relative;
+}
+
+#audio button img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.1s;
+}
+
+#audio button:hover img.white {
+    opacity: 0;
 }
 
 form#upload label:has(input[type="file"]) img {
-    width: 36%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 form#upload label:has(input[type="file"]) span {
-    display: none;
     max-width: 90%;
     max-height: 70%;
     word-wrap: break-word;
@@ -125,24 +205,13 @@ p {
 }
 
 @media screen and (min-width: 700px) {
-    form#upload #main-container {
-        flex-direction: row;
-        align-items: center;
-        gap: 3em;
-        width: 80%;
-        max-width: 700px;
-    }
-
-    form#upload label:has(input[type="file"]) {
-        margin-bottom: 0;
-        width: 35% !important;
-    }
-
-    form#upload #inputs-container  {
-        width: calc(100% - 35% - 3em);
-    }
-
     p {
         padding: 0 20%;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    p {
+        padding: 0 30%;
     }
 }
