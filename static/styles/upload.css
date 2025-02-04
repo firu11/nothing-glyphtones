@@ -152,6 +152,7 @@ form#upload #file-container:hover {
     display: none;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.3em;
 }
 
 #audio .wave {
@@ -185,7 +186,7 @@ form#upload #file-container:hover {
     opacity: 0;
 }
 
-form#upload label:has(input[type="file"]) img {
+form#upload label:has(input[type="file"]) #image img {
     width: 100%;
     position: absolute;
     left: 0;
@@ -193,13 +194,20 @@ form#upload label:has(input[type="file"]) img {
 }
 
 form#upload label:has(input[type="file"]) span {
-    max-width: 90%;
-    max-height: 70%;
-    word-wrap: break-word;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+form#upload label:has(input[type="file"]) span>img {
+    position: relative;
+    top: 2px;
 }
 
 p {
-    margin: 2em 0;
+    margin: 1.1em 0;
     text-align: center;
     padding: 0 6%;
 }

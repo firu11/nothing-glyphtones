@@ -13,7 +13,7 @@ function handleFile(e) {
         fileInputSpanElement.innerText = "Click to choose a file."
         fileInputAudioPreviewElement.style.display = "none"
     } else {
-        fileInputSpanElement.innerText = file.name
+        fileInputSpanElement.innerHTML = file.name + ' <img src="/static/icons/edit.svg" width="16"/>'
         fileInputImageElement.style.display = "none"
         fileInputAudioPreviewElement.style.display = "flex"
 

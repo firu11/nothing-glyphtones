@@ -17,7 +17,6 @@ templ Upload(loggedIn bool, categoryValue string, effects []database.EffectModel
 					<h3 class="red-heading">Only logged-in users can upload files.</h3>
 				}
 				@UploadForm(categoryValue, effects, effectsValue, nameValue, loggedIn, err)
-				<p>Please do not include the <s>author's name</s> or the <s>phone model</s> in the title, as they are both taken care of.</p>
 			</main>
 			@components.Footer()
 			<script src="/static/scripts/upload.js" type="module"></script>
@@ -46,7 +45,7 @@ templ UploadForm(categoryValue string, effects []database.EffectModel, effectsVa
 				</label>
 			</div>
 			<div id="inputs-container">
-				<input type="text" name="name" placeholder="Name your glyphtone" value={ nameValue }/>
+				<input type="text" name="name" placeholder="Name your glyphtone" value={ nameValue } required/>
 				<div id="selects-container">
 					@components.CategorySelectUpload(categoryValue)
 					@components.EffectSelect(effects, effectsValue)
@@ -64,6 +63,7 @@ templ UploadForm(categoryValue string, effects []database.EffectModel, effectsVa
 		if err != nil {
 			<h3 class="red-heading">{ err.Error() } <br/> Please try again.</h3>
 		}
+		<p>Please do not include the <s>author's name</s> or the <s>phone model</s> in the title, as they are both taken care of.</p>
 	</form>
 }
 
