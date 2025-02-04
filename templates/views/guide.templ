@@ -40,7 +40,7 @@ templ Guide(loggedIn bool) {
 				<section id="technical-details">
 					<h2>How does it work?</h2>
 					<span>(3 min read)</span>
-					<p>A glyphtone, as I like to call it, is a simple audio file. However, the glyph data is stored in its metadata. Among other meta tags, there is "AUTHOR" tag, which contains a Base64 encoded and then Zlib compressed CSV data. This is what it could look like:</p>
+					<p>A glyphtone is a simple audio file. However, the glyph data is stored in its metadata. Among other meta tags, there is "AUTHOR" tag, which contains a Base64 encoded and then Zlib compressed CSV data. This is what it could look like extracted:</p>
 					<pre>
 						<code>
 							@templ.Raw("0,0,4095,0,0,\r\n0,0,4095,0,2032,\r\n0,0,0,0,0,\r\n0,0,0,0,0,\r\n0,0,4095,0,0,\r\n")

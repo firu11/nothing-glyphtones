@@ -22,9 +22,9 @@
 }
 
 #filters input[type="text"] {
-    padding: 0.2em 0.2em 0.2em 1.9em;
+    padding: 0.2em 0.2em 0.2em 2.2em;
     width: 100%;
-    font-size: 1.4em;
+    font-size: 1.2em;
     background: url("/static/icons/search.svg") no-repeat scroll 8px;
     background-size: 26px;
     background-color: black;
@@ -131,7 +131,7 @@
     height: 40px;
     background-color: black;
     padding: 0.2em;
-    font-size: 1.2em;
+    font-size: 1.1em;
     border: 1px solid transparent;
     border-radius: var(--base-border-radius);
     color: white;

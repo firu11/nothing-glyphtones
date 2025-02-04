@@ -209,6 +209,10 @@
     padding: 10%;
 }
 
+.ringtone .icons a:not([title='Download']):not([title='Delete']) img {
+    padding: 12%;
+}
+
 .ringtone .icons a img:last-of-type {
     opacity: 0;
     transition: opacity 0.1s;
