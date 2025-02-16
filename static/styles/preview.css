@@ -1,0 +1,43 @@
+#glyph-preview {
+    z-index: 1000;
+    background-color: black;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 171px;
+    height: 335.7px;
+    align-self: flex-end;
+    border-radius: 25px;
+    border: 1px solid var(--bg-color);
+    transition: border 0.2s;
+}
+
+#glyph-preview svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 6px 12px;
+    width: 100%;
+    height: 100%;
+}
+
+@media screen and (max-width: 899px) {
+    #glyph-preview svg {
+        padding: 3px 6px;
+    }
+
+    #glyph-preview {
+        top: 225px;
+        right: 15px;
+        left: auto;
+        position: fixed;
+        width: 110px;
+        height: 216px;
+        border-radius: 10px;
+        cursor: move;
+    }
+
+    #glyph-preview:hover {
+        border: 1px solid red;
+    }
+}

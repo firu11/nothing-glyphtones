@@ -1,7 +1,12 @@
+#left-column-container {
+    display: flex;
+    flex-direction: column;
+}
+
 #filters {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr auto;
+    grid-auto-rows: min-content;
     gap: 0.5em;
     padding: 1em 0;
     text-align: left;
@@ -160,10 +165,13 @@
     }
 
     #filters {
-        height: 100%;
         width: 350px !important;
+    }
+
+    #left-column-container {
         position: sticky;
         top: 0;
+        margin-bottom: auto;
     }
 
     #filter-container {

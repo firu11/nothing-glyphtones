@@ -79,14 +79,14 @@ templ Rename(ringtone database.RingtoneModel, err error) {
 		<div>
 			<input type="text" value={ ringtone.Name } name="name" autofocus/>
 			<button type="submit">
-                <img src="/static/icons/ok.svg" width="15"/>
-            </button>
+				<img src="/static/icons/ok.svg" width="15"/>
+			</button>
 		</div>
 		if err != nil {
 			<p>{ err.Error() }</p>
 		} else {
-            <p></p>
-        }
+			<p></p>
+		}
 	</form>
 }
 

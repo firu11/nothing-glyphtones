@@ -25,23 +25,26 @@ templ Index(data IndexData) {
 		<body>
 			@components.Header(data.LoggedIn)
 			<main>
-				<form id="filters" hx-get="/" hx-trigger="submit, input from:input[type='checkbox'] delay:10ms, input from:input[name='s'] delay:550ms, change from:select delay:10ms" hx-target="#list-of-ringtones" hx-swap="outerHTML" hx-push-url="true">
-					@components.Search(data.SearchQuery)
-					@components.CategorySelect(data.Category)
-					@components.Sort(data.SortBy)
-					<div id="filter-container">
-						<button id="show-checkboxes" type="button">Show Filters</button>
-						<hr/>
-						<div class="filters-column">
-							@components.PhonesCheckboxes(data.Phones)
+				<div id="left-column-container">
+					<form id="filters" hx-get="/" hx-trigger="submit, input from:input[type='checkbox'] delay:10ms, input from:input[name='s'] delay:550ms, change from:select delay:10ms" hx-target="#list-of-ringtones" hx-swap="outerHTML" hx-push-url="true">
+						@components.Search(data.SearchQuery)
+						@components.CategorySelect(data.Category)
+						@components.Sort(data.SortBy)
+						<div id="filter-container">
+							<button id="show-checkboxes" type="button">Show Filters</button>
+							<hr/>
+							<div class="filters-column">
+								@components.PhonesCheckboxes(data.Phones)
+							</div>
+							<div class="filters-column">
+								@components.EffectsCheckboxes(data.Effects)
+							</div>
 						</div>
-						<div class="filters-column">
-							@components.EffectsCheckboxes(data.Effects)
-						</div>
-					</div>
-					<input type="hidden" name="p" id="aggregated-phones"/>
-					<input type="hidden" name="e" id="aggregated-effects"/>
-				</form>
+						<input type="hidden" name="p" id="aggregated-phones"/>
+						<input type="hidden" name="e" id="aggregated-effects"/>
+					</form>
+					@components.Preview()
+				</div>
 				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, data.Admin, "", "index")
 			</main>
 			@components.Footer()

@@ -142,6 +142,7 @@ form#upload #file-container {
     margin-bottom: 1.4em;
     border: 1px solid transparent;
     transition: 0.2s;
+    border-radius: var(--base-border-radius);
 }
 
 form#upload #file-container:hover {
