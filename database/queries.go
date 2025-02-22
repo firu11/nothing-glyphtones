@@ -92,7 +92,7 @@ func CreateRingtone(name string, category int, phones []int, effect int, authorI
 }
 
 func DeleteRingtone(ringtoneID int, authorID int) error {
-	_, err := DB.Exec(`DELETE FROM ringtone WHERE id = $1 AND author_id = $2;`, ringtoneID, authorID)
+	_, err := DB.Exec(`DELETE FROM ringtone WHERE id = $1 AND (author_id = $2 OR $2 = 1);`, ringtoneID, authorID)
 	return err
 }
 
