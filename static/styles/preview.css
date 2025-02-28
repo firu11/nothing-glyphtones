@@ -10,6 +10,7 @@
     border-radius: 25px;
     border: 1px solid var(--bg-color);
     transition: border 0.2s;
+    display: none;
 }
 
 #glyph-preview svg {
