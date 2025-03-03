@@ -3,6 +3,7 @@ package components
 import (
 	"fmt"
 	"glyphtones/database"
+	"strconv"
 	"strings"
 )
 
@@ -20,8 +21,8 @@ templ CategorySelectUpload(value string) {
 		}
 		for i, v := range categories {
 			<option
-				value={ fmt.Sprintf("%d", i + 1) }
-				if string(i + 1) == value {
+				value={ fmt.Sprintf("%d", i+1) }
+				if strconv.Itoa(i + 1) == value {
 					selected
 				}
 			>{ v }</option>
@@ -39,7 +40,7 @@ templ CategorySelect(value int) {
 		>All categories</option>
 		for i, v := range categories {
 			<option
-				value={ fmt.Sprintf("%d", i + 1) }
+				value={ fmt.Sprintf("%d", i+1) }
 				if i + 1 == value {
 					selected
 				}
