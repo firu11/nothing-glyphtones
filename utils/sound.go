@@ -16,7 +16,7 @@ import (
 
 var RingtonesDir string = "./sounds"
 
-func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, bool) {
+func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, string, bool) {
 	var phonesResult []int
 
 	cmd := exec.Command("ffprobe", "-i", file.Name(), "-show_streams", "-select_streams", "a", "-v", "quiet", "-of", "json")
@@ -25,34 +25,34 @@ func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, bool) {
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {
 		fmt.Println("Error running FFprobe:", err)
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 
 	var result map[string]interface{}
 	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
 		fmt.Println("Error running Json Unmarshal:", err)
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 
 	streams, ok := result["streams"].([]interface{})
 	if !ok || len(streams) == 0 {
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 	firstStream, ok := streams[0].(map[string]interface{})
 	if !ok {
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 	if firstStream["codec_name"] != "opus" {
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 	tags, ok := firstStream["tags"].(map[string]interface{})
 	if !ok {
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 
 	author, ok := tags["AUTHOR"].(string)
 	if !ok {
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 
 	// im not sure what the difference between StdEncoding and RawStdEncoding is, but sometimes the file doesn't decode with the normal one so I have to try raw too...
@@ -60,26 +60,26 @@ func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, bool) {
 	if err != nil {
 		decoded, err = base64.RawStdEncoding.DecodeString(author) // decode from base64 to bytes
 		if err != nil {
-			return phonesResult, false
+			return phonesResult, "", false
 		}
 	}
 	reader, err := zlib.NewReader(bytes.NewReader(decoded)) // decode zlib compression
 	if err != nil {
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 	defer reader.Close()
 
 	var decompressed bytes.Buffer
 	_, err = io.Copy(&decompressed, reader) // copy the result to buffer
 	if err != nil {
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 
 	csvReader := csv.NewReader(&decompressed)
 	csvReader.TrimLeadingSpace = true
 	record, err := csvReader.Read()
 	if err != nil {
-		return phonesResult, false
+		return phonesResult, "", false
 	}
 	columns := len(record)
 	for i := len(record) - 1; i >= 0; i-- {
@@ -99,7 +99,7 @@ func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, bool) {
 	file.Seek(0, 0)
 
 	// finally if everything is ok, return true
-	return phonesResult, true
+	return phonesResult, author, true
 }
 
 func CreateRingtoneFile(src *os.File, ringtoneID int) error {

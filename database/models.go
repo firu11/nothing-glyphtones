@@ -1,6 +1,8 @@
 package database
 
 import (
+	"database/sql"
+
 	"github.com/lib/pq"
 	"github.com/rickb777/date/v2"
 )
@@ -16,6 +18,7 @@ type RingtoneModel struct {
 	AuthorID        int            `db:"author_id"`
 	NumberOfResults int            `db:"results"`
 	Score           float32        `db:"score"`
+	Glyphs          sql.NullString `db:"glyphs"` // converted to base64 and zlib compressed
 }
 
 type PhoneModel struct {

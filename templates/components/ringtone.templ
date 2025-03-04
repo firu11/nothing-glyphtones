@@ -16,7 +16,7 @@ func idToJson(id int) string {
 }
 
 templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones bool) {
-	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.ID) }>
+	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.ID) } data-phone={ data.PhoneNames[0] } data-glyphs={ data.Glyphs.String }>
 		<div class="audio">
 			<button type="button">
 				<img class="red" src="/static/icons/loading.svg"/>
@@ -71,7 +71,6 @@ templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, pag
 		}
 	</div>
 	<script src="/static/scripts/ringtone.js" type="module"></script>
-	<script src="/static/scripts/rename.js" type="module"></script>
 }
 
 templ Rename(ringtone database.RingtoneModel, err error) {

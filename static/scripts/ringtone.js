@@ -1,4 +1,5 @@
 import WaveSurfer from "/static/scripts/wavesurfer.esm.js"
+import Pako from "/static/scripts/pako.esm.mjs"
 
 const images = ["/static/icons/play.svg", "/static/icons/pause.svg", "/static/icons/loading.svg"]
 const imagesRed = ["/static/icons/play-red.svg", "/static/icons/pause-red.svg", "/static/icons/loading.svg"]
@@ -26,12 +27,41 @@ function click(e) {
 
         if (allWaveSurfers[i].isPlaying()) {
             allWaveSurfers[i].pause()
+            window.nowPlaying.player = null
+            window.nowPlaying.isPlaying = false
             e.target.querySelector(".white").src = images[0]
             e.target.querySelector(".red").src = imagesRed[0]
         } else {
             muteAllExcept(i)
             allWaveSurfers[i].play()
+            window.nowPlaying.player = allWaveSurfers[i]
+            window.nowPlaying.phoneModel = e.target.parentElement.parentElement.getAttribute("data-phone")
+            console.log(window.nowPlaying.phoneModel)
+            
+            const glyphs = e.target.parentElement.parentElement.getAttribute("data-glyphs")
+            let resultCSV = ""
+            try {
+                const compressedData = atob(glyphs)
+                
+                const bytes = new Uint8Array(compressedData.length)
+                for (let i = 0; i < compressedData.length; i++) {
+                    bytes[i] = compressedData.charCodeAt(i)
+                }
+                resultCSV = Pako.inflate(bytes, { to: 'string' })
+            } catch (err) {
+                console.log(err)
+            }
 
+            if (resultCSV !== undefined) {
+                let rows = resultCSV.split("\r\n")
+                let csv = []
+                rows.forEach(row => {
+                    csv.push(row.split(",").slice(0, -1))
+                })
+                window.nowPlaying.CSV = csv
+            }
+            
+            window.nowPlaying.isPlaying = true
             e.target.querySelector(".white").src = images[1]
             e.target.querySelector(".red").src = imagesRed[1]
         }
@@ -72,12 +102,17 @@ function main(e) {
         wavesurfer.on("finish", () => {
             all[i].querySelector(".audio button img.white").src = images[0]
             all[i].querySelector(".audio button img.red").src = imagesRed[0]
+            window.nowPlaying.CSV = ""
+            window.nowPlaying.isPlaying = false
+            window.nowPlaying.phoneModel = null
+            window.nowPlaying.player = null
         })
 
         allWaveSurfers.push(wavesurfer)
     }
 
     listOfRingtones.addEventListener("click", click)
+    window.nowPlaying = {}
 }
 
 main()

@@ -17,7 +17,7 @@ func GetRingtones(search string, category int, sortBy string, phones []int, effe
 	var rows *sql.Rows
 	var err error
 
-	query := `WITH all_ringtones AS ( SELECT id, name, ARRAY ( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, ARRAY ( SELECT par.phone_id FROM phone_and_ringtone par WHERE par.ringtone_id = ringtone.id ) as phone_ids, effect_id, author_id, downloads, time_added, category, not_working FROM ringtone ), ringtones_matched AS ( SELECT * FROM all_ringtones WHERE ( phone_ids && $2 OR COALESCE(array_length($2, 1), 0) = 0 ) AND ( effect_id = ANY ($3) OR COALESCE(array_length($3, 1), 0) = 0 ) AND ( $4 = 0 OR category = $4 ) ) SELECT rm.id, rm.name, ( CASE WHEN $1 = '' THEN (rm.downloads::FLOAT - 2 * rm.not_working::FLOAT) / GREATEST(MAX(rm.downloads) OVER (), 1) ELSE similarity (concat(rm.name, u.name), $1) END ) AS score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, rm.category, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id WHERE ( similarity (concat(rm.name, u.name), $1) > 0.05 OR LENGTH($1) < 3 )`
+	query := `WITH all_ringtones AS ( SELECT id, name, ARRAY ( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, ARRAY ( SELECT par.phone_id FROM phone_and_ringtone par WHERE par.ringtone_id = ringtone.id ) as phone_ids, effect_id, author_id, downloads, time_added, category, not_working, glyphs FROM ringtone ), ringtones_matched AS ( SELECT * FROM all_ringtones WHERE ( phone_ids && $2 OR COALESCE(array_length($2, 1), 0) = 0 ) AND ( effect_id = ANY ($3) OR COALESCE(array_length($3, 1), 0) = 0 ) AND ( $4 = 0 OR category = $4 ) ) SELECT rm.id, rm.name, ( CASE WHEN $1 = '' THEN (rm.downloads::FLOAT - 2 * rm.not_working::FLOAT) / GREATEST(MAX(rm.downloads) OVER (), 1) ELSE similarity (concat(rm.name, u.name), $1) END ) AS score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, rm.category, rm.glyphs, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id WHERE ( similarity (concat(rm.name, u.name), $1) > 0.05 OR LENGTH($1) < 3 )`
 
 	if search != "" {
 		query += ` ORDER BY score DESC, rm.name`
@@ -58,7 +58,7 @@ func GetRingtonesByAuthor(authorName string, page int) ([]RingtoneModel, int, er
 	var rows *sql.Rows
 	var err error
 
-	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, ARRAY( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, effect_id, author_id, downloads, ( downloads::FLOAT - 2 * not_working::FLOAT ) / GREATEST(MAX(downloads) OVER (), 1) AS score FROM ringtone WHERE author_id = ( SELECT id FROM author WHERE name = $1 ) ) SELECT rm.id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id ORDER BY score DESC LIMIT $2 OFFSET $3;`, authorName, resultsPerPage, (page-1)*resultsPerPage)
+	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT id, name, ARRAY( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = ringtone.id ) as phone_names, effect_id, author_id, downloads, glyphs, ( downloads::FLOAT - 2 * not_working::FLOAT ) / GREATEST(MAX(downloads) OVER (), 1) AS score FROM ringtone WHERE author_id = ( SELECT id FROM author WHERE name = $1 ) ) SELECT rm.id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names , rm.glyphs, e.name AS effect_name, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id ORDER BY score DESC LIMIT $2 OFFSET $3;`, authorName, resultsPerPage, (page-1)*resultsPerPage)
 	if err != nil {
 		log.Println(1)
 		return ringtones, 0, err
@@ -78,9 +78,9 @@ func GetRingtonesByAuthor(authorName string, page int) ([]RingtoneModel, int, er
 	return ringtones, numberOfPages, nil
 }
 
-func CreateRingtone(name string, category int, phones []int, effect int, authorID int) (int, error) {
+func CreateRingtone(name string, category int, phones []int, effect int, authorID int, glyphData string) (int, error) {
 	var ringtoneID int
-	err := DB.QueryRow(`INSERT INTO ringtone (name, category, effect_id, author_id) VALUES ($1, $2, $3, $4) RETURNING id;`, name, category, effect, authorID).Scan(&ringtoneID)
+	err := DB.QueryRow(`INSERT INTO ringtone (name, category, effect_id, author_id, glyphs) VALUES ($1, $2, $3, $4, $5) RETURNING id;`, name, category, effect, authorID, glyphData).Scan(&ringtoneID)
 	if err != nil {
 		return 0, err
 	}

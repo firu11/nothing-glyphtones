@@ -10,7 +10,6 @@
     border-radius: 25px;
     border: 1px solid var(--bg-color);
     transition: border 0.2s;
-    display: none;
 }
 
 #glyph-preview svg {
@@ -20,6 +19,13 @@
     padding: 6px 12px;
     width: 100%;
     height: 100%;
+    display: none;
+}
+
+@media screen and (min-width: 900px) {
+    #glyph-preview {
+        transform: none !important;
+    }
 }
 
 @media screen and (max-width: 899px) {
@@ -34,7 +40,7 @@
         position: fixed;
         width: 110px;
         height: 216px;
-        border-radius: 10px;
+        border-radius: 12px;
         cursor: move;
     }
 

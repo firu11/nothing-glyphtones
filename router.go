@@ -353,12 +353,12 @@ func uploadFile(c echo.Context) error {
 		return errorHandler(errors.New("The file is too large! (2MB limit)"))
 	}
 
-	phonesCompatibleIDs, ok := utils.CheckFile(tmpFile, phones)
+	phonesCompatibleIDs, glyphData, ok := utils.CheckFile(tmpFile, phones)
 	if !ok {
 		return errorHandler(errors.New("It seems that the file provided is not a Nothing Glyphtone."))
 	}
 
-	ringtoneID, err := database.CreateRingtone(name, category, phonesCompatibleIDs, effect, authorID)
+	ringtoneID, err := database.CreateRingtone(name, category, phonesCompatibleIDs, effect, authorID, glyphData)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
@@ -496,7 +496,7 @@ func googleCallback(c echo.Context) error {
 	authorID, err := database.CreateAuthor(name, authorInfo["email"].(string))
 	if err != nil {
 		if strings.Contains(err.Error(), "unique_name") {
-			authorID, err = database.CreateAuthor(fmt.Sprintf("%s%d", name, rand.IntN(10000)), authorInfo["email"].(string))
+			authorID, _ = database.CreateAuthor(fmt.Sprintf("%s%d", name, rand.IntN(10000)), authorInfo["email"].(string))
 		} else {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
