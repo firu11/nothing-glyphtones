@@ -35,8 +35,11 @@ function click(e) {
             muteAllExcept(i)
             allWaveSurfers[i].play()
             window.nowPlaying.player = allWaveSurfers[i]
-            window.nowPlaying.phoneModel = e.target.parentElement.parentElement.getAttribute("data-phone")
-            console.log(window.nowPlaying.phoneModel)
+            let phones = e.target.parentElement.parentElement.getAttribute("data-phone").split(",")
+            if (phones.length == 1 && phones[0] == "(1)") { // 15 zone (1)
+                window.nowPlaying.phoneModel = "(1)_15"
+            } else window.nowPlaying.phoneModel = phones[0]
+            //console.log(window.nowPlaying.phoneModel)
             
             const glyphs = e.target.parentElement.parentElement.getAttribute("data-glyphs")
             let resultCSV = ""

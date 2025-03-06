@@ -15,8 +15,15 @@ func idToJson(id int) string {
 	return string(v)
 }
 
+
 templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones bool) {
-	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.ID) } data-phone={ data.PhoneNames[0] } data-glyphs={ data.Glyphs.String }>
+    /* {{
+        var phone string = data.PhoneNames[0]
+        if (len(data.PhoneNames) == 1 && data.PhoneNames[0] == "(1)") {
+            phone = "(1)_15"
+        }
+    }} */
+	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.ID) } data-phone={ strings.Join([]string(data.PhoneNames), ",") } data-glyphs={ data.Glyphs.String }>
 		<div class="audio">
 			<button type="button">
 				<img class="red" src="/static/icons/loading.svg"/>

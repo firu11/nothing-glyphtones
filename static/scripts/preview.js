@@ -1,4 +1,8 @@
-import {phoneMap} from "./preview-models.js"
+const preview = document.getElementById("glyph-preview")
+const phoneMap = new Map()
+preview.childNodes.forEach(el => {
+    phoneMap.set(el.id, { "el": el })
+})
 
 let activePhone = null
 
@@ -14,7 +18,20 @@ function showFrame() {
         for (let i=0; i<len; ++i) a[i] = 0
     }
 
-    phoneMap.get(window.nowPlaying.phoneModel).func(glyphRow)
+    const model = window.nowPlaying.phoneModel
+    const glyphs = phoneMap.get(model).el.querySelectorAll("path")
+    glyphs.forEach(glyph => {
+        const range = glyph.id.split("-")
+        if (range.length == 1) { // for simple glyphs
+            glyph.setAttribute("opacity", opacity(glyphRow[parseInt(range[0])], 4095))
+        } else { // for glyphs split into paths (they need to have a gradient)
+            const gradientParts = phoneMap.get(model).el.querySelector("#gradient-" + glyph.id).children
+            for (let i = 0; i < gradientParts.length; i++) {
+                const colIndex = parseInt(gradientParts[i].id.split("-")[1])
+                gradientParts[i].setAttribute("stop-opacity", opacity(glyphRow[colIndex], 4095))
+            }
+        }
+    })
 }
 
 function showPhoneModel(model) {
@@ -36,6 +53,11 @@ function update() {
         showPhoneModel(window.nowPlaying.phoneModel)
     }
     requestAnimationFrame(update)
+}
+
+const minOpacity = 0.1
+function opacity(value, maxValue = 4095) {
+    return minOpacity + (1 - minOpacity) * (value / maxValue)
 }
 
 requestAnimationFrame(update)
