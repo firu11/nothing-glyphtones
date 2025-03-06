@@ -1,7 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="182" height="382" viewBox="0 0 182 382">
-    <g fill="white">
-        <path id="0-23" d="M63.057,55.311c0.524,1.363 -0.156,2.894 -1.52,3.419c-4.942,1.901 -12.013,7.268 -18.387,14.372c-6.355,7.083 -11.63,15.468 -13.376,23.102c-0.326,1.424 -1.744,2.315 -3.169,1.989c-1.424,-0.325 -2.314,-1.744 -1.989,-3.169c2.028,-8.869 7.948,-18.045 14.596,-25.455c6.628,-7.39 14.367,-13.448 20.426,-15.778c1.363,-0.525 2.894,0.156 3.419,1.52Z" />
-        <path id="24" d="M159.648,87.219c1.482,-0 2.68,1.198 2.68,2.68l0,47.64c0,1.483 -1.198,2.681 -2.68,2.681c-1.478,-0 -2.676,-1.198 -2.676,-2.681l0,-47.64c0,-1.482 1.198,-2.68 2.676,-2.68Z" />
-        <path id="25" d="M30.754,144.063c1.363,-0.573 2.932,0.066 3.506,1.428c2.167,5.144 7.304,12.329 11.354,15.749c1.129,0.953 1.272,2.642 0.318,3.772c-0.954,1.13 -2.643,1.272 -3.773,0.318c-4.752,-4.013 -10.37,-11.912 -12.833,-17.76c-0.574,-1.363 0.065,-2.933 1.428,-3.507Z" />
+<svg xmlns="http://www.w3.org/2000/svg" width="182" height="382" viewBox="0 0 182 382" id="(2a)">
+    <defs>
+        <linearGradient id="gradient-0-23" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop id="grad-0" offset="0%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-1" offset="4.347826%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-2" offset="8.695652%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-3" offset="13.043478%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-4" offset="17.391304%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-5" offset="21.739130%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-6" offset="26.086957%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-7" offset="30.434783%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-8" offset="34.782609%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-9" offset="39.130435%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-10" offset="43.478261%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-11" offset="47.826087%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-12" offset="52.173913%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-13" offset="56.521739%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-14" offset="60.869565%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-15" offset="65.217391%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-16" offset="69.565217%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-17" offset="73.913043%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-18" offset="78.260870%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-19" offset="82.608696%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-20" offset="86.956522%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-21" offset="91.304348%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-22" offset="95.652174%" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-23" offset="100%" stop-color="white" stop-opacity="1"></stop>
+        </linearGradient>
+    </defs>
+    <g fill="white" transform="matrix(1.128745, 0, 0, 1.128745, -13.02971, -47.134602)">
+        <path id="0-23"
+            d="M63.057,55.311c0.524,1.363 -0.156,2.894 -1.52,3.419c-4.942,1.901 -12.013,7.268 -18.387,14.372c-6.355,7.083 -11.63,15.468 -13.376,23.102c-0.326,1.424 -1.744,2.315 -3.169,1.989c-1.424,-0.325 -2.314,-1.744 -1.989,-3.169c2.028,-8.869 7.948,-18.045 14.596,-25.455c6.628,-7.39 14.367,-13.448 20.426,-15.778c1.363,-0.525 2.894,0.156 3.419,1.52Z"
+            style="fill: url(#gradient-0-23);"></path>
+        <path id="24" opacity="1"
+            d="M159.648,87.219c1.482,-0 2.68,1.198 2.68,2.68l0,47.64c0,1.483 -1.198,2.681 -2.68,2.681c-1.478,-0 -2.676,-1.198 -2.676,-2.681l0,-47.64c0,-1.482 1.198,-2.68 2.676,-2.68Z">
+        </path>
+        <path id="25" opacity="1"
+            d="M30.754,144.063c1.363,-0.573 2.932,0.066 3.506,1.428c2.167,5.144 7.304,12.329 11.354,15.749c1.129,0.953 1.272,2.642 0.318,3.772c-0.954,1.13 -2.643,1.272 -3.773,0.318c-4.752,-4.013 -10.37,-11.912 -12.833,-17.76c-0.574,-1.363 0.065,-2.933 1.428,-3.507Z">
+        </path>
     </g>
 </svg>

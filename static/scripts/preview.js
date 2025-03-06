@@ -6,7 +6,13 @@ function showFrame() {
     if (!window.nowPlaying.CSV) return
     const time = window.nowPlaying.player.media.currentTime
     const rowIndex = Math.floor(time * 60)
-    const glyphRow = window.nowPlaying.CSV[rowIndex]
+    
+    let glyphRow = window.nowPlaying.CSV[rowIndex]
+    if (!glyphRow) { // all zeros
+        const len = window.nowPlaying.CSV[0]
+        glyphRow = new Array(len)
+        for (let i=0; i<len; ++i) a[i] = 0
+    }
 
     phoneMap.get(window.nowPlaying.phoneModel).func(glyphRow)
 }

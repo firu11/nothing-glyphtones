@@ -30,7 +30,7 @@
 
 @media screen and (max-width: 899px) {
     #glyph-preview svg {
-        padding: 3px 6px;
+        padding: 6px 6px 3px 6px;
     }
 
     #glyph-preview {
@@ -40,7 +40,7 @@
         position: fixed;
         width: 110px;
         height: 216px;
-        border-radius: 12px;
+        border-radius: 14px;
         cursor: move;
     }
 

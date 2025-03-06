@@ -8,3 +8,4 @@ glyphtones
 taskfile.yaml
 .air.toml
 .DS_Store
+.vscode
