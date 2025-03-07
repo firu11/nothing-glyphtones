@@ -56,7 +56,7 @@ function click(e) {
             }
 
             if (resultCSV !== undefined) {
-                let rows = resultCSV.split("\r\n")
+                let rows = resultCSV.split(/\r\n|\n/)
                 let csv = []
                 rows.forEach(row => {
                     csv.push(row.split(",").slice(0, -1))
