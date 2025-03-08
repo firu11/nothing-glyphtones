@@ -269,7 +269,7 @@ func authorRename(c echo.Context) error {
 	if authorID == 0 {
 		return errors.New("You're not logged in.")
 	}
-	newName := c.FormValue("name")
+	newName := strings.Trim(c.FormValue("name"), " ")
 	if !authorNameR.MatchString(newName) {
 		return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("Invalid name. Maximal length is 20 letters. Only ASCII characters are allowed (a-z and some special characters).")))
 	}
@@ -486,6 +486,7 @@ func googleCallback(c echo.Context) error {
 
 	name := authorInfo["name"].(string)
 	name = godiacritics.Normalize(name)
+	name = strings.Trim(name, " ")
 	if len(name) > 30 {
 		name = name[0:30]
 	}
