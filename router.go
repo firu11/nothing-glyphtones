@@ -297,11 +297,6 @@ func uploadFile(c echo.Context) error {
 		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in authorors can upload Glyphtones")))
 	}
 
-	phones, err := database.GetPhones()
-	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
-	}
-
 	errorHandler := func(mainErr error) error {
 		effects, err := database.GetEffects()
 		if err != nil {
@@ -351,6 +346,11 @@ func uploadFile(c echo.Context) error {
 	}
 	if stats.Size() > maxRingtoneSize {
 		return errorHandler(errors.New("The file is too large! (2MB limit)"))
+	}
+
+	phones, err := database.GetPhones()
+	if err != nil {
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
 	phonesCompatibleIDs, glyphData, ok := utils.CheckFile(tmpFile, phones)

@@ -43,9 +43,6 @@
         border-radius: 14px;
         cursor: move;
         touch-action: none;
-    }
-
-    #glyph-preview:hover {
         border: 1px solid red;
     }
 }
