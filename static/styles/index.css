@@ -20,7 +20,7 @@
     transition: border .1s;
 }
 
-#filters input[type="checkbox"] {
+#filters input[type="checkbox"]:not([role="switch"]) {
     background-color: black;
     font-size: 1.1em;
     padding: 0.6em 0.2em 0.4em 0.2em;
@@ -91,7 +91,8 @@
     padding: 0.6em 1em 1em 0;
 }
 
-.filters-column>span {
+.filters-column>span,
+.filters-column>div>span {
     font-size: 1.3em;
 }
 
@@ -108,7 +109,7 @@
     cursor: pointer;
 }
 
-.filters-column input[type="checkbox"] {
+.filters-column input[type="checkbox"]:not([role="switch"]) {
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -129,6 +130,54 @@
 .filters-column input[type="checkbox"]:checked+.checkmark {
     background-color: white;
     border: none;
+}
+
+#auto-generated-label {
+    margin-top: auto;
+    line-height: 0.9em;
+}
+
+input:where([type="checkbox"][role="switch"]) {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    position: relative;
+    font-size: inherit;
+    width: 2em;
+    height: 1em;
+    box-sizing: content-box;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 1em;
+    vertical-align: text-bottom;
+    color: white;
+    cursor: pointer;
+    transition: 0.15s;
+    top: 4px;
+}
+
+input:where([type="checkbox"][role="switch"]):checked {
+    background-color: white;
+}
+
+input:where([type="checkbox"][role="switch"])::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+    box-sizing: border-box;
+    width: 0.7em;
+    height: 0.7em;
+    margin: 0 0.15em;
+    border: 1px solid black;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transition: 0.15s;
+}
+
+input:where([type="checkbox"][role="switch"]):checked::before {
+    left: 1em;
+    background-color: black;
 }
 
 #filters>select {
