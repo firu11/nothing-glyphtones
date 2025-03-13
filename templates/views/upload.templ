@@ -50,6 +50,14 @@ templ UploadForm(categoryValue string, effects []database.EffectModel, effectsVa
 					@components.CategorySelectUpload(categoryValue)
 					@components.EffectSelect(effects, effectsValue)
 				</div>
+                <label id="auto-gen">
+                    Is it auto generated?
+                    <select name="gen" required>
+                        <option selected disabled hidden value="">Choose</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </label>
 			</div>
 		</div>
 		<button

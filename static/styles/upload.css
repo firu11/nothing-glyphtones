@@ -206,6 +206,16 @@ form#upload label:has(input[type="file"]) span>img {
     position: relative;
     top: 2px;
 }
+form#upload #auto-gen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+}
+
+form#upload #auto-gen>select {
+    width: 6em;
+}
 
 p {
     margin: 1.1em 0;
