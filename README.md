@@ -11,11 +11,13 @@ The website is running in Germany, Falkenstein on [Hetzner](https://www.hetzner.
 
 I didn't want to pay for a domain so I used this sweet [is-a.dev](https://is-a.dev/) project.
 
+---
+
 ### How to run (for developers)
 1. Install Go compiler and PostgreSQL server
 2. Create a new database in psql
 3. Run the _init.sql_ file to setup the database
 4. Clone this repository
 5. Rename _.env.example_ to _.env_ and configure your enviroment variables
-6. Run `go run .` in the terminal
+6. Run `templ generate && go run .` in the terminal
 7. The site should be running on http://localhost:1323
