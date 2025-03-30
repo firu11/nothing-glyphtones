@@ -27,7 +27,9 @@ CREATE TABLE ringtone (
     effect_id INTEGER REFERENCES effect (id),
     author_id INTEGER REFERENCES author (id),
     not_working INTEGER DEFAULT 0,
-    time_added TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    time_added TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    glyphs TEXT,
+    auto_generated BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE phone_and_ringtone (
@@ -40,13 +42,16 @@ CREATE EXTENSION pg_trgm;
 
 INSERT INTO
     phone (name, cols, cols2)
-VALUES ('(1)', 5, 15),
+VALUES 
+    ('(1)', 5, 15),
     ('(2)', 33, 5),
-    ('(2a)', 26, -1);
+    ('(2a)', 26, -1),
+    ('(3a)', 36, -1);
 
 INSERT INTO
     effect (name)
-VALUES ('Dan'),
+VALUES 
+    ('Dan'),
     ('Brrr'),
     ('606'),
     ('Weevil'),

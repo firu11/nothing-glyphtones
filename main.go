@@ -3,20 +3,18 @@ package main
 import (
 	"fmt"
 	"glyphtones/database"
+	"glyphtones/utils"
 	"log"
 	"os"
 	"regexp"
-	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/patrickmn/go-cache"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
 
 var googleOauthConfig *oauth2.Config
-var myCache *cache.Cache
 
 const maxRingtoneSize = 2 * 1024 * 1024 // 2MB
 
@@ -28,6 +26,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if _, err := os.Stat(utils.RingtonesDir); os.IsNotExist(err) {
+		err := os.Mkdir(utils.RingtonesDir, os.ModeDir)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	googleOauthConfig = &oauth2.Config{
 		RedirectURL:  os.Getenv("GOOGLE_REDIRECT_URL"),
 		ClientID:     os.Getenv("GOOGLE_ID"),
@@ -37,7 +42,6 @@ func main() {
 	}
 
 	database.Init()
-	myCache = cache.New(10*time.Second, 1*time.Hour)
 
 	e := echo.New()
 
