@@ -1,5 +1,7 @@
 # Glyphtones
-### A simple audio-sharing platform for Nothing Phone users
+[Nothing](https://nothing.tech/) is making phones with programmable LED lights on the back. They call it "Glyph Interface" and there is a bunch of ringtones preinstalled. Nothing also made an app called Glyph Composer, which allows users to create new ringtones, but the options are quite limited. Users have figured out a way to create custom ringtones and started making popular songs with matching lights.
+
+Glyphtones is a platform, where people can either share their custom compositions, or find those they like.
 
 ![Screenshots](https://s3-nothing-prod.s3.eu-central-1.amazonaws.com/2025-01-04/1735987786-859251-render.png)
 
