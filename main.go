@@ -16,7 +16,7 @@ import (
 
 var googleOauthConfig *oauth2.Config
 
-const maxRingtoneSize = 2 * 1024 * 1024 // 2MB
+const maxRingtoneSize = 3 * 1024 * 1024 // 2MB
 
 var ringtoneNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{2,30}$")
 var authorNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{3,20}$")

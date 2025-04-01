@@ -348,7 +348,7 @@ func uploadFile(c echo.Context) error {
 		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 	if stats.Size() > maxRingtoneSize {
-		return errorHandler(errors.New("The file is too large! (2MB limit)"))
+		return errorHandler(errors.New("The file is too large! (3MB limit)"))
 	}
 
 	phones, err := database.GetPhones()
