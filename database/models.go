@@ -41,4 +41,5 @@ type AuthorModel struct {
 	Name       string    `db:"name"`
 	Email      string    `db:"email"`
 	DateJoined date.Date `db:"date_joined"`
+	Banned     bool      `db:"banned"`
 }

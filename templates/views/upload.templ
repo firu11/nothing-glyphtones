@@ -3,6 +3,7 @@ package views
 import (
 	"glyphtones/database"
 	"glyphtones/templates/components"
+	"strings"
 )
 
 templ Upload(loggedIn bool, categoryValue string, effects []database.EffectModel, effectsValue string, nameValue string, err error) {
@@ -50,14 +51,14 @@ templ UploadForm(categoryValue string, effects []database.EffectModel, effectsVa
 					@components.CategorySelectUpload(categoryValue)
 					@components.EffectSelect(effects, effectsValue)
 				</div>
-                <label id="auto-gen">
-                    Is it auto generated?
-                    <select name="gen" required>
-                        <option selected disabled hidden value="">Choose</option>
-                        <option value="true">Yes</option>
-                        <option value="false">No</option>
-                    </select>
-                </label>
+				<label id="auto-gen">
+					Is it auto generated?
+					<select name="gen" required>
+						<option selected disabled hidden value="">Choose</option>
+						<option value="true">Yes</option>
+						<option value="false">No</option>
+					</select>
+				</label>
 			</div>
 		</div>
 		<button
@@ -69,7 +70,13 @@ templ UploadForm(categoryValue string, effects []database.EffectModel, effectsVa
 			Submit file
 		</button>
 		if err != nil {
-			<h3 class="red-heading">{ err.Error() } <br/> Please try again.</h3>
+			<h3 class="red-heading">
+				{ err.Error() }
+				if !strings.Contains(err.Error(), "banned") {
+					<br/>
+					Please try again.
+				}
+			</h3>
 		}
 		<p>Please do not include the <s>author's name</s> or the <s>phone model</s> in the title, as they are both taken care of.</p>
 	</form>

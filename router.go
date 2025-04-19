@@ -298,6 +298,10 @@ func uploadFile(c echo.Context) error {
 	if authorID == 0 {
 		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in authorors can upload Glyphtones")))
 	}
+	author, err := database.GetAuthor(authorID)
+	if err != nil {
+		return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("Something went wrong")))
+	}
 
 	errorHandler := func(mainErr error) error {
 		effects, err := database.GetEffects()
@@ -305,6 +309,11 @@ func uploadFile(c echo.Context) error {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
 		return Render(c, views.UploadForm(c.FormValue("c"), effects, c.FormValue("e"), c.FormValue("name"), authorID != 0, mainErr))
+	}
+
+	if author.Banned {
+		log.Println("ban")
+		return errorHandler(errors.New("You cannot upload since you are banned!"))
 	}
 
 	name := c.FormValue("name")
