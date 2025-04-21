@@ -109,14 +109,25 @@
     color: red;
 }
 
+#glyph-preview {
+    position: sticky !important;
+    top: 335px !important;
+    grid-area: preview;
+    align-self: auto !important;
+    margin-top: 1em;
+    justify-self: end;
+}
+
 @media screen and (min-width: 700px) {
     main:has(#author) {
         display: grid;
         column-gap: 2em;
         grid-template-columns: 350px auto;
+        grid-template-rows: 89px calc(320px - 89px) auto;
         grid-template-areas:
             "author heading"
-            "author ringtones";
+            "author ringtones"
+            "preview ringtones";
     }
 
     #author {
@@ -144,10 +155,17 @@
 
     main:not(:has(#author)) {
         display: grid;
+        column-gap: 2em;
+        grid-template-columns: 135px 1fr;
         grid-template-areas:
-            "heading"
-            "ringtones";
+            "preview heading"
+            "preview ringtones";
         padding: 0 20%;
+    }
+
+    main:not(:has(#author)) #glyph-preview {
+        position: sticky !important;
+        top: 1em !important;
     }
 
     main>h1 {
@@ -163,9 +181,50 @@
 @media screen and (max-width: 900px) {
     main:has(#author) {
         grid-template-columns: 250px auto;
+        grid-template-rows: 89px calc(250px + 32px - 95px) auto;
+    }
+
+    main:has(#author) #glyph-preview {
+        position: sticky !important;
+        top: 290px !important;
+        right: 0 !important;
+        border: none;
+        cursor: default;
+    }
+
+    main:not(:has(#author)) {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "heading"
+            "ringtones";
+        padding: 0 20%;
+    }
+
+    main:not(:has(#author)) #glyph-preview {
+        position: fixed !important;
+        top: 115px !important;
+        right: calc(20% - 10px);
     }
 
     h1 {
         font-size: 1.6em;
+    }
+}
+
+@media screen and (max-width: 699px) {
+    main:has(#author) #glyph-preview {
+        position: fixed !important;
+        cursor: move;
+        border: 1px solid red;
+        right: 15px !important;
+        top: 310px !important;
+    }
+
+    main:not(:has(#author)) #glyph-preview {
+        right: 15px !important;
+    }
+
+    main {
+        padding: 0 1.6em !important;
     }
 }

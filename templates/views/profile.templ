@@ -27,6 +27,7 @@ templ Profile(data ProfileData) {
 				} else {
 					<h1>{ data.Author.Name }</h1>
 				}
+				@components.Preview()
 				@components.ListOfRingtones(data.Ringtones, data.NumberOfPages, data.Page, !data.ItsADifferentAuthor, data.Author.Name, "profile")
 			</main>
 			@components.Footer()
