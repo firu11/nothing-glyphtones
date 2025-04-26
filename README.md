@@ -16,10 +16,11 @@ I didn't want to pay for a domain so I used this sweet [is-a.dev](https://is-a.d
 ---
 
 ### How to run (for developers)
-1. Install Go compiler and PostgreSQL server
-2. Create a new database in psql
-3. Run the _init.sql_ file to setup the database
-4. Clone this repository
-5. Rename _.env.example_ to _.env_ and configure your enviroment variables
-6. Run `templ generate && go run .` in the terminal
-7. The site should be running on http://localhost:1323
+1. Install [Go](https://go.dev/doc/install) compiler and [PostgreSQL](https://www.postgresql.org/download/) server
+2. Install [Templ](https://templ.guide/quick-start/installation) via `go install`
+3. Create a new database in psql
+4. Run the _init.sql_ file to setup the database
+5. Clone this repository
+6. Rename _.env.example_ to _.env_ and configure your enviroment variables
+7. Run `templ generate && go run .` in the terminal
+8. The site should be running on http://localhost:1323
