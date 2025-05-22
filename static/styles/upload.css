@@ -43,6 +43,8 @@ form#upload select {
     font-family: "Ntype", "Cascadia Code", sans-serif;
     /* fallback for firefox which is broken */
     transition: border 0.2s;
+    -webkit-appearance: none;
+    /* safari is gay */
 }
 
 form#upload option {
