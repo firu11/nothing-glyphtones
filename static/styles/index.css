@@ -197,6 +197,13 @@ input:where([type="checkbox"][role="switch"]):checked::before {
     /* safari is gay */
 }
 
+/* safari is gay */
+_::-webkit-full-page-media,
+_:future,
+:root #filters>select {
+    -webkit-appearance: none;
+}
+
 /* firefox specific padding for Fr4nKB xd */
 @supports (-moz-appearance:button) and (contain:paint) {
     #filters>select {

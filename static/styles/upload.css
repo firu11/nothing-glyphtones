@@ -47,6 +47,13 @@ form#upload select {
     /* safari is gay */
 }
 
+/* safari is gay */
+_::-webkit-full-page-media,
+_:future,
+:root form#upload select {
+    -webkit-appearance: none;
+}
+
 form#upload option {
     font-weight: 300;
 }
@@ -208,6 +215,7 @@ form#upload label:has(input[type="file"]) span>img {
     position: relative;
     top: 2px;
 }
+
 form#upload #auto-gen {
     display: flex;
     align-items: center;
