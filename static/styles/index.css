@@ -193,8 +193,6 @@ input:where([type="checkbox"][role="switch"]):checked::before {
     /* fallback for firefox which is broken */
     transition: border 0.2s;
     width: 100%;
-    -webkit-appearance: none;
-    /* safari is gay */
 }
 
 /* safari is gay */
