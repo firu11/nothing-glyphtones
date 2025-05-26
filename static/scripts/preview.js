@@ -10,12 +10,12 @@ function showFrame() {
     if (!window.nowPlaying.CSV) return
     const time = window.nowPlaying.player.media.currentTime
     const rowIndex = Math.ceil(time * 60)
-    
+
     let glyphRow = window.nowPlaying.CSV[rowIndex]
-    if (!glyphRow) {
-        const len = window.nowPlaying.CSV[0]
-        glyphRow = new Array(len)
-        for (let i=0; i<len; ++i) a[i] = 0 // all zeros
+    if (!glyphRow || glyphRow.length == 0) {
+        const len = window.nowPlaying.CSV[0].length
+        glyphRow = []
+        for (let i = 0; i < len; ++i) glyphRow.push("0") // all zeros
     }
 
     const model = window.nowPlaying.phoneModel
