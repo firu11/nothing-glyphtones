@@ -15,6 +15,7 @@ import (
 )
 
 var RingtonesDir string = "./sounds"
+var TemporaryDir string = "./tmp"
 
 func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, string, bool) {
 	var phonesResult []int
@@ -114,7 +115,7 @@ func CreateRingtoneFile(src *os.File, ringtoneID int) error {
 }
 
 func CreateTemporaryFile(src io.Reader) (*os.File, error) {
-	dst, err := os.CreateTemp("./tmp", "upload")
+	dst, err := os.CreateTemp(TemporaryDir, "upload")
 	if err != nil {
 		log.Println(3)
 		return dst, err

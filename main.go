@@ -32,6 +32,12 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+	if _, err := os.Stat(utils.TemporaryDir); os.IsNotExist(err) {
+		err := os.Mkdir(utils.TemporaryDir, os.ModeDir)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	googleOauthConfig = &oauth2.Config{
 		RedirectURL:  os.Getenv("GOOGLE_REDIRECT_URL"),
