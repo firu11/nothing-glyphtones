@@ -7,7 +7,7 @@ import (
 )
 
 templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones bool) {
-	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ fmt.Sprintf("%d", data.ID) } data-phone={ strings.Join([]string(data.PhoneNames), ",") } data-glyphs={ data.Glyphs.String }>
+	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ data.DisplayID } data-phone={ strings.Join([]string(data.PhoneNames), ",") } data-glyphs={ data.Glyphs.String }>
 		<div class="audio">
 			<button type="button">
 				<img class="red" src="/static/icons/loading.svg"/>
@@ -19,9 +19,9 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones 
 			@Captions(data, loggedInAuthorsRingtones)
 			<div class="captions">
 				<div class="icons">
-					<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%d.ogg", data.ID)) } title="Download" download={ fmt.Sprintf("%s - Phone %s.ogg", data.Name, strings.Join(data.PhoneNames, ", ")) } rel="nofollow">
-						<img src="/static/icons/download.svg" hx-post={ fmt.Sprintf("/download/%d", data.ID) } hx-swap="none"/>
-						<img src="/static/icons/download-red.svg" hx-post={ fmt.Sprintf("/download/%d", data.ID) } hx-swap="none"/>
+					<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%s.ogg", data.DisplayID)) } title="Download" download={ fmt.Sprintf("%s - Phone %s.ogg", data.Name, strings.Join(data.PhoneNames, ", ")) } rel="nofollow">
+						<img src="/static/icons/download.svg" hx-post={ fmt.Sprintf("/download/%s", data.DisplayID) } hx-swap="none"/>
+						<img src="/static/icons/download-red.svg" hx-post={ fmt.Sprintf("/download/%s", data.DisplayID) } hx-swap="none"/>
 					</a>
 					if !loggedInAuthorsRingtones {
 						<a hx-post={ fmt.Sprintf("/report/%d", data.ID) } hx-swap="none" title="Report (not working, not a ringtone etc.)" hx-confirm="Are you sure you want to report this ringtone as not working, not a Nothing ringtone etc.?">
@@ -30,7 +30,7 @@ templ Ringtone(data database.RingtoneModel, index int, loggedInAuthorsRingtones 
 						</a>
 					} else {
 						<a
-							hx-post={ fmt.Sprintf("/delete-ringtone/%d", data.ID) }
+							hx-post={ fmt.Sprintf("/delete-ringtone/%s", data.DisplayID) }
 							hx-swap="none"
 							hx-confirm={ fmt.Sprintf("Do you really want to delete \"%s\" glyphtone?", data.Name) }
 							title="Delete"
@@ -85,7 +85,7 @@ templ Captions(ringtone database.RingtoneModel, loggedInAuthorsRingtones bool) {
 		<span class="name">
 			{ ringtone.Name }
 			if loggedInAuthorsRingtones {
-				<img src="/static/icons/edit.svg" hx-get={ fmt.Sprintf("/rename/%d", ringtone.ID) } hx-target="closest .captions" hx-swap="outerHTML" height="15" width="15"/>
+				<img src="/static/icons/edit.svg" hx-get={ fmt.Sprintf("/rename/%s", ringtone.DisplayID) } hx-target="closest .captions" hx-swap="outerHTML" height="15" width="15"/>
 			}
 		</span>
 		<span>by <a href={ templ.SafeURL(fmt.Sprintf("/author/%s", ringtone.AuthorName)) }>{ ringtone.AuthorName }</a></span>

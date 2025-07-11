@@ -41,11 +41,11 @@ func setupRouter(e *echo.Echo) {
 	e.POST("/rename-author", authorRename)
 	e.GET("/upload", uploadView)
 	e.PUT("/upload", uploadFile)
-	e.POST("/report/:id", reportRingtone)
-	e.POST("/download/:id", downloadRingtone)
-	e.GET("/rename/:id", renameView)
-	e.POST("/rename/:id", rename)
-	e.POST("/delete-ringtone/:id", deleteRingtone)
+	// e.POST("/report/:id", reportRingtone)
+	e.POST("/download/:displayID", downloadRingtone)
+	e.GET("/rename/:displayID", renameView)
+	e.POST("/rename/:displayID", rename)
+	e.POST("/delete-ringtone/:displayID", deleteRingtone)
 	e.GET("/guide", guide)
 	e.GET("/dmca", dmca)
 	e.GET("/google-login", googleLogin)
@@ -207,11 +207,11 @@ func renameView(c echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("You're not logged in.")))
 	}
 
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	displayID := c.Param("displayID")
+	if len(displayID) <= 5 {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	ringtone, err := database.GetRingtone(id)
+	ringtone, err := database.GetRingtone(displayID)
 	if err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
@@ -224,28 +224,28 @@ func rename(c echo.Context) error {
 	if authorID == 0 {
 		return errors.New("You're not logged in.")
 	}
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	displayID := c.Param("displayID")
+	if len(displayID) <= 5 {
 		return c.NoContent(http.StatusBadRequest)
 	}
 	newName := c.FormValue("name")
 	if !ringtoneNameR.MatchString(newName) {
-		ringtone, err := database.GetRingtone(id)
+		ringtone, err := database.GetRingtone(displayID)
 		if err != nil {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
 		ringtone.Name = newName
 		return Render(c, components.Rename(ringtone, errors.New("The name must be 2-20 letters and only a-z and some special characters.")))
 	}
-	err = database.RenameRingtone(id, newName, authorID)
+	err := database.RenameRingtone(displayID, newName, authorID)
 	if err != nil {
-		ringtone, err := database.GetRingtone(id)
+		ringtone, err := database.GetRingtone(displayID)
 		if err != nil {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
 		return Render(c, components.Rename(ringtone, errors.New("Something went wrong")))
 	}
-	ringtone, err := database.GetRingtone(id)
+	ringtone, err := database.GetRingtone(displayID)
 	if err != nil {
 		return Render(c, components.Rename(ringtone, errors.New("Something went wrong")))
 	}
@@ -382,47 +382,47 @@ func uploadFile(c echo.Context) error {
 	return Render(c, views.SuccessfulUpload())
 }
 
-func reportRingtone(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		return c.NoContent(http.StatusBadRequest)
-	}
-	_, err = c.Cookie(fmt.Sprintf("Glyphtone_%d_reported", id))
-	if err == nil {
-		// already reported this glyphtone
-		return c.NoContent(http.StatusOK)
-	}
+// func reportRingtone(c echo.Context) error {
+// 	id, err := strconv.Atoi(c.Param("id"))
+// 	if err != nil {
+// 		return c.NoContent(http.StatusBadRequest)
+// 	}
+// 	_, err = c.Cookie(fmt.Sprintf("Glyphtone_%d_reported", id))
+// 	if err == nil {
+// 		// already reported this glyphtone
+// 		return c.NoContent(http.StatusOK)
+// 	}
 
-	err = database.RingtoneIncreaseNotWorking(id)
-	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
-	}
-	cookie := http.Cookie{
-		Name:    fmt.Sprintf("Glyphtone_%d_reported", id),
-		Value:   "true",
-		Expires: time.Now().Add(time.Hour * 1_000_000), // ~ 100 years
-		Path:    "/",
-	}
-	c.SetCookie(&cookie)
-	return c.NoContent(http.StatusOK)
-}
+// 	err = database.RingtoneIncreaseNotWorking(id)
+// 	if err != nil {
+// 		return c.NoContent(http.StatusInternalServerError)
+// 	}
+// 	cookie := http.Cookie{
+// 		Name:    fmt.Sprintf("Glyphtone_%d_reported", id),
+// 		Value:   "true",
+// 		Expires: time.Now().Add(time.Hour * 1_000_000), // ~ 100 years
+// 		Path:    "/",
+// 	}
+// 	c.SetCookie(&cookie)
+// 	return c.NoContent(http.StatusOK)
+// }
 
 func downloadRingtone(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	displayID := c.Param("displayID")
+	if len(displayID) <= 5 {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	_, err = c.Cookie(fmt.Sprintf("Glyphtone_%d_downloaded", id))
+	_, err := c.Cookie(fmt.Sprintf("Glyphtone_%s_downloaded", displayID))
 	if err == nil {
 		// already downloaded this glyphtone
 		return c.NoContent(http.StatusOK)
 	}
-	err = database.RingtoneIncreaseDownload(id)
+	err = database.RingtoneIncreaseDownload(displayID)
 	if err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	cookie := http.Cookie{
-		Name:    fmt.Sprintf("Glyphtone_%d_downloaded", id),
+		Name:    fmt.Sprintf("Glyphtone_%s_downloaded", displayID),
 		Value:   "true",
 		Expires: time.Now().Add(time.Hour * 1_000_000), // ~ 100 years
 		Path:    "/",
@@ -432,22 +432,21 @@ func downloadRingtone(c echo.Context) error {
 }
 
 func deleteRingtone(c echo.Context) error {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
+	displayID := c.Param("displayID")
+	if len(displayID) <= 5 {
 		return c.NoContent(http.StatusBadRequest)
 	}
-
 	authorID := utils.GetIDFromCookie(c)
 	if authorID == 0 {
 		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("You're not logged in.")))
 	}
 
-	err = database.DeleteRingtone(id, authorID)
+	err := database.DeleteRingtone(displayID, authorID)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusBadRequest, err))
 	}
 
-	utils.DeleteFile(fmt.Sprintf("%s/%d.ogg", utils.RingtonesDir, id))
+	utils.DeleteFile(fmt.Sprintf("%s/%s.ogg", utils.RingtonesDir, displayID))
 
 	c.Response().Header().Set("HX-Refresh", "true")
 	return c.NoContent(http.StatusOK)

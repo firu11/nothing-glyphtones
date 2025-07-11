@@ -5,6 +5,7 @@ go 1.24
 require (
 	github.com/a-h/templ v0.3.857
 	github.com/labstack/echo/v4 v4.13.3
+	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	gopkg.in/Regis24GmbH/go-diacritics.v2 v2.0.3
 )
 

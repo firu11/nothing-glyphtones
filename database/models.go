@@ -9,6 +9,7 @@ import (
 
 type RingtoneModel struct {
 	ID              int            `db:"id"`
+	DisplayID       string         `db:"display_id"`
 	Name            string         `db:"name"`
 	PhoneNames      pq.StringArray `db:"phone_names"`
 	EffectName      string         `db:"effect_name"`
