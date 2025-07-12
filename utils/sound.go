@@ -103,8 +103,8 @@ func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, string, bool
 	return phonesResult, author, true
 }
 
-func CreateRingtoneFile(src *os.File, ringtoneID int) error {
-	dst, err := os.Create(fmt.Sprintf("%s/%d.ogg", RingtonesDir, ringtoneID))
+func CreateRingtoneFile(src *os.File, name string) error {
+	dst, err := os.Create(fmt.Sprintf("%s/%s.ogg", RingtonesDir, name))
 	if err != nil {
 		return err
 	}

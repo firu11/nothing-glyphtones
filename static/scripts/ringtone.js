@@ -40,12 +40,12 @@ function click(e) {
                 window.nowPlaying.phoneModel = "(1)_15"
             } else window.nowPlaying.phoneModel = phones[0]
             //console.log(window.nowPlaying.phoneModel)
-            
+
             const glyphs = e.target.parentElement.parentElement.getAttribute("data-glyphs")
             let resultCSV = ""
             try {
                 const compressedData = atob(glyphs)
-                
+
                 const bytes = new Uint8Array(compressedData.length)
                 for (let i = 0; i < compressedData.length; i++) {
                     bytes[i] = compressedData.charCodeAt(i)
@@ -63,7 +63,7 @@ function click(e) {
                 })
                 window.nowPlaying.CSV = csv
             }
-            
+
             window.nowPlaying.isPlaying = true
             e.target.querySelector(".white").src = images[1]
             e.target.querySelector(".red").src = imagesRed[1]
@@ -120,3 +120,15 @@ function main(e) {
 
 main()
 document.addEventListener("htmx:afterSwap", main)
+
+document.body.addEventListener("htmx:responseError", function (event) {
+    if (event.detail.xhr.status === 401) {
+        const messageBox = document.getElementById("unauthorized-message")
+        if (messageBox === null) return
+        messageBox.innerText = "Unauthorized! Please log in."
+        messageBox.style.display = "block"
+        setInterval(() => {
+            messageBox.style.display = "none"
+        }, 4000)
+    }
+})

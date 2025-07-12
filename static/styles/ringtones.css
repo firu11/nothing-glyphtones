@@ -88,6 +88,10 @@
     max-width: 100%;
 }
 
+.ringtone .captions .numbers img {
+    cursor: help;
+}
+
 .ringtone .captions span.name {
     margin-bottom: 0.2em;
 }
@@ -99,10 +103,6 @@
 
 .ringtone .captions span:not(.name) {
     font-size: 0.9em;
-}
-
-.ringtone .captions:has(.icons) span {
-    text-align: right;
 }
 
 .ringtone .captions:has(.icons) span img {
@@ -126,7 +126,8 @@
     color: red;
 }
 
-.ringtone .captions .tags {
+.ringtone .captions .tags,
+.ringtone .captions .numbers {
     margin-top: 6px;
     display: flex;
     flex-wrap: nowrap;
@@ -134,8 +135,18 @@
     align-items: center;
 }
 
+.ringtone .captions .numbers {
+    justify-content: end;
+}
+
 .ringtone .captions .tags svg {
     fill: color-mix(in srgb, var(--txt-color) 70%, transparent);
+    width: 5px;
+    height: 5px;
+}
+
+.ringtone .captions .numbers svg {
+    fill: var(--txt-color);
     width: 5px;
     height: 5px;
 }
@@ -193,7 +204,7 @@
     right: -5px;
 }
 
-.ringtone .icons a {
+.ringtone .icons>* {
     width: 34px;
     height: 34px;
     display: flex;
@@ -203,15 +214,30 @@
     position: relative;
 }
 
+.ringtone .icons>div {
+    flex-direction: column;
+    margin-top: 1px;
+    width: 28px;
+}
+
+.ringtone .icons>div>a {
+    position: relative;
+    height: 50%;
+    width: 100%;
+}
+
+.ringtone .icons>div>a>img {
+    padding: 0 6px;
+}
+
+.ringtone .icons>div>a:last-of-type>img {
+    margin-top: -2px;
+}
+
 .ringtone .icons a img {
     position: absolute;
     width: 100%;
     padding: 10%;
-}
-
-.ringtone .icons a:not([title='Download']):not([title='Delete']) img {
-    padding: 12%;
-    max-height: 100%;
 }
 
 .ringtone .icons a img:last-of-type {
@@ -256,6 +282,19 @@
 
 #pages>button:last-child {
     text-align: right;
+}
+
+#unauthorized-message {
+    display: none;
+    position: fixed;
+    background-color: var(--menu-bg-color);
+    border-radius: var(--base-border-radius);
+    border: 1px solid rgb(190, 0, 0);
+    left: 10px;
+    bottom: 10px;
+    padding: 5px;
+    z-index: 10000000;
+    user-select: none;
 }
 
 @media screen and (min-width: 900px) {
