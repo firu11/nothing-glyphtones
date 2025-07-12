@@ -2,10 +2,8 @@ CREATE TABLE author (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name CHARACTER VARYING(255),
     email CHARACTER VARYING(255) UNIQUE,
-    date_joined timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    date_joined TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE INDEX name_idx ON author (name);
 
 CREATE TABLE phone (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -22,14 +20,14 @@ CREATE TABLE effect (
 CREATE TABLE ringtone (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name CHARACTER VARYING(255) NOT NULL,
-    category int NOT NULL,
+    category INT NOT NULL,
     downloads INTEGER DEFAULT 0,
     effect_id INTEGER REFERENCES effect (id),
     author_id INTEGER REFERENCES author (id),
-    not_working INTEGER DEFAULT 0,
     time_added TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     glyphs TEXT,
-    auto_generated BOOLEAN NOT NULL DEFAULT false
+    auto_generated BOOLEAN NOT NULL DEFAULT FALSE,
+    display_id VARCHAR(15) NOT NULL,
 );
 
 CREATE TABLE phone_and_ringtone (
@@ -38,20 +36,30 @@ CREATE TABLE phone_and_ringtone (
     ringtone_id INTEGER REFERENCES ringtone (id) ON DELETE CASCADE
 );
 
+CREATE TABLE vote (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    author_id INTEGER REFERENCES author (id),
+    ringtone_id INTEGER REFERENCES ringtone (id),
+    up BOOLEAN,
+    UNIQUE (author_id, ringtone_id)
+);
+
 CREATE EXTENSION pg_trgm;
 
-INSERT INTO
-    phone (name, cols, cols2)
-VALUES 
-    ('(1)', 5, 15),
+CREATE INDEX idx_ringtone_display_id ON ringtone (display_id);
+
+CREATE INDEX idx_author_name ON author (name);
+
+
+/* --------------------------------------------------------------------------------------------- */
+INSERT INTO phone (name, cols, cols2)
+    VALUES ('(1)', 5, 15),
     ('(2)', 33, 5),
     ('(2a)', 26, -1),
     ('(3a)', 36, -1);
 
-INSERT INTO
-    effect (name)
-VALUES 
-    ('Dan'),
+INSERT INTO effect (name)
+    VALUES ('Dan'),
     ('Brrr'),
     ('606'),
     ('Weevil'),
@@ -62,4 +70,3 @@ VALUES
     ('Fantasy'),
     ('Custom made');
 
-/* ---------------------------------------------------------------------------------------------  */
