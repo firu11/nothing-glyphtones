@@ -182,6 +182,16 @@ func GetAuthor(id int) (AuthorModel, error) {
 	return author, err
 }
 
+func GetAuthorByName(name string) (AuthorModel, error) {
+	var author AuthorModel
+	rows, err := DB.Query(`SELECT * FROM author WHERE name = $1;`, name)
+	if err != nil {
+		return author, err
+	}
+	err = scan.Row(&author, rows)
+	return author, err
+}
+
 func CreateAuthor(name string, email string) (int, error) {
 	var authorID int
 

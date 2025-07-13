@@ -1,6 +1,7 @@
 package views
 
 import (
+	"fmt"
 	"glyphtones/database"
 	"glyphtones/templates/components"
 )
@@ -20,6 +21,7 @@ templ Profile(data ProfileData) {
 		<body>
 			@components.Header(data.LoggedInAuthorId != 0)
 			<main>
+				{ fmt.Sprintf("%d", data.Author.ID) }
 				if data.Author.ID == data.LoggedInAuthorId {
 					@components.AuthorProfile(data.Author.Name, data.Author.Email)
 					<h1>Your glyphtones</h1>

@@ -35,7 +35,7 @@ func setupRouter(e *echo.Echo) {
 	e.RouteNotFound("/*", notFound)
 
 	e.GET("/", index)
-	e.GET("/me", author)
+	e.GET("/me", me)
 	e.GET("/author/:name", author)
 	e.GET("/rename-author", authorRenameView)
 	e.POST("/rename-author", authorRename)
@@ -142,13 +142,15 @@ func index(c echo.Context) error {
 }
 
 func author(c echo.Context) error {
+	authorName := c.Param("name")
+	if authorName == "" {
+		return c.Redirect(http.StatusTemporaryRedirect, "/")
+	}
+
 	pageNumber, err := strconv.Atoi(c.QueryParam("page"))
 	if err != nil {
 		pageNumber = 1
 	}
-
-	var itsADifferentAuthor bool = true
-	authorName := c.Param("name")
 
 	userID := utils.GetIDFromCookie(c)
 	var user database.AuthorModel
@@ -160,12 +162,6 @@ func author(c echo.Context) error {
 			}
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
-
-		if authorName == "" {
-			authorName = user.Name
-		}
-
-		itsADifferentAuthor = user.Name != authorName
 	}
 
 	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorName, pageNumber)
@@ -179,12 +175,9 @@ func author(c echo.Context) error {
 	}
 
 	var author database.AuthorModel
-	if itsADifferentAuthor {
-		author = database.AuthorModel{
-			Name: authorName,
-		}
-	} else {
-		author = user
+	author, err = database.GetAuthorByName(authorName)
+	if err != nil {
+		return Render(c, views.NotFoundView(userID != 0))
 	}
 
 	_, err = c.Cookie(utils.CookieName)
@@ -193,6 +186,47 @@ func author(c echo.Context) error {
 		NumberOfPages:    numberOfPages,
 		Page:             pageNumber,
 		Author:           author,
+		LoggedInAuthorId: user.ID,
+	}
+	return Render(c, views.Profile(data))
+}
+
+func me(c echo.Context) error {
+	pageNumber, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil {
+		pageNumber = 1
+	}
+
+	userID := utils.GetIDFromCookie(c)
+	var user database.AuthorModel
+	if userID == 0 {
+		return c.Redirect(http.StatusTemporaryRedirect, "/")
+	}
+
+	user, err = database.GetAuthor(userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			utils.RemoveAuthCookie(c)
+		}
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+	}
+
+	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(user.Name, pageNumber)
+	if err != nil {
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+	}
+
+	// if it is a htmx request, render only the new results
+	if c.Request().Header.Get("HX-Request") == "true" {
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, user.ID, user.Name, "profile"))
+	}
+
+	_, err = c.Cookie(utils.CookieName)
+	var data views.ProfileData = views.ProfileData{
+		Ringtones:        ringtones,
+		NumberOfPages:    numberOfPages,
+		Page:             pageNumber,
+		Author:           user,
 		LoggedInAuthorId: user.ID,
 	}
 	return Render(c, views.Profile(data))
