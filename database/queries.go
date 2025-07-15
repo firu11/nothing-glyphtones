@@ -205,10 +205,9 @@ func CreateAuthor(name string, email string) (int, error) {
 
 }
 
-func RenameAuthor(id int, newName string) (string, error) {
-	var email string
-	err := DB.QueryRow(`UPDATE author SET name = $1 WHERE id = $2 RETURNING email;`, newName, id).Scan(&email)
-	return email, err
+func RenameAuthor(id int, newName string) error {
+	_, err := DB.Exec(`UPDATE author SET name = $1 WHERE id = $2;`, newName, id)
+	return err
 }
 
 func Vote(userID int, displayID string, vote int) error {

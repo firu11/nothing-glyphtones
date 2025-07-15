@@ -13,12 +13,15 @@ templ AuthorProfile(name string, email string) {
 	</div>
 }
 
-templ EditName(name string) {
+templ EditName(name string, err error) {
 	<div id="author">
-		<form hx-post="/rename-author" hx-target="#author" hx-swap="innerHTML">
-			<input id="name" name="name" value={ name }/>
+		<form hx-post="/rename-author" hx-target="#author" hx-swap="outerHTML">
+			<input id="name" name="name" value={ name } autocomplete="none"/>
 			<button type="submit">Save</button>
 			<a href="/me">Cancel</a>
+			if err != nil {
+				<span class="error">{ err.Error() }</span>
+			}
 		</form>
 	</div>
 }

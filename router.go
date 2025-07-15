@@ -270,7 +270,7 @@ func authorRenameView(c echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	return Render(c, components.EditName(author.Name))
+	return Render(c, components.EditName(author.Name, nil))
 }
 
 func authorRename(c echo.Context) error {
@@ -280,17 +280,19 @@ func authorRename(c echo.Context) error {
 	}
 	newName := strings.ToLower(strings.Trim(c.FormValue("name"), " "))
 	if !authorNameR.MatchString(newName) {
-		return Render(c, views.OtherError(
-			http.StatusBadRequest,
+		return Render(c, components.EditName(
+			newName,
 			errors.New("Invalid name. Maximal length is 20 letters. Only letters, numbers and '_-' are allowed.")),
 		)
 	}
-	email, err := database.RenameAuthor(authorID, newName)
+	err := database.RenameAuthor(authorID, newName)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("Something went wrong")))
 	}
 
-	return Render(c, components.AuthorProfile(newName, email))
+	c.Response().Header().Add("HX-Redirect", "/me")
+
+	return c.NoContent(http.StatusOK)
 }
 
 func uploadView(c echo.Context) error {

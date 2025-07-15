@@ -14,9 +14,9 @@
     gap: 0em 1em;
 }
 
-#author .error h1 {
+#author .error {
     font-size: 1em;
-    margin: 0 0 1em 0;
+    color: red;
 }
 
 #author:has(form) {
@@ -76,7 +76,7 @@
 #author form {
     display: flex;
     flex-wrap: wrap;
-    gap: 2.5em;
+    gap: 1.2em;
     justify-content: center;
 }
 
@@ -91,7 +91,6 @@
     text-align: center;
     border-radius: var(--base-border-radius);
     transition: border 0.1s;
-    margin-bottom: -1.1em;
 }
 
 #author form input:focus {
