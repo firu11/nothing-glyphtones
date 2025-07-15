@@ -192,11 +192,6 @@ func author(c echo.Context) error {
 }
 
 func me(c echo.Context) error {
-	pageNumber, err := strconv.Atoi(c.QueryParam("page"))
-	if err != nil {
-		pageNumber = 1
-	}
-
 	userID := utils.GetIDFromCookie(c)
 	if userID == 0 {
 		return c.Redirect(http.StatusTemporaryRedirect, "/")
@@ -210,25 +205,7 @@ func me(c echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(user.Name, pageNumber)
-	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
-	}
-
-	// if it is a htmx request, render only the new results
-	if c.Request().Header.Get("HX-Request") == "true" {
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, user.ID, user.Name, "profile"))
-	}
-
-	_, err = c.Cookie(utils.CookieName)
-	var data views.ProfileData = views.ProfileData{
-		Ringtones:        ringtones,
-		NumberOfPages:    numberOfPages,
-		Page:             pageNumber,
-		Author:           user,
-		LoggedInAuthorId: user.ID,
-	}
-	return Render(c, views.Profile(data))
+	return c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("/author/%s", user.Name))
 }
 
 func renameView(c echo.Context) error {
