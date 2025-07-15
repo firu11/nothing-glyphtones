@@ -198,12 +198,11 @@ func me(c echo.Context) error {
 	}
 
 	userID := utils.GetIDFromCookie(c)
-	var user database.AuthorModel
 	if userID == 0 {
 		return c.Redirect(http.StatusTemporaryRedirect, "/")
 	}
 
-	user, err = database.GetAuthor(userID)
+	user, err := database.GetAuthor(userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.RemoveAuthCookie(c)
@@ -302,7 +301,7 @@ func authorRename(c echo.Context) error {
 	if authorID == 0 {
 		return errors.New("You're not logged in.")
 	}
-	newName := strings.Trim(c.FormValue("name"), " ")
+	newName := strings.ToLower(strings.Trim(c.FormValue("name"), " "))
 	if !authorNameR.MatchString(newName) {
 		return Render(c, views.OtherError(
 			http.StatusInternalServerError,
@@ -532,7 +531,7 @@ func googleCallback(c echo.Context) error {
 	defer resp.Body.Close()
 
 	// decode the user information
-	var authorInfo map[string]interface{}
+	var authorInfo map[string]any
 	if err := json.NewDecoder(resp.Body).Decode(&authorInfo); err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to decode author info")))
 	}
@@ -540,6 +539,7 @@ func googleCallback(c echo.Context) error {
 	name := authorInfo["name"].(string)
 	name = godiacritics.Normalize(name)
 	name = strings.Trim(name, " ")
+	name = strings.ToLower(name)
 	if len(name) > 30 {
 		name = name[0:30]
 	}
