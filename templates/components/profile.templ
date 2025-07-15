@@ -15,10 +15,10 @@ templ AuthorProfile(name string, email string) {
 
 templ EditName(name string) {
 	<div id="author">
-		<form hx-post="/rename-author" hx-target="#author" hx-swap="outerHTML">
+		<form hx-post="/rename-author" hx-target="#author" hx-swap="innerHTML">
 			<input id="name" name="name" value={ name }/>
-            <button type="submit">Save</button>
-            <a href="/me">Cancel</a>
+			<button type="submit">Save</button>
+			<a href="/me">Cancel</a>
 		</form>
 	</div>
 }

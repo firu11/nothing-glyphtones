@@ -35,8 +35,7 @@ templ OtherErrorView(status int, err error) {
 }
 
 templ OtherError(status int, err error) {
-	<div>
+	<div class="error">
 		<h1>{ fmt.Sprintf("%d", status) } - { err.Error() }</h1>
-		<p>Whoops, something went wrong</p>
 	</div>
 }

@@ -281,7 +281,7 @@ func authorRename(c echo.Context) error {
 	newName := strings.ToLower(strings.Trim(c.FormValue("name"), " "))
 	if !authorNameR.MatchString(newName) {
 		return Render(c, views.OtherError(
-			http.StatusInternalServerError,
+			http.StatusBadRequest,
 			errors.New("Invalid name. Maximal length is 20 letters. Only letters, numbers and '_-' are allowed.")),
 		)
 	}
