@@ -282,7 +282,7 @@ func authorRename(c echo.Context) error {
 	if !authorNameR.MatchString(newName) {
 		return Render(c, views.OtherError(
 			http.StatusInternalServerError,
-			errors.New("Invalid name. Maximal length is 20 letters. Only ASCII characters are allowed (a-z and some special characters).")),
+			errors.New("Invalid name. Maximal length is 20 letters. Only letters, numbers and '_-' are allowed.")),
 		)
 	}
 	email, err := database.RenameAuthor(authorID, newName)
@@ -521,7 +521,7 @@ func googleCallback(c echo.Context) error {
 		name = name[0:30]
 	}
 	if !authorNameR.MatchString(name) {
-		name = fmt.Sprintf("Author%d", rand.IntN(10000))
+		name = fmt.Sprintf("author%d", rand.IntN(10000))
 	}
 
 	authorID, err := database.CreateAuthor(name, authorInfo["email"].(string))
