@@ -30,7 +30,7 @@ templ ListOfRingtones(ringtones []database.RingtoneModel, numberOfPages int, pag
 		}
 		if len(ringtones) == 0 {
 			if view == "profile" {
-				<span>There aren't any uploaded Glyphtones yet!</span>
+				<span>There aren't any uploaded glyphtones yet!</span>
 			} else if view == "index" {
 				<span>There are no glyphtones matching your search.</span>
 			}
