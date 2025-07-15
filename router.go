@@ -304,7 +304,10 @@ func authorRename(c echo.Context) error {
 	}
 	newName := strings.Trim(c.FormValue("name"), " ")
 	if !authorNameR.MatchString(newName) {
-		return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("Invalid name. Maximal length is 20 letters. Only ASCII characters are allowed (a-z and some special characters).")))
+		return Render(c, views.OtherError(
+			http.StatusInternalServerError,
+			errors.New("Invalid name. Maximal length is 20 letters. Only ASCII characters are allowed (a-z and some special characters).")),
+		)
 	}
 	email, err := database.RenameAuthor(authorID, newName)
 	if err != nil {

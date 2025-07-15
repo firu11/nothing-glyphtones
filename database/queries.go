@@ -216,7 +216,7 @@ func Vote(userID int, displayID string, vote int) error {
 	if vote == 0 {
 		_, err = DB.Exec(`DELETE FROM vote WHERE author_id = $1 AND ringtone_id = (SELECT id FROM ringtone WHERE display_id = $2)`, userID, displayID)
 	} else {
-		_, err = DB.Exec(`INSERT INTO vote (author_id, ringtone_id, up) VALUES ($1, (SELECT id FROM ringtone WHERE display_id = $2), $3) ON CONFLICT (author_id, ringtone_id) DO UPDATE SET up = EXCLUDED.up;`, userID, displayID, vote == 1)
+		_, err = DB.Exec(`INSERT INTO vote (author_id, ringtone_id, up) SELECT $1, r.id, $3 FROM ringtone r WHERE r.display_id = $2 AND r.author_id != $1 ON CONFLICT (author_id, ringtone_id) DO UPDATE SET up = EXCLUDED.up;`, userID, displayID, vote == 1)
 	}
 	return err
 }
