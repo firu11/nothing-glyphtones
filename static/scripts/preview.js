@@ -1,6 +1,7 @@
 const preview = document.getElementById("glyph-preview")
 const phoneMap = new Map()
 preview.childNodes.forEach(el => {
+    if (el === undefined || el.id === undefined) return
     phoneMap.set(el.id, { "el": el })
 })
 
@@ -19,7 +20,7 @@ function showFrame() {
     }
 
     const model = window.nowPlaying.phoneModel
-    const glyphs = phoneMap.get(model).el.querySelectorAll("path")
+    const glyphs = phoneMap.get(model).el.querySelectorAll("path, rect")
     glyphs.forEach(glyph => {
         const range = glyph.id.split("-")
         if (range.length == 1) { // for simple glyphs
@@ -34,9 +35,9 @@ function showFrame() {
     })
 }
 
-function showPhoneModel(model) {
+function showPhoneModel() {
     phoneMap.forEach(phone => {
-        if (model === phone.el.id) phone.el.style.display = "block"
+        if (activePhone === phone.el.id) phone.el.style.display = "block"
         else phone.el.style.display = "none"
     })
 }
@@ -45,12 +46,12 @@ function update() {
     if (window.nowPlaying == undefined) window.nowPlaying = {}
 
     if (window.nowPlaying.isPlaying) {
-        //console.log(window.nowPlayingCSV)
+        // console.log(window.nowPlaying.CSV)
         showFrame()
     }
     if (activePhone !== window.nowPlaying.phoneModel) {
         activePhone = window.nowPlaying.phoneModel
-        showPhoneModel(window.nowPlaying.phoneModel)
+        showPhoneModel()
     }
     requestAnimationFrame(update)
 }

@@ -38,8 +38,8 @@ CREATE TABLE phone_and_ringtone (
 
 CREATE TABLE vote (
     id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    author_id INTEGER REFERENCES author (id),
-    ringtone_id INTEGER REFERENCES ringtone (id),
+    author_id INTEGER REFERENCES author (id) ON DELETE CASCADE,
+    ringtone_id INTEGER REFERENCES ringtone (id) ON DELETE CASCADE,
     up BOOLEAN,
     UNIQUE (author_id, ringtone_id)
 );
@@ -56,7 +56,8 @@ INSERT INTO phone (name, cols, cols2)
     VALUES ('(1)', 5, 15),
     ('(2)', 33, 5),
     ('(2a)', 26, -1),
-    ('(3a)', 36, -1);
+    ('(3a)', 36, -1),
+    ('(3)', 625, -1);
 
 INSERT INTO effect (name)
     VALUES ('Dan'),
