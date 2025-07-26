@@ -5,13 +5,14 @@ import "fmt"
 templ Pages(view string, authorName string, numberOfPages int, page int) {
 	{{
 	var url string
-	if view == "profile" {
+	switch view {
+	case "profile":
 		if authorName != "" {
 			url = fmt.Sprintf("/author/%s", authorName)
 		} else {
 			url = "/me"
 		}
-	} else if view == "index" {
+	case "index":
 		url = "/"
 	}
 	}}

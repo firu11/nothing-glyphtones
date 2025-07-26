@@ -29,24 +29,24 @@ func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, string, bool
 		return phonesResult, "", false
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
 		fmt.Println("Error running Json Unmarshal:", err)
 		return phonesResult, "", false
 	}
 
-	streams, ok := result["streams"].([]interface{})
+	streams, ok := result["streams"].([]any)
 	if !ok || len(streams) == 0 {
 		return phonesResult, "", false
 	}
-	firstStream, ok := streams[0].(map[string]interface{})
+	firstStream, ok := streams[0].(map[string]any)
 	if !ok {
 		return phonesResult, "", false
 	}
 	if firstStream["codec_name"] != "opus" {
 		return phonesResult, "", false
 	}
-	tags, ok := firstStream["tags"].(map[string]interface{})
+	tags, ok := firstStream["tags"].(map[string]any)
 	if !ok {
 		return phonesResult, "", false
 	}
