@@ -16,8 +16,8 @@
 }
 
 #glyph-preview.square {
-    width: 220px;
-    height: 220px;
+    width: 160px;
+    height: 160px;
 }
 
 #glyph-preview svg {
@@ -33,6 +33,16 @@
 @media screen and (min-width: 900px) {
     #glyph-preview {
         transform: none !important;
+    }
+
+    #glyph-preview.rectangle {
+        width: 135px;
+        height: 265px;
+    }
+
+    #glyph-preview.square {
+        width: 220px;
+        height: 220px;
     }
 }
 
