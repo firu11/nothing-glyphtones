@@ -4,12 +4,20 @@
     position: relative;
     top: 0;
     left: 0;
-    width: 135px;
-    height: 265px;
     align-self: flex-end;
     border-radius: 25px;
     border: 1px solid var(--bg-color);
     transition: border 0.2s;
+}
+
+#glyph-preview.rectangle {
+    width: 135px;
+    height: 265px;
+}
+
+#glyph-preview.square {
+    width: 220px;
+    height: 220px;
 }
 
 #glyph-preview svg {

@@ -40,6 +40,11 @@ function showPhoneModel() {
         if (activePhone === phone.el.id) phone.el.style.display = "block"
         else phone.el.style.display = "none"
     })
+    if (["(1)", "(1)_15", "(2)"].includes(activePhone)) {
+        preview.classList.replace("square", "rectangle")
+    } else if (["(2a)", "(3a)", "(3)"].includes(activePhone)) {
+        preview.classList.replace("rectangle", "square")
+    }
 }
 
 function update() {
