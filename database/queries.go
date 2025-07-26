@@ -24,13 +24,15 @@ func GetRingtones(search string, category int, sortBy string, phones []int, effe
 	} else {
 		switch sortBy {
 		case "popular":
+			query += ` ORDER BY votes DESC, score DESC`
+		case "most downloads":
 			query += ` ORDER BY score DESC, rm.name`
 		case "latest":
 			query += ` ORDER BY rm.time_added DESC, rm.name`
 		case "name (a-z)":
 			query += ` ORDER BY rm.name, score DESC`
 		default:
-			query += ` ORDER BY score DESC, rm.name`
+			query += ` ORDER BY votes DESC, score DESC`
 		}
 	}
 	query += ` LIMIT $6 OFFSET $7;`
