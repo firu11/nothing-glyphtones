@@ -55,6 +55,38 @@
     overflow: hidden;
     transition: border 0.1s, max-height 0.2s;
     max-height: calc(1.8em + 0.6em);
+
+    position: relative;
+}
+
+#filter-container #reset {
+    position: absolute;
+    top: 0.35em;
+    right: 0.35em;
+    width: 1.6em;
+    height: 1.6em;
+    transition: transform 0.4s;
+
+    :hover {
+        transform: rotate(-360deg);
+    }
+
+    img {
+        position: absolute;
+    }
+}
+
+#filter-container #reset:hover {
+    transform: rotate(-360deg);
+}
+
+#filter-container #reset img:last-of-type {
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+#filter-container #reset:hover img:last-of-type {
+    opacity: 1;
 }
 
 #filter-container.open {
@@ -233,6 +265,11 @@ _:future,
     #filter-container {
         max-height: 24em;
         border: 1px solid transparent !important;
+    }
+
+    #filter-container #reset {
+        top: 0.4em;
+        right: 0.4em;
     }
 
     #show-checkboxes,

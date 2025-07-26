@@ -31,6 +31,7 @@ templ Index(data IndexData) {
 						@components.CategorySelect(data.Category)
 						@components.Sort(data.SortBy)
 						<div id="filter-container">
+							@components.ResetFiltersBtn()
 							<button id="show-checkboxes" type="button">Show Filters</button>
 							<hr/>
 							<div class="filters-column">
