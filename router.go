@@ -54,6 +54,14 @@ func setupRouter(e *echo.Echo) {
 }
 
 func index(c echo.Context) error {
+	if c.QueryParams().Has("reset-filters") {
+		c.SetCookie(&http.Cookie{
+			Name:   LastSearchCookieName,
+			Value:  "/",
+			MaxAge: -1,
+		})
+		c.Redirect(http.StatusTemporaryRedirect, "/")
+	}
 	if len(c.QueryParams()) == 0 { // if no filters applied
 		cookie, err := c.Cookie(LastSearchCookieName)
 		if err == nil && cookie.Value != "/" {
