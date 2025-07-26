@@ -21,6 +21,8 @@ const maxRingtoneSize = 3 * 1024 * 1024 // 2MB
 var ringtoneNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{2,30}$")
 var authorNameR regexp.Regexp = *regexp.MustCompile("^[a-z0-9_-]{3,20}$")
 
+var LastSearchCookieName string = "Glyphtones_last_search_options"
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)

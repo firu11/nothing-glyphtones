@@ -54,6 +54,25 @@ func setupRouter(e *echo.Echo) {
 }
 
 func index(c echo.Context) error {
+	if len(c.QueryParams()) == 0 { // if no filters applied
+		cookie, err := c.Cookie(LastSearchCookieName)
+		if err == nil && cookie.Value != "/" {
+			c.Redirect(http.StatusTemporaryRedirect, cookie.Value)
+		} else {
+			c.SetCookie(&http.Cookie{
+				Name:   LastSearchCookieName,
+				Value:  c.Request().RequestURI,
+				MaxAge: 1_000_000,
+			})
+		}
+	} else {
+		c.SetCookie(&http.Cookie{
+			Name:   LastSearchCookieName,
+			Value:  c.Request().RequestURI,
+			MaxAge: 1_000_000,
+		})
+	}
+
 	authorID := utils.GetIDFromCookie(c)
 
 	searchQuery := c.QueryParam("s")
