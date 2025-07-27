@@ -27,6 +27,7 @@ function click(e) {
 
         if (allWaveSurfers[i].isPlaying()) {
             allWaveSurfers[i].pause()
+            window.nowPlaying.phoneModel = null
             window.nowPlaying.player = null
             window.nowPlaying.isPlaying = false
             e.target.querySelector(".white").src = images[0]

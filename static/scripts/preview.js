@@ -6,6 +6,7 @@ preview.childNodes.forEach(el => {
 })
 
 let activePhone = null
+const phone = window.innerWidth < 900
 
 function showFrame() {
     if (!window.nowPlaying.CSV) return
@@ -36,6 +37,11 @@ function showFrame() {
 }
 
 function showPhoneModel() {
+    if (phone && (activePhone === null || activePhone === undefined)) {
+        preview.style.display = "none"
+    } else {
+        preview.style.display = "block"
+    }
     phoneMap.forEach(phone => {
         if (activePhone === phone.el.id) phone.el.style.display = "block"
         else phone.el.style.display = "none"

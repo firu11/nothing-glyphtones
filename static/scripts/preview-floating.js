@@ -1,89 +1,88 @@
-const preview = document.getElementById("glyph-preview")
-let initialX = 0, initialY = 0
-let currentTranslateX = 0, currentTranslateY = 0
-let isDragging = false
+// chatgpt made this shit
 
-// Get the element's default position
-const defaultRect = preview.getBoundingClientRect()
-const defaultX = defaultRect.left
-const defaultY = defaultRect.top
+const preview = document.getElementById("glyph-preview");
 
-// Start dragging (mouse or touch)
-function startDragging(e) {
-    e.preventDefault()
-    if (window.getComputedStyle(preview).position !== "fixed") return
+let isDragging = false;
+let initialX = 0, initialY = 0;
+let startTranslateX = 0, startTranslateY = 0;
 
-    isDragging = true
+function getTranslate() {
+    const style = window.getComputedStyle(preview);
+    const transform = style.transform;
+    if (!transform || transform === "none") return { x: 0, y: 0 };
 
-    // Handle both mouse and touch
-    const event = e.type === "touchstart" ? e.touches[0] : e
-    initialX = event.clientX
-    initialY = event.clientY
-
-    const transform = preview.style.transform
-    if (transform) {
-        const match = transform.match(/translate\(([^,]+)px, ([^)]+)px\)/)
-        if (match) {
-            currentTranslateX = parseFloat(match[1])
-            currentTranslateY = parseFloat(match[2])
-        }
+    const match = transform.match(/matrix\((.+)\)/);
+    if (match) {
+        const parts = match[1].split(", ");
+        return {
+            x: parseFloat(parts[4]),
+            y: parseFloat(parts[5]),
+        };
     }
 
-    // Add move and stop listeners only when dragging starts
-    document.addEventListener("mousemove", moveDragging)
-    document.addEventListener("mouseup", stopDragging)
-    document.addEventListener("touchmove", moveDragging, { passive: false })
-    document.addEventListener("touchend", stopDragging)
+    return { x: 0, y: 0 };
 }
 
-// Move element (mouse or touch)
+function startDragging(e) {
+    if (e.type === "mousedown" && e.button !== 0) return; // only left-click
+    e.preventDefault();
+
+    const event = e.type.startsWith("touch") ? e.touches[0] : e;
+    isDragging = true;
+
+    initialX = event.clientX;
+    initialY = event.clientY;
+
+    const { x, y } = getTranslate();
+    startTranslateX = x;
+    startTranslateY = y;
+
+    document.addEventListener("mousemove", moveDragging);
+    document.addEventListener("mouseup", stopDragging);
+    document.addEventListener("touchmove", moveDragging, { passive: false });
+    document.addEventListener("touchend", stopDragging);
+}
+
 function moveDragging(e) {
-    if (!isDragging) return
-    e.preventDefault()
+    if (!isDragging) return;
+    e.preventDefault();
 
-    // Handle both mouse and touch
-    const event = e.type === "touchmove" ? e.touches[0] : e
-    const deltaX = event.clientX - initialX
-    const deltaY = event.clientY - initialY
+    const event = e.type.startsWith("touch") ? e.touches[0] : e;
+    const deltaX = event.clientX - initialX;
+    const deltaY = event.clientY - initialY;
 
-    // Calculate new position
-    let newTranslateX = currentTranslateX + deltaX
-    let newTranslateY = currentTranslateY + deltaY
+    let translateX = startTranslateX + deltaX;
+    let translateY = startTranslateY + deltaY;
 
-    // Get screen and element dimensions
-    const screenWidth = window.innerWidth
-    const screenHeight = window.innerHeight
-    const elementWidth = preview.offsetWidth
-    const elementHeight = preview.offsetHeight
+    // Get element's live size
+    const width = preview.offsetWidth;
+    const height = preview.offsetHeight;
 
-    // Calculate boundaries relative to the default position
-    const minX = -defaultX
-    const maxX = screenWidth - (defaultX + elementWidth)
-    const minY = -defaultY
-    const maxY = screenHeight - (defaultY + elementHeight)
+    // Get fixed left/top position from computed style
+    const style = window.getComputedStyle(preview);
+    const fixedLeft = parseFloat(style.left);
+    const fixedTop = parseFloat(style.top);
 
-    // Clamp position within boundaries
-    newTranslateX = Math.max(minX, Math.min(newTranslateX, maxX))
-    newTranslateY = Math.max(minY, Math.min(newTranslateY, maxY))
+    // Clamp to window
+    const minX = -fixedLeft;
+    const maxX = window.innerWidth - fixedLeft - width;
+    const minY = -fixedTop;
+    const maxY = window.innerHeight - fixedTop - height;
 
-    // Apply new position
-    preview.style.transform = `translate(${newTranslateX}px, ${newTranslateY}px)`
+    translateX = Math.max(minX, Math.min(translateX, maxX));
+    translateY = Math.max(minY, Math.min(translateY, maxY));
+
+    preview.style.transform = `translate(${translateX}px, ${translateY}px)`;
 }
 
-// Stop dragging (mouse or touch)
 function stopDragging(e) {
-    e.preventDefault()
-    isDragging = false
+    isDragging = false;
 
-    // Remove move and stop listeners when dragging stops
-    document.removeEventListener("mousemove", moveDragging)
-    document.removeEventListener("mouseup", stopDragging)
-    document.removeEventListener("touchmove", moveDragging)
-    document.removeEventListener("touchend", stopDragging)
+    document.removeEventListener("mousemove", moveDragging);
+    document.removeEventListener("mouseup", stopDragging);
+    document.removeEventListener("touchmove", moveDragging);
+    document.removeEventListener("touchend", stopDragging);
 }
 
-// Mouse event listeners
-preview.addEventListener("mousedown", startDragging)
-
-// Touch event listeners
-preview.addEventListener("touchstart", startDragging)
+preview.addEventListener("mousedown", startDragging);
+preview.addEventListener("touchstart", startDragging, { passive: false });
