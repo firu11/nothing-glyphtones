@@ -61,10 +61,10 @@
 
 #filter-container #reset {
     position: absolute;
-    top: 0.35em;
-    right: 0.35em;
-    width: 1.6em;
-    height: 1.6em;
+    top: 0.45em;
+    right: 0.45em;
+    width: 1.4em;
+    height: 1.4em;
     transition: transform 0.4s;
 
     :hover {
@@ -268,6 +268,8 @@ _:future,
     }
 
     #filter-container #reset {
+        width: 1.2em;
+        height: 1.2em;
         top: 0.4em;
         right: 0.4em;
     }
