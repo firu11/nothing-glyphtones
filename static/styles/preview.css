@@ -20,6 +20,16 @@
     height: 160px;
 }
 
+#glyph-preview.circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+}
+
+#glyph-preview.circle svg {
+    padding-top: 9px;
+}
+
 #glyph-preview svg {
     position: absolute;
     top: 0;
@@ -43,6 +53,12 @@
     #glyph-preview.square {
         width: 220px;
         height: 220px;
+    }
+
+    #glyph-preview.circle {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
     }
 }
 
