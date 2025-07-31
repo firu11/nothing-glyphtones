@@ -41,10 +41,10 @@ postgres=# CREATE ROLE chris WITH LOGIN PASSWORD 'password';  # create user with
 postgres=# CREATE DATABASE glyphtones OWNER chris;            # create a database called "glyphtones" with chris being the owner
 postgres=# \q  # exit
 # --- back in terminal ---
-git clone https://github.com/firu11/nothing_glyphtones.git  # clone the repository
+git clone https://github.com/firu11/nothing-glyphtones.git  # clone the repository
 
 # CONFIGURATION
-cd nothing_glyphtones       # go into the project
+cd nothing-glyphtones       # go into the project
 psql glyphtones < init.sql  # load the init.sql file into the database
 cp .env.example .env        # duplicate .env.example -> .env
 open -e .env                # open .env file
