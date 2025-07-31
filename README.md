@@ -41,7 +41,7 @@ postgres=# CREATE ROLE chris WITH LOGIN PASSWORD 'password';  # create user with
 postgres=# CREATE DATABASE glyphtones OWNER chris;            # create a database called "glyphtones" with chris being the owner
 postgres=# \q  # exit
 # --- back in terminal ---
-git clone https://github.com/Firu115/nothing_glyphtones.git  # clone the repository
+git clone https://github.com/firu11/nothing_glyphtones.git  # clone the repository
 
 # CONFIGURATION
 cd nothing_glyphtones       # go into the project
