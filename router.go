@@ -545,6 +545,7 @@ func googleCallback(c echo.Context) error {
 	name := authorInfo["name"].(string)
 	name = godiacritics.Normalize(name)
 	name = strings.Trim(name, " ")
+	name = strings.ReplaceAll(name, " ", "_")
 	name = strings.ToLower(name)
 	if len(name) > 30 {
 		name = name[0:30]
