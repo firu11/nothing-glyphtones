@@ -83,7 +83,7 @@ header #logo span {
 main {
     padding: 0 1.6em;
     /* for footer */
-    padding-bottom: 6em;
+    padding-bottom: 9em;
 }
 
 main>* {
@@ -94,33 +94,41 @@ footer {
     position: absolute;
     bottom: 0;
     background-color: var(--menu-bg-color);
-    padding: 1em;
+    padding: 1em 1em 2em 1em;
     font-size: 0.7em;
-    margin-top: 4em;
     min-height: 4em;
-    max-height: 9em;
+    max-height: 11.5em;
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 3em;
+    gap: 1em;
 }
 
 footer>span {
-    max-width: calc(100% - 4em - 3em);
+    a {
+        color: red;
+    }
 }
 
-footer>a {
-    width: 3em;
-    height: 3em;
-}
+footer>#footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
 
-footer>a>img {
-    width: 100%;
-}
+    a {
+        height: 3em;
 
-footer>span>a {
-    color: red;
+        img {
+            width: 3em;
+        }
+    }
+
+    a#buy-me-a-coffee>img {
+        height: 100%;
+        width: auto;
+    }
 }
 
 h1 {
@@ -137,5 +145,15 @@ h1 {
     header {
         padding-left: 5em;
         padding-right: 5em;
+    }
+
+    footer {
+        flex-direction: row;
+        gap: 3em;
+        padding: 1em;
+
+        #footer-links {
+            gap: 1em;
+        }
     }
 }
