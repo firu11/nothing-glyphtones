@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <meta name="description" content="A simple audio-sharing platform for Nothing Phone users." />
+        <meta name="keywords" content="nothing, phone, tech, glyph, ringtone, interface, composer" />
+        <meta name="author" content="Firu (mail: firu-glyphtones@proton.me, github: firu11)" />
+
+        <link rel="shortcut icon" href="static/favicons/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="static/favicons/apple-touch-icon.png" />
+
+        <title>Maintenance</title>
+
+        <style>
+            @font-face {
+                font-family: 'Ndot';
+                src: url('static/ndot-45-inspired-by-nothing.ttf');
+            }
+            @font-face {
+                font-family: 'Ndot2';
+                src: url('static/nothing-font.ttf');
+            }
+            @font-face {
+                font-family: 'Ntype';
+                src: url('static/SpaceGrotesk-VariableFont_wght.ttf');
+            }
+
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100dvh;
+                margin: 0;
+                background-color: #1b1b28;
+                font-family: 'Ntype';
+            }
+
+            section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1em;
+                padding: 1em;
+                width: min(80%, 30em);
+                background-color: black;
+                border-radius: 4px;
+                color: white;
+            }
+
+            div {
+                position: relative;
+                top: -2px;
+                text-decoration: none;
+                user-select: none;
+                font-family: 'Ndot';
+                display: flex;
+                flex-direction: column;
+                align-self: flex-start;
+            }
+
+            div span {
+                font-size: 0.7em;
+                font-family: 'Ndot2';
+            }
+
+            h1,
+            p {
+                margin: 0;
+                text-align: center;
+            }
+
+            a {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <section>
+            <div>
+                GLYPHTONES
+                <span>not by NOTHING</span>
+            </div>
+
+            <h1>We'll be right back</h1>
+            <p>Sorry for the inconvenience — we’re performing some maintenance. Check back soon!</p>
+            <p>If you need support, <a href="mailto:firu-glyphtones@proton.me">contact me</a>.</p>
+        </section>
+    </body>
+</html>
