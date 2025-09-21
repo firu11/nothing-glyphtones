@@ -28,6 +28,7 @@ CREATE TABLE ringtone (
     glyphs TEXT,
     auto_generated BOOLEAN NOT NULL DEFAULT FALSE,
     display_id VARCHAR(15) NOT NULL,
+    hash BYTEA UNIQUE
 );
 
 CREATE TABLE phone_and_ringtone (

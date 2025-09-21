@@ -6,12 +6,14 @@ require (
 	github.com/a-h/templ v0.3.924
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
+	github.com/zeebo/blake3 v0.2.4
 	gopkg.in/Regis24GmbH/go-diacritics.v2 v2.0.3
 )
 
 require (
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
 	github.com/govalues/decimal v0.1.36 // indirect
+	github.com/klauspost/cpuid/v2 v2.0.12 // indirect
 	github.com/rickb777/period v1.0.9 // indirect
 	github.com/rickb777/plural v1.4.2 // indirect
 )
