@@ -181,16 +181,6 @@ func author(c echo.Context) error {
 	}
 
 	userID := utils.GetIDFromCookie(c)
-	var user database.AuthorModel
-	if userID != 0 {
-		user, err = database.GetAuthor(userID)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				utils.RemoveAuthCookie(c)
-			}
-			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
-		}
-	}
 
 	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorName, pageNumber, userID)
 	if err != nil {
@@ -199,7 +189,7 @@ func author(c echo.Context) error {
 
 	// if it is a htmx request, render only the new results
 	if c.Request().Header.Get("HX-Request") == "true" {
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, user.ID, authorName, "profile"))
+		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, userID, authorName, "profile"))
 	}
 
 	var author database.AuthorModel
@@ -214,7 +204,7 @@ func author(c echo.Context) error {
 		NumberOfPages:    numberOfPages,
 		Page:             pageNumber,
 		Author:           author,
-		LoggedInAuthorId: user.ID,
+		LoggedInAuthorId: userID,
 	}
 	return Render(c, views.Profile(data))
 }
