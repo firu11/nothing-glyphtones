@@ -192,7 +192,7 @@ func author(c echo.Context) error {
 		}
 	}
 
-	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorName, pageNumber)
+	ringtones, numberOfPages, err := database.GetRingtonesByAuthor(authorName, pageNumber, userID)
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}

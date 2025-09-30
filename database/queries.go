@@ -55,12 +55,12 @@ func GetRingtones(search string, category int, sortBy string, phones []int, effe
 	return ringtones, numberOfPages, nil
 }
 
-func GetRingtonesByAuthor(authorName string, page int) ([]RingtoneModel, int, error) {
+func GetRingtonesByAuthor(authorName string, page int, loggedInUser int) ([]RingtoneModel, int, error) {
 	var ringtones []RingtoneModel
 	var rows *sql.Rows
 	var err error
 
-	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT r.id, r.display_id, r.name, ARRAY ( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = r.id ) as phone_names, r.effect_id, r.author_id, r.downloads, r.glyphs, r.auto_generated, (downloads::FLOAT) / GREATEST(MAX(downloads) OVER (), 1) AS score, COUNT(*) FILTER ( WHERE up IS TRUE ) - COUNT(*) FILTER ( WHERE up IS FALSE ) AS votes FROM ringtone r FULL OUTER JOIN vote v ON v.ringtone_id = r.id WHERE r.author_id = ( SELECT id FROM author WHERE name = $1 ) GROUP BY ( r.id, r.display_id, r.name, r.downloads, phone_names, r.category, r.auto_generated, r.glyphs, r.time_added ) ) SELECT rm.id, rm.display_id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, rm.glyphs, rm.auto_generated, e.name AS effect_name, rm.votes, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id ORDER BY score DESC LIMIT $2 OFFSET $3;`, authorName, resultsPerPage, (page-1)*resultsPerPage)
+	rows, err = DB.Query(`WITH ringtones_matched AS ( SELECT r.id, r.display_id, r.name, ARRAY ( SELECT p.name FROM phone_and_ringtone par INNER JOIN phone p ON p.id = par.phone_id WHERE par.ringtone_id = r.id ) as phone_names, r.effect_id, r.author_id, r.downloads, r.glyphs, r.auto_generated, (downloads::FLOAT) / GREATEST(MAX(downloads) OVER (), 1) AS score, COUNT(*) FILTER ( WHERE up IS TRUE ) - COUNT(*) FILTER ( WHERE up IS FALSE ) AS votes FROM ringtone r FULL OUTER JOIN vote v ON v.ringtone_id = r.id WHERE r.author_id = ( SELECT id FROM author WHERE name = $1 ) GROUP BY ( r.id, r.display_id, r.name, r.downloads, phone_names, r.category, r.auto_generated, r.glyphs, r.time_added ) ) SELECT rm.id, rm.display_id, rm.name, rm.score, u.id AS author_id, u.name AS author_name, rm.downloads, rm.phone_names, rm.glyphs, rm.auto_generated, e.name AS effect_name, rm.votes, ( CASE WHEN $2 = 0 THEN 0 ELSE ( CASE WHEN ( SELECT up FROM vote WHERE ringtone_id = rm.id AND author_id = $2 ) IS FALSE THEN 2 WHEN ( SELECT up FROM vote WHERE ringtone_id = rm.id AND author_id = $2 ) IS TRUE THEN 1 ELSE 0 END ) END ) AS user_vote, COUNT(*) OVER () AS results FROM ringtones_matched rm INNER JOIN effect e ON rm.effect_id = e.id INNER JOIN author u ON rm.author_id = u.id ORDER BY score DESC LIMIT $3 OFFSET $4;`, authorName, loggedInUser, resultsPerPage, (page-1)*resultsPerPage)
 	if err != nil {
 		log.Println(1)
 		return ringtones, 0, err
