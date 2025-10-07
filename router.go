@@ -47,6 +47,7 @@ func setupRouter(e *echo.Echo) {
 	e.GET("/rename/:displayID", renameView)
 	e.POST("/rename/:displayID", rename)
 	e.POST("/delete-ringtone/:displayID", deleteRingtone)
+	e.GET("/g/:displayID", detailRingtone)
 	e.GET("/guide", guide)
 	e.GET("/dmca", dmca)
 	e.GET("/google-login", googleLogin)
@@ -468,6 +469,21 @@ func deleteRingtone(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
+func detailRingtone(c echo.Context) error {
+	displayID := c.Param("displayID")
+	if len(displayID) <= 5 {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	userID := utils.GetIDFromCookie(c)
+
+	ringtone, err := database.GetRingtone(displayID, userID)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	return Render(c, views.Detail(ringtone, userID))
+}
+
 func vote(c echo.Context) error {
 	displayID := c.Param("displayID")
 	if len(displayID) <= 5 {
@@ -490,7 +506,7 @@ func vote(c echo.Context) error {
 		if err != nil {
 			return c.NoContent(http.StatusInternalServerError)
 		}
-		return Render(c, components.Captions2(ringtone, ringtone.AuthorID == userID))
+		return Render(c, components.Votes(ringtone.DisplayID, ringtone.Votes, ringtone.LoggedInAuthorsVote))
 	}
 
 	ringtone, err := database.GetRingtone(displayID, userID)
@@ -498,7 +514,7 @@ func vote(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	return Render(c, components.Captions2(ringtone, ringtone.AuthorID == userID))
+	return Render(c, components.Votes(ringtone.DisplayID, ringtone.Votes, ringtone.LoggedInAuthorsVote))
 }
 
 func guide(c echo.Context) error {

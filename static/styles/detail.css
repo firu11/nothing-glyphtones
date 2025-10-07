@@ -1,0 +1,111 @@
+main {
+    display: grid;
+    grid-template-areas:
+        "preview"
+        "ringtone"
+        "info"
+        "btn"
+    ;
+    margin-top: 3em;
+    justify-items: center;
+    gap: 1em;
+
+    >.ringtone {
+        width: 100%;
+    }
+}
+
+#glyph-preview {
+    grid-area: preview;
+    justify-self: center;
+    transform: none !important;
+
+    &.rectangle {
+        width: calc(135px * 1.1) !important;
+        height: calc(265px * 1.1) !important;
+    }
+
+    &.square {
+        width: 220px !important;
+        height: 220px !important;
+    }
+
+    &.circle {
+        width: 220px !important;
+        height: 220px !important;
+        border-radius: 50% !important;
+    }
+}
+
+#buttons {
+    display: flex;
+    gap: 1em;
+
+    #browse-other,
+    button.share-btn {
+        grid-area: btn;
+        align-self: center;
+        padding: 0.5em 1em;
+        background-color: black;
+        border: 1px solid black;
+        border-radius: var(--base-border-radius);
+        color: var(--txt-color);
+        transition: border .1s;
+        text-decoration: none;
+
+        font-size: 1em;
+        font-weight: normal;
+        font-family: "NType";
+        cursor: pointer;
+
+        &:hover {
+            outline: none;
+            border: 1px solid red;
+        }
+    }
+}
+
+
+
+#aditional-info {
+    grid-area: info;
+    width: 100%;
+    padding: 0.5em 1em;
+    background-color: black;
+    border-radius: var(--base-border-radius);
+    text-align: start;
+
+    th {
+        border-bottom: 0.3em solid transparent;
+    }
+
+    td:nth-of-type(2) {
+        font-weight: bold;
+        text-align: end;
+    }
+}
+
+@media screen and (min-width: 900px) {
+    main {
+        justify-content: center;
+        column-gap: 2em;
+        grid-template-areas:
+            "preview ringtone"
+            "preview info"
+            "preview btn"
+        ;
+
+        &:has(.rectangle) {
+            grid-template-columns: calc(135px * 1.1) 35em;
+        }
+
+        &:has(.square) {
+            grid-template-columns: 220px 35em;
+        }
+
+        #glyph-preview {
+            justify-self: end;
+            align-self: start;
+        }
+    }
+}

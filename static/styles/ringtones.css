@@ -4,10 +4,11 @@
     gap: 1em;
     padding: 0.5em 0;
     text-align: left;
-}
 
-#list-of-ringtones>span {
-    text-align: center;
+    /* no glyphtones found */
+    >span {
+        text-align: center;
+    }
 }
 
 .ringtone {
@@ -21,143 +22,184 @@
     padding-bottom: 0.65em;
     min-height: 149px;
     transition: border .2s;
-}
 
-.ringtone:hover {
-    border: 1px solid rgb(190, 0, 0);
-}
+    &:hover {
+        border: 1px solid rgb(190, 0, 0);
+    }
 
-.ringtone .audio {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    .audio {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
 
-.ringtone .audio .wave {
-    width: calc(100% - 48px - 17px);
-    height: 3em;
-}
+        button {
+            background-color: transparent;
+            border: none;
+            border-radius: 1000px;
+            width: 48px;
+            height: 48px;
+            aspect-ratio: 1/1;
+            cursor: pointer;
+            position: relative;
 
-.ringtone .audio button {
-    background-color: transparent;
-    border: none;
-    border-radius: 1000px;
-    width: 48px;
-    height: 48px;
-    aspect-ratio: 1/1;
-    cursor: pointer;
-    position: relative;
-}
+            img {
+                width: 100%;
+                aspect-ratio: 1/1;
+                user-select: none;
+                pointer-events: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transition: opacity 0.1s;
+            }
+        }
 
-.ringtone .audio button img {
-    width: 100%;
-    aspect-ratio: 1/1;
-    user-select: none;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: opacity 0.1s;
-}
+        button:hover img.white {
+            opacity: 0;
+        }
 
-.ringtone .audio button:hover img.white {
-    opacity: 0;
-}
+        .wave {
+            width: calc(100% - 48px - 17px);
+            height: 3em;
+        }
+    }
 
-.ringtone .container {
-    display: flex;
-    justify-content: space-between;
-}
+    .container {
+        display: flex;
+        justify-content: space-between;
+    }
 
-.ringtone .captions {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    max-width: 4.5em;
-}
+    .actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: end;
 
-.ringtone .captions:first-of-type:has(+ div) {
-    align-items: start;
-    max-width: calc(100% - 4.5em);
-}
+        position: relative;
+        right: -5px;
 
-.ringtone .captions * {
-    text-wrap: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-}
+        .second-line,
+        .first-line {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 0.3em;
+            justify-content: right;
 
-.ringtone .captions .numbers img {
-    cursor: help;
-}
+            a {
+                width: 34px;
+                height: 34px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                position: relative;
 
-.ringtone .captions span.name {
-    margin-bottom: 0.2em;
-}
+                img {
+                    position: absolute;
+                    width: 100%;
+                    padding: 10%;
 
-.ringtone .captions span.name img {
-    padding-top: 1px;
-    cursor: pointer;
-}
+                    /* red version */
+                    &:last-of-type {
+                        opacity: 0;
+                        transition: opacity 0.1s;
+                    }
+                }
 
-.ringtone .captions span:not(.name) {
-    font-size: 0.9em;
-}
+                &:hover img:last-of-type {
+                    opacity: 1;
+                }
+            }
 
-.ringtone .captions:has(.icons) span img {
-    position: relative;
-    top: 2px;
-}
+            .vote {
+                display: flex;
+                position: relative;
+                top: 4px;
 
-.ringtone .captions>span:has(a) {
-    color: color-mix(in srgb, var(--txt-color) 70%, transparent);
-    font-size: 0.9em;
-}
+                >a {
+                    >img {
+                        padding: 4px;
+                    }
+                }
 
-.ringtone .captions>span>a {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-    color: inherit;
-    transition: 0.1s;
-}
+                /* the number itself */
+                >span {
+                    min-width: 1em;
+                    text-align: center;
+                    align-self: center;
+                }
+            }
+        }
+    }
 
-.ringtone .captions>span>a:hover {
-    color: red;
-}
+    .captions {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: start;
+        max-width: calc(100% - 6em);
 
-.ringtone .captions .tags,
-.ringtone .captions .numbers {
-    margin-top: 6px;
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 0.3em;
-    align-items: center;
-}
+        * {
+            text-wrap: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
 
-.ringtone .captions .numbers {
-    justify-content: end;
-}
+        span {
+            &.name {
+                margin-bottom: 0.2em;
 
-.ringtone .captions .tags svg {
-    fill: color-mix(in srgb, var(--txt-color) 70%, transparent);
-    width: 5px;
-    height: 5px;
-}
+                img {
+                    padding-top: 1px;
+                    cursor: pointer;
+                }
+            }
+        }
 
-.ringtone .captions .numbers svg {
-    fill: var(--txt-color);
-    width: 5px;
-    height: 5px;
-}
+        >span {
+            &:has(a) {
+                color: color-mix(in srgb, var(--txt-color) 70%, transparent);
+                font-size: 0.9em;
+            }
 
-.ringtone .captions .tags span {
-    color: color-mix(in srgb, var(--txt-color) 70%, transparent);
-    font-size: 0.75em;
-}
+            >a {
+                text-decoration: underline;
+                text-underline-offset: 0.2em;
+                color: inherit;
+                transition: 0.1s;
 
-.ringtone .captions .tags span:first-of-type {
-    overflow: visible;
+                &:hover {
+                    color: red;
+                }
+            }
+        }
+
+        .tags {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 0.3em;
+            align-items: center;
+        }
+
+        .tags {
+            span {
+                color: color-mix(in srgb, var(--txt-color) 70%, transparent);
+                font-size: 0.75em;
+
+                &:first-of-type {
+                    overflow: visible;
+                }
+            }
+
+            svg {
+                fill: color-mix(in srgb, var(--txt-color) 70%, transparent);
+                width: 5px;
+                height: 5px;
+            }
+        }
+    }
 }
 
 .ringtone form.captions {
@@ -196,92 +238,39 @@
     width: 20px;
 }
 
-.ringtone .icons {
-    display: flex;
-    justify-content: right;
-    gap: 0.2em;
-    position: relative;
-    right: -5px;
-}
-
-.ringtone .icons>* {
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-}
-
-.ringtone .icons>div {
-    flex-direction: column;
-    margin-top: 1px;
-    width: 28px;
-}
-
-.ringtone .icons>div>a {
-    position: relative;
-    height: 50%;
-    width: 100%;
-}
-
-.ringtone .icons>div>a>img {
-    padding: 0 6px;
-}
-
-.ringtone .icons>div>a:last-of-type>img {
-    margin-top: -2px;
-}
-
-.ringtone .icons a img {
-    position: absolute;
-    width: 100%;
-    padding: 10%;
-}
-
-.ringtone .icons a img:last-of-type {
-    opacity: 0;
-    transition: opacity 0.1s;
-}
-
-.ringtone .icons a:hover img:last-of-type {
-    opacity: 1;
-}
-
 #pages {
     display: flex;
     padding: 0.6em 0;
     justify-content: space-between;
-}
 
-#pages>span {
-    text-align: center;
-}
+    >span {
+        text-align: center;
+    }
 
-#pages>button {
-    color: white;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    text-align: left;
-    font-family: "Ntype";
-    font-size: 1em;
-    flex-basis: 5em;
-    transition: color 0.1s;
-}
+    >button {
+        color: white;
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        text-align: left;
+        font-family: "Ntype";
+        font-size: 1em;
+        flex-basis: 5em;
+        transition: color 0.1s;
 
-#pages>button:hover {
-    color: red;
-}
+        &:hover {
+            color: red;
+        }
 
-#pages>button:disabled {
-    color: rgba(255, 255, 255, 0.4);
-    cursor: not-allowed;
-}
+        &:disabled {
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+        }
 
-#pages>button:last-child {
-    text-align: right;
+        &:last-child {
+            text-align: right;
+        }
+    }
 }
 
 #unauthorized-message {
