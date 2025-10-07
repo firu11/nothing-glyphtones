@@ -9,8 +9,7 @@ templ Detail(data database.RingtoneModel, loggedInUserID int) {
 	<html lang="en">
 		@components.Head("detail.css")
 		<body>
-			//logged in
-			@components.Header(true)
+			@components.Header(loggedInUserID != 0)
 			<main>
 				@components.Preview()
 				// <div id="info">
