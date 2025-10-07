@@ -37,22 +37,35 @@ main {
     }
 }
 
-#browse-other {
-    grid-area: btn;
-    align-self: center;
-    padding: 0.5em 1em;
-    background-color: black;
-    border: 1px solid black;
-    border-radius: var(--base-border-radius);
-    color: var(--txt-color);
-    transition: border .1s;
-    text-decoration: none;
+#buttons {
+    display: flex;
+    gap: 1em;
 
-    &:hover {
-        outline: none;
-        border: 1px solid red;
+    #browse-other,
+    button.share-btn {
+        grid-area: btn;
+        align-self: center;
+        padding: 0.5em 1em;
+        background-color: black;
+        border: 1px solid black;
+        border-radius: var(--base-border-radius);
+        color: var(--txt-color);
+        transition: border .1s;
+        text-decoration: none;
+
+        font-size: 1em;
+        font-weight: normal;
+        font-family: "NType";
+        cursor: pointer;
+
+        &:hover {
+            outline: none;
+            border: 1px solid red;
+        }
     }
 }
+
+
 
 #aditional-info {
     grid-area: info;

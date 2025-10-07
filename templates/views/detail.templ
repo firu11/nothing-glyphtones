@@ -14,16 +14,20 @@ templ Detail(data database.RingtoneModel, loggedInUserID int) {
 				@components.Preview()
      			@components.Ringtone(data, 0, loggedInUserID == data.AuthorID, true)
      			@aditionalInfo(data.Downloads, components.Categories[data.Category+1])
-     			@browseOtherButton()
+                @buttons()
 			</main>
 			@components.Footer()
 		</body>
 		<script src="/static/scripts/ringtone.js" type="module"></script>
+		<script src="/static/scripts/share-link.js" type="module"></script>
 	</html>
 }
 
-templ browseOtherButton() {
-    <a href="/" id="browse-other">Browse other</a>
+templ buttons() {
+    <div id="buttons">
+        <button type="button" class="share-btn">Share</button>
+        <a href="/" id="browse-other">Browse other</a>
+    </div>
 }
 
 templ aditionalInfo(numOfDownloads int, category string) {
