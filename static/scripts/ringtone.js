@@ -6,8 +6,10 @@ const imagesRed = ["/static/icons/play-red.svg", "/static/icons/pause-red.svg", 
 let allWaveSurfers = []
 let listOfRingtones = []
 let all = []
+const singleRingtonePreview = window.location.pathname.includes("/g/")
 
 function muteAllExcept(index) {
+    if (allWaveSurfers.length === 1) return
     const imgElements = listOfRingtones.querySelectorAll(".audio button img.white")
     const imgRedElements = listOfRingtones.querySelectorAll(".audio button img.red")
     for (let i = 0; i < allWaveSurfers.length; i++) {
@@ -21,13 +23,15 @@ function muteAllExcept(index) {
 
 function click(e) {
     if (e.target.tagName == "BUTTON" && e.target.firstChild.tagName == "IMG") {
-        const i = parseInt(e.target.parentElement.parentElement.getAttribute("data-i"))
+        const ringtoneDiv = e.target.parentElement.parentElement
+        const i = parseInt(ringtoneDiv.getAttribute("data-i"))
 
         if (e.target.firstChild.getAttribute("src") == images[2]) return
 
         if (allWaveSurfers[i].isPlaying()) {
             allWaveSurfers[i].pause()
-            window.nowPlaying.phoneModel = null
+            if (!singleRingtonePreview)
+                window.nowPlaying.phoneModel = null
             window.nowPlaying.player = null
             window.nowPlaying.isPlaying = false
             e.target.querySelector(".white").src = images[0]
@@ -36,13 +40,9 @@ function click(e) {
             muteAllExcept(i)
             allWaveSurfers[i].play()
             window.nowPlaying.player = allWaveSurfers[i]
-            let phones = e.target.parentElement.parentElement.getAttribute("data-phone").split(",")
-            if (phones.length == 1 && phones[0] == "(1)") { // 15 zone (1)
-                window.nowPlaying.phoneModel = "(1)_15"
-            } else window.nowPlaying.phoneModel = phones[0]
-            //console.log(window.nowPlaying.phoneModel)
+            setPhoneModel(ringtoneDiv)
 
-            const glyphs = e.target.parentElement.parentElement.getAttribute("data-glyphs")
+            const glyphs = ringtoneDiv.getAttribute("data-glyphs")
             let resultCSV = ""
             try {
                 const compressedData = atob(glyphs)
@@ -81,6 +81,8 @@ function main(e) {
     all = document.querySelectorAll(".ringtone")
     allWaveSurfers = []
 
+    window.nowPlaying = {}
+
     for (let i = 0; i < all.length; i++) {
         const id = all[i].getAttribute("data-id")
 
@@ -108,15 +110,27 @@ function main(e) {
             all[i].querySelector(".audio button img.red").src = imagesRed[0]
             window.nowPlaying.CSV = ""
             window.nowPlaying.isPlaying = false
-            window.nowPlaying.phoneModel = null
+            if (!singleRingtonePreview)
+                window.nowPlaying.phoneModel = null
             window.nowPlaying.player = null
         })
 
         allWaveSurfers.push(wavesurfer)
     }
 
-    listOfRingtones.addEventListener("click", click)
-    window.nowPlaying = {}
+    if (listOfRingtones === null) {
+        all[0].addEventListener("click", click)
+        setPhoneModel(all[0])
+    } else {
+        listOfRingtones.addEventListener("click", click)
+    }
+}
+
+function setPhoneModel(ringtoneDiv) {
+    const phones = ringtoneDiv.getAttribute("data-phone").split(",")
+    if (phones.length == 1 && phones[0] == "(1)") { // 15 zone (1)
+        window.nowPlaying.phoneModel = "(1)_15"
+    } else window.nowPlaying.phoneModel = phones[0]
 }
 
 main()

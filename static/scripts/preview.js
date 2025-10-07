@@ -7,17 +7,15 @@ preview.childNodes.forEach(el => {
 
 let activePhone = null
 const phone = window.innerWidth < 900
+const singleRingtonePreview = window.location.pathname.includes("/g/")
 
-function showFrame() {
+function showFrame(rowIndex = 0) {
     if (!window.nowPlaying.CSV) return
-    const time = window.nowPlaying.player.media.currentTime
-    const rowIndex = Math.ceil(time * 60)
 
     let glyphRow = window.nowPlaying.CSV[rowIndex]
     if (!glyphRow || glyphRow.length == 0) {
         const len = window.nowPlaying.CSV[0].length
-        glyphRow = []
-        for (let i = 0; i < len; ++i) glyphRow.push("0") // all zeros
+        glyphRow = new Array(len).fill("0") // all zeros
     }
 
     const model = window.nowPlaying.phoneModel
@@ -63,7 +61,9 @@ function update() {
 
     if (window.nowPlaying.isPlaying) {
         // console.log(window.nowPlaying.CSV)
-        showFrame()
+        const time = window.nowPlaying.player.media.currentTime
+        const rowIndex = Math.ceil(time * 60)
+        showFrame(rowIndex)
     }
     if (activePhone !== window.nowPlaying.phoneModel) {
         activePhone = window.nowPlaying.phoneModel
