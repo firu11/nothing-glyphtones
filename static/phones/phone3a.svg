@@ -1,46 +1,46 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="182" height="182" viewBox="0 0 182 182" id="(3a)">
     <defs>
         <linearGradient id="gradient-0-19" x1="15%" y1="100%" x2="85%" y2="0%">
-            <stop id="grad-0" offset="0" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-1" offset="0.0526" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-2" offset="0.1053" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-3" offset="0.1579" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-4" offset="0.2105" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-5" offset="0.2632" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-6" offset="0.3158" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-7" offset="0.3684" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-8" offset="0.421" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-9" offset="0.4737" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-10" offset="0.5263" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-11" offset="0.5789" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-12" offset="0.6316" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-13" offset="0.6842" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-14" offset="0.7368" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-15" offset="0.7895" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-16" offset="0.8421" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-17" offset="0.8947" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-18" offset="0.9474" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-19" offset="1" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-0" offset="0" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-1" offset="0.0526" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-2" offset="0.1053" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-3" offset="0.1579" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-4" offset="0.2105" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-5" offset="0.2632" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-6" offset="0.3158" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-7" offset="0.3684" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-8" offset="0.421" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-9" offset="0.4737" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-10" offset="0.5263" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-11" offset="0.5789" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-12" offset="0.6316" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-13" offset="0.6842" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-14" offset="0.7368" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-15" offset="0.7895" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-16" offset="0.8421" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-17" offset="0.8947" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-18" offset="0.9474" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-19" offset="1" stop-color="white" stop-opacity="0.1"></stop>
         </linearGradient>
         <linearGradient id="gradient-20-30" x1="55%" y1="0%" x2="50%" y2="100%">
-            <stop id="grad-20" offset="0" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-21" offset="0.1" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-22" offset="0.2" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-23" offset="0.3" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-24" offset="0.4" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-25" offset="0.5" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-26" offset="0.6" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-27" offset="0.7" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-28" offset="0.8" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-29" offset="0.9" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-30" offset="1" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-20" offset="0" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-21" offset="0.1" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-22" offset="0.2" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-23" offset="0.3" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-24" offset="0.4" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-25" offset="0.5" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-26" offset="0.6" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-27" offset="0.7" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-28" offset="0.8" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-29" offset="0.9" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-30" offset="1" stop-color="white" stop-opacity="0.1"></stop>
         </linearGradient>
         <linearGradient id="gradient-31-35" x1="80%" y1="100%" x2="15%" y2="0%">
-            <stop id="grad-31" offset="0" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-32" offset="0.25" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-33" offset="0.5" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-34" offset="0.75" stop-color="white" stop-opacity="1"></stop>
-            <stop id="grad-35" offset="1" stop-color="white" stop-opacity="1"></stop>
+            <stop id="grad-31" offset="0" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-32" offset="0.25" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-33" offset="0.5" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-34" offset="0.75" stop-color="white" stop-opacity="0.1"></stop>
+            <stop id="grad-35" offset="1" stop-color="white" stop-opacity="0.1"></stop>
         </linearGradient>
     </defs>
     <g transform="translate(-2, 7) scale(1.03)">
