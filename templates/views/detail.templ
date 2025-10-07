@@ -4,7 +4,7 @@ import "glyphtones/templates/components"
 import "glyphtones/database"
 import "fmt"
 
-templ Detail(data database.RingtoneModel) {
+templ Detail(data database.RingtoneModel, loggedInUserID int) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@components.Head("detail.css")
@@ -14,7 +14,7 @@ templ Detail(data database.RingtoneModel) {
 			<main>
 				@components.Preview()
 				// <div id="info">
-         			@components.Ringtone(data, 0, false)
+         			@components.Ringtone(data, 0, loggedInUserID == data.AuthorID)
          			@aditionalInfo(data.Downloads, components.Categories[data.Category+1])
          			@browseOtherButton()
 				// </div>

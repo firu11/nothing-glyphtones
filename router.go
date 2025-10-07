@@ -481,7 +481,7 @@ func detailRingtone(c echo.Context) error {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
-	return Render(c, views.Detail(ringtone))
+	return Render(c, views.Detail(ringtone, userID))
 }
 
 func vote(c echo.Context) error {
