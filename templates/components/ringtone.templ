@@ -17,7 +17,7 @@ templ Ringtone(data database.RingtoneModel, index int, ownedByLoggedInAuthor boo
 		</div>
 		<div class="container">
 			@Captions(data, ownedByLoggedInAuthor)
-			@Captions2(data, ownedByLoggedInAuthor)
+			@Actions(data, ownedByLoggedInAuthor)
 		</div>
 	</div>
 }
@@ -79,59 +79,63 @@ templ Captions(ringtone database.RingtoneModel, ownedByLoggedInAuthor bool) {
 	</div>
 }
 
-templ Captions2(ringtone database.RingtoneModel, ownedByLoggedInAuthor bool) {
-	<div class="captions">
-		<div class="icons">
+templ Actions(ringtone database.RingtoneModel, ownedByLoggedInAuthor bool) {
+	<div class="actions">
+		<div class="first-line">
 			<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%s.ogg", ringtone.DisplayID)) } title="Download" download={ fmt.Sprintf("%s - Phone %s.ogg", ringtone.Name, strings.Join(ringtone.PhoneNames, ", ")) } rel="nofollow">
 				<img src="/static/icons/download.svg" hx-post={ fmt.Sprintf("/download/%s", ringtone.DisplayID) } hx-swap="none"/>
 				<img src="/static/icons/download-red.svg" hx-post={ fmt.Sprintf("/download/%s", ringtone.DisplayID) } hx-swap="none"/>
 			</a>
+			<a href={ templ.SafeURL(fmt.Sprintf("/g/%s", ringtone.DisplayID)) } title="Share">
+				<img src="/static/icons/share.svg"/>
+				<img src="/static/icons/share-red.svg"/>
+			</a>
+		</div>
+		<div class="second-line">
 			if ownedByLoggedInAuthor {
 				<a hx-post={ fmt.Sprintf("/delete-ringtone/%s", ringtone.DisplayID) } hx-swap="none" hx-confirm={ fmt.Sprintf("Do you really want to delete \"%s\" glyphtone?", ringtone.Name) } title="Delete">
 					<img src="/static/icons/remove.svg"/>
 					<img src="/static/icons/remove-red.svg"/>
 				</a>
 			} else {
-				@Votes(ringtone.DisplayID, ringtone.LoggedInAuthorsVote)
+				@Votes(ringtone.DisplayID, ringtone.Votes, ringtone.LoggedInAuthorsVote)
 			}
-		</div>
-		<div class="numbers">
-			<span>{ fmt.Sprintf("%d", ringtone.Votes) }</span>
-			@CircleDivider()
-			<img src="/static/icons/download-mini.svg" title={ fmt.Sprintf("%d downloads", ringtone.Downloads) } width="14"/>
 		</div>
 	</div>
 }
 
-templ Votes(displayID string, vote int) {
-	<div id="vote">
-		if vote == 1 {
-			<a hx-post={ fmt.Sprintf("/vote/%s?vote=0", displayID) } hx-target="closest .captions" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/up-selected.svg" height="17" width="34"/>
-				<img src="/static/icons/up-red.svg" height="17" width="34"/>
+templ Votes(displayID string, votes int, userVote int) {
+	<div class="vote">
+		if userVote == 1 {
+			<a hx-post={ fmt.Sprintf("/vote/%s?vote=0", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
+				<img src="/static/icons/up-selected.svg" height="34" width="34"/>
+				<img src="/static/icons/up-red.svg" height="34" width="34"/>
 			</a>
-			<a hx-post={ fmt.Sprintf("/vote/%s?vote=2", displayID) } hx-target="closest .captions" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/down.svg" height="17" width="34"/>
-				<img src="/static/icons/down-red.svg" height="17" width="34"/>
+			<span>{ fmt.Sprintf("%d", votes) }</span>
+			<a hx-post={ fmt.Sprintf("/vote/%s?vote=2", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
+				<img src="/static/icons/down.svg" height="34" width="34"/>
+				<img src="/static/icons/down-red.svg" height="34" width="34"/>
 			</a>
-		} else if vote == 2 {
-			<a hx-post={ fmt.Sprintf("/vote/%s?vote=1", displayID) } hx-target="closest .captions" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/up.svg" height="17" width="34"/>
-				<img src="/static/icons/up-red.svg" height="17" width="34"/>
+		} else if userVote == 2 {
+			<a hx-post={ fmt.Sprintf("/vote/%s?vote=1", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
+				<img src="/static/icons/up.svg" height="34" width="34"/>
+				<img src="/static/icons/up-red.svg" height="34" width="34"/>
 			</a>
-			<a hx-post={ fmt.Sprintf("/vote/%s?vote=0", displayID) } hx-target="closest .captions" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/down-selected.svg" height="17" width="34"/>
-				<img src="/static/icons/down-red.svg" height="17" width="34"/>
+			<span>{ fmt.Sprintf("%d", votes) }</span>
+			<a hx-post={ fmt.Sprintf("/vote/%s?vote=0", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
+				<img src="/static/icons/down-selected.svg" height="34" width="34"/>
+				<img src="/static/icons/down-red.svg" height="34" width="34"/>
 			</a>
 		} else {
-			// vote = 0
-			<a hx-post={ fmt.Sprintf("/vote/%s?vote=1", displayID) } hx-target="closest .captions" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/up.svg" height="17" width="34"/>
-				<img src="/static/icons/up-red.svg" height="17" width="34"/>
+			// userVote = 0
+			<a hx-post={ fmt.Sprintf("/vote/%s?vote=1", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
+				<img src="/static/icons/up.svg" height="34" width="34"/>
+				<img src="/static/icons/up-red.svg" height="34" width="34"/>
 			</a>
-			<a hx-post={ fmt.Sprintf("/vote/%s?vote=2", displayID) } hx-target="closest .captions" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/down.svg" height="17" width="34"/>
-				<img src="/static/icons/down-red.svg" height="17" width="34"/>
+			<span>{ fmt.Sprintf("%d", votes) }</span>
+			<a hx-post={ fmt.Sprintf("/vote/%s?vote=2", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
+				<img src="/static/icons/down.svg" height="34" width="34"/>
+				<img src="/static/icons/down-red.svg" height="34" width="34"/>
 			</a>
 		}
 	</div>
