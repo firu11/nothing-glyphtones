@@ -11,15 +11,15 @@ templ Search(value string) {
 	<input name="s" type="text" placeholder="Search..." value={ value }/>
 }
 
-var categories []string = []string{"Ringtones", "Notifications", "Other"}
-var sortOptions []string = []string{"Popular", "Most downloads", "Latest", "Name (A-Z)"}
+var Categories []string = []string{"Ringtones", "Notifications", "Other"}
+var SortOptions []string = []string{"Popular", "Most downloads", "Latest", "Name (A-Z)"}
 
 templ CategorySelectUpload(value string) {
 	<select name="c" required>
 		if value == "" {
 			<option value="" selected disabled hidden>Choose category</option>
 		}
-		for i, v := range categories {
+		for i, v := range Categories {
 			<option
 				value={ fmt.Sprintf("%d", i+1) }
 				if strconv.Itoa(i + 1) == value {
@@ -38,7 +38,7 @@ templ CategorySelect(value int) {
 				selected
 			}
 		>All categories</option>
-		for i, v := range categories {
+		for i, v := range Categories {
 			<option
 				value={ fmt.Sprintf("%d", i+1) }
 				if i + 1 == value {
@@ -133,7 +133,7 @@ templ EffectsCheckboxes(effects []database.EffectModel) {
 
 templ Sort(value string) {
 	<select name="o">
-		for _, v := range sortOptions {
+		for _, v := range SortOptions {
 			<option
 				value={ strings.ToLower(v) }
 				if strings.ToLower(v) == value {
