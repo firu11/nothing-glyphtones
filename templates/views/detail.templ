@@ -12,7 +12,7 @@ templ Detail(data database.RingtoneModel, loggedInUserID int) {
 			@components.Header(loggedInUserID != 0)
 			<main>
 				@components.Preview()
-     			@components.Ringtone(data, 0, loggedInUserID == data.AuthorID)
+     			@components.Ringtone(data, 0, loggedInUserID == data.AuthorID, true)
      			@aditionalInfo(data.Downloads, components.Categories[data.Category+1])
      			@browseOtherButton()
 			</main>
