@@ -7,14 +7,14 @@ import "fmt"
 templ Detail(data database.RingtoneModel, loggedInUserID int) {
 	<!DOCTYPE html>
 	<html lang="en">
-		@components.Head("detail.css")
+		@components.Head("detail.css", fmt.Sprintf("%s by %s", data.Name, data.AuthorName), "Check out my Glyphtone!")
 		<body>
 			@components.Header(loggedInUserID != 0)
 			<main>
 				@components.Preview()
-     			@components.Ringtone(data, 0, loggedInUserID == data.AuthorID, true)
-     			@aditionalInfo(data.Downloads, components.Categories[data.Category+1])
-                @buttons()
+				@components.Ringtone(data, 0, loggedInUserID == data.AuthorID, true)
+				@aditionalInfo(data.Downloads, components.Categories[data.Category+1])
+				@buttons()
 			</main>
 			@components.Footer()
 		</body>
@@ -24,28 +24,28 @@ templ Detail(data database.RingtoneModel, loggedInUserID int) {
 }
 
 templ buttons() {
-    <div id="buttons">
-        <button type="button" class="share-btn">Share</button>
-        <a href="/" id="browse-other">Browse other</a>
-    </div>
+	<div id="buttons">
+		<button type="button" class="share-btn">Share</button>
+		<a href="/" id="browse-other">Browse other</a>
+	</div>
 }
 
 templ aditionalInfo(numOfDownloads int, category string) {
-    <table id="aditional-info">
-        <thead>
-            <tr>
-                <th colspan="2">Aditional info</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Number of downloads:</td>
-                <td>{ fmt.Sprint(numOfDownloads)} </td>
-            </tr>
-            <tr>
-                <td>Category:</td>
-                <td>{ category }</td>
-            </tr>
-        </tbody>
-    </table>
+	<table id="aditional-info">
+		<thead>
+			<tr>
+				<th colspan="2">Aditional info</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Number of downloads:</td>
+				<td>{ fmt.Sprint(numOfDownloads) } </td>
+			</tr>
+			<tr>
+				<td>Category:</td>
+				<td>{ category }</td>
+			</tr>
+		</tbody>
+	</table>
 }

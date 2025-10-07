@@ -2,12 +2,20 @@ package components
 
 import "fmt"
 
-templ Head(stylesheetName string) {
+templ Head(stylesheetName, title, description string) {
 	<head>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Glyphtones</title>
-		<meta name="description" content="A simple audio-sharing platform for Nothing Phone users."/>
+		if (title == "") {
+			<title>Glyphtones</title>
+		} else {
+			<title>{ title }</title>
+		}
+		if (description == "") {
+			<meta name="description" content="A simple audio-sharing platform for Nothing Phone users."/>
+		} else {
+			<meta name="description" content={ description }/>
+		}
 		<meta name="keywords" content="nothing, phone, tech, glyph, ringtone, interface, composer"/>
 		<meta name="author" content="Firu (mail: firu-glyphtones@proton.me, github: firu11)"/>
 		<link rel="stylesheet" href="/static/styles/main.css"/>

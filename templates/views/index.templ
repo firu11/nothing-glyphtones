@@ -21,7 +21,7 @@ type IndexData struct {
 templ Index(data IndexData) {
 	<!DOCTYPE html>
 	<html lang="en">
-		@components.Head("index.css")
+		@components.Head("index.css", "", "")
 		<body>
 			@components.Header(data.LoggedInAuthorID != 0)
 			<main>

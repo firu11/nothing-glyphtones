@@ -9,7 +9,7 @@ import (
 templ Upload(loggedIn bool, categoryValue string, effects []database.EffectModel, effectsValue string, nameValue string, err error) {
 	<!DOCTYPE html>
 	<html lang="en">
-		@components.Head("upload.css")
+		@components.Head("upload.css", "Glyphtones - Upload", "")
 		<body>
 			@components.Header(loggedIn)
 			<main>

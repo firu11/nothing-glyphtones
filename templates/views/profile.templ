@@ -1,6 +1,7 @@
 package views
 
 import (
+	"fmt"
 	"glyphtones/database"
 	"glyphtones/templates/components"
 )
@@ -16,7 +17,7 @@ type ProfileData struct {
 templ Profile(data ProfileData) {
 	<!DOCTYPE html>
 	<html lang="en">
-		@components.Head("profile.css")
+		@components.Head("profile.css", fmt.Sprintf("%s on Glyphtones", data.Author.Name), "")
 		<body>
 			@components.Header(data.LoggedInAuthorId != 0)
 			<main>
