@@ -99,7 +99,7 @@ main {
             grid-template-columns: calc(135px * 1.1) 35em;
         }
 
-        &:has(.square) {
+        &:has(.square, .circle) {
             grid-template-columns: 220px 35em;
         }
 
