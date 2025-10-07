@@ -1,0 +1,50 @@
+package views
+
+import "glyphtones/templates/components"
+import "glyphtones/database"
+import "fmt"
+
+templ Detail(data database.RingtoneModel) {
+	<!DOCTYPE html>
+	<html lang="en">
+		@components.Head("detail.css")
+		<body>
+			//logged in
+			@components.Header(true)
+			<main>
+				@components.Preview()
+				// <div id="info">
+         			@components.Ringtone(data, 0, false)
+         			@aditionalInfo(data.Downloads, components.Categories[data.Category+1])
+         			@browseOtherButton()
+				// </div>
+			</main>
+			@components.Footer()
+		</body>
+		<script src="/static/scripts/ringtone.js" type="module"></script>
+	</html>
+}
+
+templ browseOtherButton() {
+    <a href="/" id="browse-other">Browse other</a>
+}
+
+templ aditionalInfo(numOfDownloads int, category string) {
+    <table id="aditional-info">
+        <thead>
+            <tr>
+                <th colspan="2">Aditional info</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Number of downloads:</td>
+                <td>{ fmt.Sprint(numOfDownloads)} </td>
+            </tr>
+            <tr>
+                <td>Category:</td>
+                <td>{ category }</td>
+            </tr>
+        </tbody>
+    </table>
+}
