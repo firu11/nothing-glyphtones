@@ -15,6 +15,9 @@ Data is stored in a [PostgreSQL](https://www.postgresql.org/) database.
 ## Production
 The website is running in Germany, Falkenstein on [Hetzner](https://www.hetzner.com/cloud/) VPS.
 
+## Database Schema
+![ER Diagram](database/diagram.svg)
+
 ---
 
 ## How to run (for developers)
