@@ -10,7 +10,7 @@ Glyphtones is a platform, where people can either share their custom composition
 
 ## Tech stack
 The app uses [Go](https://go.dev/) + [echo](https://echo.labstack.com/) + [templ](https://github.com/a-h/templ) to render HTML pages for the client (and a little bit of [htmx](https://htmx.org/)).
-This approach is called "server-side rendering". Data are stored in a [PostgreSQL](https://www.postgresql.org/) database.
+Data is stored in a [PostgreSQL](https://www.postgresql.org/) database.
 
 ## Production
 The website is running in Germany, Falkenstein on [Hetzner](https://www.hetzner.com/cloud/) VPS.
