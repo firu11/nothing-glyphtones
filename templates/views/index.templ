@@ -26,7 +26,7 @@ templ Index(data IndexData) {
 			@components.Header(data.LoggedInAuthorID != 0)
 			<main>
 				<div id="left-column-container">
-					<form id="filters" hx-get="/" hx-trigger="submit, input from:input[type='checkbox'] delay:10ms, input from:input[name='s'] delay:550ms, change from:select delay:10ms" hx-target="#list-of-ringtones" hx-swap="outerHTML" hx-push-url="true">
+					<form id="filters" hx-get="/" hx-trigger="submit, input from:input[type='checkbox'] delay:10ms, input from:input[name='s'] delay:550ms, change from:select delay:10ms, clear-search" hx-target="#list-of-ringtones" hx-swap="outerHTML" hx-push-url="true">
 						@components.Search(data.SearchQuery)
 						@components.CategorySelect(data.Category)
 						@components.Sort(data.SortBy)

@@ -28,6 +28,7 @@ function updateHiddenInputs() {
 function enableAndDisableSort() {
     if (search.value === "") {
         sort.disabled = false
+        htmx.trigger(search, "clear-search")
     } else {
         sort.disabled = true
     }
