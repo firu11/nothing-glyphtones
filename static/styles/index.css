@@ -47,10 +47,12 @@
     opacity: 0;
     cursor: pointer;
     transition: 0.2s;
+    pointer-events: none;
 }
 
 #filters input[type="search"]:focus::-webkit-search-cancel-button {
     opacity: 1;
+    pointer-events: inherit;
 }
 
 #filters input[type="search"]::-webkit-search-cancel-button:hover {
