@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"glyphtones/database"
-	"glyphtones/utils"
 	"log"
 	"os"
 	"regexp"
+
+	"glyphtones/database"
+	"glyphtones/utils"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -18,8 +19,10 @@ var googleOauthConfig *oauth2.Config
 
 const maxRingtoneSize = 3 * 1024 * 1024 // 2MB
 
-var ringtoneNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{2,30}$")
-var authorNameR regexp.Regexp = *regexp.MustCompile("^[a-z0-9_-]{3,20}$")
+var (
+	ringtoneNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{2,30}$")
+	authorNameR   regexp.Regexp = *regexp.MustCompile("^[a-z0-9_-]{3,20}$")
+)
 
 var LastSearchCookieName string = "Glyphtones_last_search_options"
 

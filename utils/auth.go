@@ -9,9 +9,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var privateKey []byte = []byte(os.Getenv("TOKEN_KEY"))
-var tokenTimeDuration time.Duration = time.Hour * 24 * 14 // 14 days
-var CookieName string = "GlyphtonesCookie"
+var (
+	privateKey        []byte        = []byte(os.Getenv("TOKEN_KEY"))
+	tokenTimeDuration time.Duration = time.Hour * 24 * 14 // 14 days
+	CookieName        string        = "GlyphtonesCookie"
+)
 
 type data struct {
 	ID int `json:"id"`

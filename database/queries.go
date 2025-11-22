@@ -204,7 +204,6 @@ func CreateAuthor(name string, email string) (int, error) {
 		return 0, err
 	}
 	return authorID, nil
-
 }
 
 func RenameAuthor(id int, newName string) error {

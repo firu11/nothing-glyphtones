@@ -87,10 +87,10 @@ templ Actions(ringtone database.RingtoneModel, ownedByLoggedInAuthor bool, hideE
 				<img src="/static/icons/download-red.svg" hx-post={ fmt.Sprintf("/download/%s", ringtone.DisplayID) } hx-swap="none"/>
 			</a>
 			if !hideEnlargeBtn {
-    			<a href={ templ.SafeURL(fmt.Sprintf("/g/%s", ringtone.DisplayID)) } title="Show in detail">
-    				<img src="/static/icons/resize.svg"/>
-    				<img src="/static/icons/resize-red.svg"/>
-    			</a>
+				<a href={ templ.SafeURL(fmt.Sprintf("/g/%s", ringtone.DisplayID)) } title="Show in detail">
+					<img src="/static/icons/resize.svg"/>
+					<img src="/static/icons/resize-red.svg"/>
+				</a>
 			}
 		</div>
 		<div class="second-line">

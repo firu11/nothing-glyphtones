@@ -1,8 +1,10 @@
 package views
 
-import "glyphtones/templates/components"
-import "glyphtones/database"
-import "fmt"
+import (
+	"fmt"
+	"glyphtones/database"
+	"glyphtones/templates/components"
+)
 
 templ Detail(data database.RingtoneModel, loggedInUserID int) {
 	<!DOCTYPE html>

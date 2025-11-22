@@ -6,10 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"glyphtones/database"
-	"glyphtones/templates/components"
-	"glyphtones/templates/views"
-	"glyphtones/utils"
 	"log"
 	"maps"
 	"math/rand/v2"
@@ -20,6 +16,11 @@ import (
 	"strings"
 	"time"
 
+	"glyphtones/database"
+	"glyphtones/templates/components"
+	"glyphtones/templates/views"
+	"glyphtones/utils"
+
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
@@ -28,7 +29,7 @@ import (
 )
 
 func Render(c echo.Context, cmp templ.Component) error {
-	//c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTML)
+	// c.Response().Header().Set(echo.HeaderContentType, echo.MIMETextHTML)
 	return cmp.Render(c.Request().Context(), c.Response())
 }
 

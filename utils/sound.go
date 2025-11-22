@@ -7,15 +7,18 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"glyphtones/database"
 	"io"
 	"log"
 	"os"
 	"os/exec"
+
+	"glyphtones/database"
 )
 
-var RingtonesDir string = "./sounds"
-var TemporaryDir string = "./tmp"
+var (
+	RingtonesDir string = "./sounds"
+	TemporaryDir string = "./tmp"
+)
 
 func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, string, bool) {
 	var phonesResult []int
