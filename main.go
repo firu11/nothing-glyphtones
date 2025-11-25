@@ -9,7 +9,6 @@ import (
 	"glyphtones/database"
 	"glyphtones/utils"
 
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -27,10 +26,6 @@ var (
 var LastSearchCookieName string = "Glyphtones_last_search_options"
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
-	}
-
 	if _, err := os.Stat(utils.RingtonesDir); os.IsNotExist(err) {
 		err := os.Mkdir(utils.RingtonesDir, os.ModeDir)
 		if err != nil {
