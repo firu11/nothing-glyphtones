@@ -46,12 +46,17 @@ func main() {
 
 	e := echo.New()
 
-	if os.Getenv("PRODUCTION") == "false" {
+	if os.Getenv("PRODUCTION") == "false" || os.Getenv("PRODUCTION") == "" {
 		e.Static("/static", "static")
 		e.Static("/sounds", "sounds")
 	}
 	setupRouter(e)
 
-	port := fmt.Sprintf(":%s", os.Getenv("LISTEN_PORT"))
+	// TODO some env config
+	port, ok := os.LookupEnv("LISTEN_PORT")
+	if !ok {
+		port = "8080"
+	}
+	port = fmt.Sprintf(":%s", port)
 	e.Logger.Fatal(e.Start(port))
 }
