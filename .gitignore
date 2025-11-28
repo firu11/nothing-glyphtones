@@ -1,10 +1,11 @@
+.zed/
+
 tmp/
 sounds/
 
 *_templ.go
 
 glyphtones
-.env
 taskfile.yaml
 .air.toml
 .DS_Store

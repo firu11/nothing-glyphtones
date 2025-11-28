@@ -54,14 +54,16 @@ CREATE INDEX idx_author_name ON author (name);
 
 /* --------------------------------------------------------------------------------------------- */
 INSERT INTO phone (name, cols, cols2)
-    VALUES ('(1)', 5, 15),
+VALUES
+    ('(1)', 5, 15),
     ('(2)', 33, 5),
     ('(2a)', 26, -1),
     ('(3a)', 36, -1),
     ('(3)', 625, -1);
 
 INSERT INTO effect (name)
-    VALUES ('Dan'),
+VALUES
+    ('Dan'),
     ('Brrr'),
     ('606'),
     ('Weevil'),

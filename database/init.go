@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"os"
 
@@ -13,8 +12,7 @@ var DB *sql.DB
 
 func Init() {
 	var err error
-	connStr := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_HOST"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
-	DB, err = sql.Open("postgres", connStr)
+	DB, err = sql.Open("postgres", os.Getenv("DB_CONNECTION_STRING"))
 	if err != nil {
 		log.Fatal("Database connection failed", err)
 	}
