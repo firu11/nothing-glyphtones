@@ -26,17 +26,12 @@ var (
 var LastSearchCookieName string = "Glyphtones_last_search_options"
 
 func main() {
-	if _, err := os.Stat(utils.RingtonesDir); os.IsNotExist(err) {
-		err := os.Mkdir(utils.RingtonesDir, os.ModeDir)
-		if err != nil {
-			log.Fatal(err)
-		}
+	if err := os.MkdirAll(utils.RingtonesDir, 0o755); err != nil {
+		log.Panic(err)
 	}
-	if _, err := os.Stat(utils.TemporaryDir); os.IsNotExist(err) {
-		err := os.Mkdir(utils.TemporaryDir, os.ModeDir)
-		if err != nil {
-			log.Fatal(err)
-		}
+
+	if err := os.MkdirAll(utils.RingtonesDir, 0o755); err != nil {
+		log.Panic(err)
 	}
 
 	googleOauthConfig = &oauth2.Config{
