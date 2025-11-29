@@ -30,7 +30,7 @@ func main() {
 		log.Panic(err)
 	}
 
-	if err := os.MkdirAll(utils.RingtonesDir, 0o755); err != nil {
+	if err := os.MkdirAll(utils.TemporaryDir, 0o755); err != nil {
 		log.Panic(err)
 	}
 
