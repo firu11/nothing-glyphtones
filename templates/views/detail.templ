@@ -15,7 +15,7 @@ templ Detail(data database.RingtoneModel, loggedInUserID int) {
 			<main>
 				@components.Preview()
 				@components.Ringtone(data, 0, loggedInUserID == data.AuthorID, true)
-				@aditionalInfo(data.Downloads, components.Categories[data.Category+1])
+				@aditionalInfo(data.Downloads, components.Categories[data.Category-1])
 				@buttons()
 			</main>
 			@components.Footer()
