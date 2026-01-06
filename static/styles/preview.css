@@ -75,6 +75,10 @@
         touch-action: none;
         border: 1px solid red;
 
+        &.circle {
+            border-radius: 50%;
+        }
+
         svg {
             padding: 6px 6px 3px 6px;
         }
