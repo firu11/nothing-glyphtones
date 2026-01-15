@@ -14,8 +14,11 @@ func Init() {
 	var err error
 	DB, err = sql.Open("postgres", os.Getenv("DB_CONNECTION_STRING"))
 	if err != nil {
-		log.Fatal("Database connection failed", err)
+		log.Fatal("database connection failed", err)
 	}
 
-	log.Printf("Connected to %q", os.Getenv("DB_NAME"))
+	err = DB.Ping()
+	if err != nil {
+		log.Fatal("database unreachable: ", err)
+	}
 }

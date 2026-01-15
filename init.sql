@@ -51,6 +51,10 @@ CREATE INDEX idx_ringtone_display_id ON ringtone (display_id);
 
 CREATE INDEX idx_author_name ON author (name);
 
+CREATE INDEX idx_phone_and_ringtone_ringtone_id ON phone_and_ringtone (ringtone_id);
+
+CREATE INDEX idx_vote_user_ringtone ON vote (author_id, ringtone_id);
+
 
 /* --------------------------------------------------------------------------------------------- */
 INSERT INTO phone (name, cols, cols2)
