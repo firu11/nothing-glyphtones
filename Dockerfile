@@ -17,8 +17,8 @@ RUN GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags "-s -w" -o glyphtone
 
 # --- Stage 2: Runtime ---
 FROM docker.io/library/alpine:3.22
-# Install ffmpeg and certificates
-RUN apk add --no-cache ffmpeg ca-certificates
+# Install ffmpeg, certificates and curl for healthcheck
+RUN apk add --no-cache ffmpeg ca-certificates curl
 WORKDIR /app
 # Copy binary and static from builder
 COPY --from=builder /app/glyphtones ./glyphtones

@@ -36,6 +36,8 @@ func Render(c echo.Context, cmp templ.Component) error {
 func setupRouter(e *echo.Echo) {
 	e.RouteNotFound("/*", notFound)
 
+	e.GET("/health", healthcheck)
+
 	e.GET("/", index)
 	e.GET("/me", me)
 	e.GET("/author/:name", author)
@@ -54,6 +56,15 @@ func setupRouter(e *echo.Echo) {
 	e.GET("/google-login", googleLogin)
 	e.GET("/google-callback", googleCallback)
 	e.POST("/logout", logout)
+}
+
+func healthcheck(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 2*time.Second)
+	defer cancel()
+	if database.DB.PingContext(ctx) != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	return c.NoContent(http.StatusOK)
 }
 
 func index(c echo.Context) error {
