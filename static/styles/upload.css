@@ -1,244 +1,244 @@
 .red-heading {
-    color: red;
-    margin-top: 1em;
+  color: red;
+  margin-top: 1em;
 }
 
 form#upload {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 2em;
-    gap: 0.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2em;
+  gap: 0.5em;
 }
 
 form#upload #main-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 30em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 30em;
 }
 
 form#upload #inputs-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  width: 100%;
 }
 
 form#upload #selects-container {
-    display: flex;
-    gap: 0.5em;
+  display: flex;
+  gap: 0.5em;
 }
 
 form#upload select {
-    width: 50%;
-    height: 40px;
-    background-color: black;
-    padding: 0.2em;
-    font-size: 1.05em;
-    border: 1px solid transparent;
-    border-radius: var(--base-border-radius);
-    color: white;
-    font-family: "Ntype", "Cascadia Code", sans-serif;
-    /* fallback for firefox which is broken */
-    transition: border 0.2s;
+  width: 50%;
+  height: 40px;
+  background-color: black;
+  padding: 0.2em;
+  font-size: 1.05em;
+  border: 1px solid transparent;
+  border-radius: var(--base-border-radius);
+  color: white;
+  font-family: 'Ntype', 'Cascadia Code', sans-serif;
+  /* fallback for firefox which is broken */
+  transition: border 0.2s;
 }
 
 /* safari is gay */
 _::-webkit-full-page-media,
 _:future,
 :root form#upload select {
-    -webkit-appearance: none;
+  -webkit-appearance: none;
 }
 
 form#upload option {
-    font-weight: 300;
+  font-weight: 300;
 }
 
-form#upload input[type="text"] {
-    width: 100%;
-    height: 40px;
-    background-color: black;
-    padding: 0.2em;
-    font-size: 1.2em;
-    border: 1px solid transparent;
-    border-radius: var(--base-border-radius);
-    color: white;
-    font-family: "Ntype";
-    text-align: center;
-    transition: border 0.2s;
+form#upload input[type='text'] {
+  width: 100%;
+  height: 40px;
+  background-color: black;
+  padding: 0.2em;
+  font-size: 1.2em;
+  border: 1px solid transparent;
+  border-radius: var(--base-border-radius);
+  color: white;
+  font-family: 'Ntype';
+  text-align: center;
+  transition: border 0.2s;
 }
 
-form#upload button[type="submit"] {
-    height: 40px;
-    background-color: black;
-    padding: 0.2em 0.5em;
-    margin-top: 1em;
-    font-size: 1.2em;
-    border: 1px solid transparent;
-    border-radius: var(--base-border-radius);
-    color: white;
-    font-family: "Ntype";
-    transition: border 0.2s;
-    cursor: pointer;
+form#upload button[type='submit'] {
+  height: 40px;
+  background-color: black;
+  padding: 0.2em 0.5em;
+  margin-top: 1em;
+  font-size: 1.2em;
+  border: 1px solid transparent;
+  border-radius: var(--base-border-radius);
+  color: white;
+  font-family: 'Ntype';
+  transition: border 0.2s;
+  cursor: pointer;
 }
 
-form#upload button[type="submit"]:hover {
-    border: 1px solid red;
+form#upload button[type='submit']:hover {
+  border: 1px solid red;
 }
 
-form#upload button[type="submit"]:disabled {
-    color: rgba(255, 255, 255, 0.5);
-    cursor: not-allowed;
-    border: 1px solid transparent !important;
+form#upload button[type='submit']:disabled {
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  border: 1px solid transparent !important;
 }
 
-form#upload input[type="file"] {
-    display: none;
+form#upload input[type='file'] {
+  display: none;
 }
 
 form#upload select:focus,
 form#upload input:focus {
-    outline: none;
-    border: 1px solid red;
+  outline: none;
+  border: 1px solid red;
 }
 
-form#upload label:has(input[type="file"]) {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+form#upload label:has(input[type='file']) {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.5em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5em;
 
-    border: 1px solid transparent;
-    transition: 0.2s;
+  border: 1px solid transparent;
+  transition: 0.2s;
 }
 
 form#upload #image {
-    position: relative;
-    width: 5em;
-    height: 3em;
-    margin-bottom: 1em;
-    align-self: center;
-    justify-self: center;
+  position: relative;
+  width: 5em;
+  height: 3em;
+  margin-bottom: 1em;
+  align-self: center;
+  justify-self: center;
 }
 
-form#upload label:has(input[type="file"]) #image img:last-of-type {
-    opacity: 0;
-    transition: 0.2s;
+form#upload label:has(input[type='file']) #image img:last-of-type {
+  opacity: 0;
+  transition: 0.2s;
 }
 
-form#upload label:has(input[type="file"]):hover #image img:last-of-type {
-    opacity: 1;
+form#upload label:has(input[type='file']):hover #image img:last-of-type {
+  opacity: 1;
 }
 
 form#upload #file-container {
-    display: flex;
-    gap: 1em;
-    flex-direction: column;
-    background-color: black;
-    width: 100%;
-    height: calc((3em + 0.8em) * 2);
-    padding: 0.8em;
-    margin-bottom: 1.4em;
-    border: 1px solid transparent;
-    transition: 0.2s;
-    border-radius: var(--base-border-radius);
+  display: flex;
+  gap: 1em;
+  flex-direction: column;
+  background-color: black;
+  width: 100%;
+  height: calc((3em + 0.8em) * 2);
+  padding: 0.8em;
+  margin-bottom: 1.4em;
+  border: 1px solid transparent;
+  transition: 0.2s;
+  border-radius: var(--base-border-radius);
 }
 
 form#upload #file-container:hover {
-    border: 1px solid red;
+  border: 1px solid red;
 }
 
 #audio {
-    display: none;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.3em;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.3em;
 }
 
 #audio .wave {
-    width: calc(100% - 48px - 17px);
-    height: 3em;
+  width: calc(100% - 48px - 17px);
+  height: 3em;
 }
 
 #audio button {
-    background-color: transparent;
-    border: none;
-    border-radius: 1000px;
-    width: 48px;
-    height: 48px;
-    aspect-ratio: 1/1;
-    cursor: pointer;
-    position: relative;
+  background-color: transparent;
+  border: none;
+  border-radius: 1000px;
+  width: 48px;
+  height: 48px;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  position: relative;
 }
 
 #audio button img {
-    width: 100%;
-    aspect-ratio: 1/1;
-    user-select: none;
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: opacity 0.1s;
+  width: 100%;
+  aspect-ratio: 1/1;
+  user-select: none;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.1s;
 }
 
 #audio button:hover img.white {
-    opacity: 0;
+  opacity: 0;
 }
 
-form#upload label:has(input[type="file"]) #image img {
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
+form#upload label:has(input[type='file']) #image img {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
-form#upload label:has(input[type="file"]) span {
-    max-width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    vertical-align: middle;
+form#upload label:has(input[type='file']) span {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: middle;
 }
 
-form#upload label:has(input[type="file"]) span>img {
-    position: relative;
-    top: 2px;
+form#upload label:has(input[type='file']) span > img {
+  position: relative;
+  top: 2px;
 }
 
 form#upload #auto-gen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
 }
 
-form#upload #auto-gen>select {
-    width: 6em;
+form#upload #auto-gen > select {
+  width: 6em;
 }
 
 p {
-    margin: 1.1em 0;
-    text-align: center;
-    padding: 0 6%;
+  margin: 1.1em 0;
+  text-align: center;
+  padding: 0 6%;
 }
 
 @media screen and (min-width: 700px) {
-    p {
-        padding: 0 20%;
-    }
+  p {
+    padding: 0 20%;
+  }
 }
 
 @media screen and (min-width: 1000px) {
-    p {
-        padding: 0 30%;
-    }
+  p {
+    padding: 0 30%;
+  }
 }

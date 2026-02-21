@@ -1,234 +1,234 @@
 #author {
-    background-color: var(--menu-bg-color);
-    padding: 1em;
-    margin-top: 2em;
-    border-radius: var(--base-border-radius);
-    display: grid;
-    grid-template-columns: 5em 1fr;
-    grid-template-rows: 1fr 1fr;
-    grid-template-areas:
-        "img name"
-        "img email"
-        "line line"
-        "buttons buttons";
-    gap: 0em 1em;
+  background-color: var(--menu-bg-color);
+  padding: 1em;
+  margin-top: 2em;
+  border-radius: var(--base-border-radius);
+  display: grid;
+  grid-template-columns: 5em 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    'img name'
+    'img email'
+    'line line'
+    'buttons buttons';
+  gap: 0em 1em;
 }
 
 #author .error {
-    font-size: 1em;
-    color: red;
+  font-size: 1em;
+  color: red;
 }
 
 #author:has(form) {
-    display: block;
+  display: block;
 }
 
 #author span#name {
-    grid-area: name;
-    align-self: end;
-    font-size: 1.3em;
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0 1em;
+  grid-area: name;
+  align-self: end;
+  font-size: 1.3em;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 1em;
 }
 
 #author #email {
-    grid-area: email;
-    align-self: start;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0 1em;
+  grid-area: email;
+  align-self: start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 1em;
 }
 
 #author img {
-    width: 100%;
-    padding: 5%;
-    margin-left: 1.2em;
-    grid-area: img;
+  width: 100%;
+  padding: 5%;
+  margin-left: 1.2em;
+  grid-area: img;
 }
 
 #author hr {
-    grid-area: line;
-    justify-self: center;
-    width: 100%;
-    margin-top: 1em;
-    border-width: 1px;
-    border-style: solid;
+  grid-area: line;
+  justify-self: center;
+  width: 100%;
+  margin-top: 1em;
+  border-width: 1px;
+  border-style: solid;
 }
 
 #author div {
-    grid-area: buttons;
-    display: flex;
-    justify-content: space-around;
-    padding: 1em 10% 0 10%;
+  grid-area: buttons;
+  display: flex;
+  justify-content: space-around;
+  padding: 1em 10% 0 10%;
 }
 
-#author div>a {
-    cursor: pointer;
-    transition: color 0.1s;
+#author div > a {
+  cursor: pointer;
+  transition: color 0.1s;
 }
 
-#author div>a:hover {
-    color: red;
+#author div > a:hover {
+  color: red;
 }
 
 #author form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.2em;
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2em;
+  justify-content: center;
 }
 
 #author form input {
-    width: 100%;
-    background-color: black;
-    outline: none;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--txt-color);
-    font-size: 1.4em;
-    height: 40px;
-    text-align: center;
-    border-radius: var(--base-border-radius);
-    transition: border 0.1s;
+  width: 100%;
+  background-color: black;
+  outline: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--txt-color);
+  font-size: 1.4em;
+  height: 40px;
+  text-align: center;
+  border-radius: var(--base-border-radius);
+  transition: border 0.1s;
 }
 
 #author form input:focus {
-    border: 1px solid red;
+  border: 1px solid red;
 }
 
 #author form button,
 #author form a {
-    background-color: transparent;
-    color: var(--txt-color);
-    font-size: 1em;
-    border: none;
-    text-decoration: none;
-    cursor: pointer;
-    transition: color 0.1s;
+  background-color: transparent;
+  color: var(--txt-color);
+  font-size: 1em;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.1s;
 }
 
 #author form button:hover,
 #author form a:hover {
-    color: red;
+  color: red;
 }
 
 #glyph-preview {
-    position: sticky !important;
-    top: 335px !important;
-    grid-area: preview;
-    align-self: auto !important;
-    margin-top: 1em;
-    justify-self: end;
+  position: sticky !important;
+  top: 335px !important;
+  grid-area: preview;
+  align-self: auto !important;
+  margin-top: 1em;
+  justify-self: end;
 }
 
 @media screen and (min-width: 700px) {
-    main:has(#author) {
-        display: grid;
-        column-gap: 2em;
-        grid-template-columns: 350px auto;
-        grid-template-rows: 89px calc(320px - 89px) auto;
-        grid-template-areas:
-            "author heading"
-            "author ringtones"
-            "preview ringtones";
-    }
+  main:has(#author) {
+    display: grid;
+    column-gap: 2em;
+    grid-template-columns: 350px auto;
+    grid-template-rows: 89px calc(320px - 89px) auto;
+    grid-template-areas:
+      'author heading'
+      'author ringtones'
+      'preview ringtones';
+  }
 
-    #author {
-        grid-area: author;
-        align-self: start;
-        width: 100%;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto auto auto;
-        grid-template-areas:
-            "img img"
-            "name name"
-            "email email"
-            "line line"
-            "buttons buttons";
-        position: sticky;
-        top: 2em;
-    }
+  #author {
+    grid-area: author;
+    align-self: start;
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      'img img'
+      'name name'
+      'email email'
+      'line line'
+      'buttons buttons';
+    position: sticky;
+    top: 2em;
+  }
 
-    #author img {
-        margin: 0;
-        width: 50%;
-        padding-top: 10px;
-        justify-self: center;
-    }
+  #author img {
+    margin: 0;
+    width: 50%;
+    padding-top: 10px;
+    justify-self: center;
+  }
 
-    main:not(:has(#author)) {
-        display: grid;
-        column-gap: 2em;
-        grid-template-columns: 135px 1fr;
-        grid-template-areas:
-            "preview heading"
-            "preview ringtones";
-        padding: 0 20%;
-    }
+  main:not(:has(#author)) {
+    display: grid;
+    column-gap: 2em;
+    grid-template-columns: 135px 1fr;
+    grid-template-areas:
+      'preview heading'
+      'preview ringtones';
+    padding: 0 20%;
+  }
 
-    main:not(:has(#author)) #glyph-preview {
-        position: sticky !important;
-        top: 1em !important;
-    }
+  main:not(:has(#author)) #glyph-preview {
+    position: sticky !important;
+    top: 1em !important;
+  }
 
-    main>h1 {
-        grid-area: heading;
-    }
+  main > h1 {
+    grid-area: heading;
+  }
 
-    #list-of-ringtones {
-        grid-area: ringtones;
-        margin-bottom: 6em;
-    }
+  #list-of-ringtones {
+    grid-area: ringtones;
+    margin-bottom: 6em;
+  }
 }
 
 @media screen and (max-width: 900px) {
-    main:has(#author) {
-        grid-template-columns: 250px auto;
-        grid-template-rows: 89px calc(250px + 32px - 95px) auto;
-    }
+  main:has(#author) {
+    grid-template-columns: 250px auto;
+    grid-template-rows: 89px calc(250px + 32px - 95px) auto;
+  }
 
-    main:has(#author) #glyph-preview {
-        position: sticky !important;
-        top: 290px !important;
-        right: 0 !important;
-        border: none;
-        cursor: default;
-    }
+  main:has(#author) #glyph-preview {
+    position: sticky !important;
+    top: 290px !important;
+    right: 0 !important;
+    border: none;
+    cursor: default;
+  }
 
-    main:not(:has(#author)) {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "heading"
-            "ringtones";
-        padding: 0 20%;
-    }
+  main:not(:has(#author)) {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'heading'
+      'ringtones';
+    padding: 0 20%;
+  }
 
-    main:not(:has(#author)) #glyph-preview {
-        position: fixed !important;
-        top: 115px !important;
-        right: calc(20% - 10px);
-    }
+  main:not(:has(#author)) #glyph-preview {
+    position: fixed !important;
+    top: 115px !important;
+    right: calc(20% - 10px);
+  }
 
-    h1 {
-        font-size: 1.6em;
-    }
+  h1 {
+    font-size: 1.6em;
+  }
 }
 
 @media screen and (max-width: 699px) {
-    main:has(#author) #glyph-preview {
-        position: fixed !important;
-        cursor: move;
-        border: 1px solid red;
-        right: 15px !important;
-        top: 310px !important;
-    }
+  main:has(#author) #glyph-preview {
+    position: fixed !important;
+    cursor: move;
+    border: 1px solid red;
+    right: 15px !important;
+    top: 310px !important;
+  }
 
-    main:not(:has(#author)) #glyph-preview {
-        right: 15px !important;
-    }
+  main:not(:has(#author)) #glyph-preview {
+    right: 15px !important;
+  }
 
-    main {
-        padding: 0 1.6em 9em 1.6em !important;
-    }
+  main {
+    padding: 0 1.6em 9em 1.6em !important;
+  }
 }
