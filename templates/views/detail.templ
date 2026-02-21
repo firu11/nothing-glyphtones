@@ -9,7 +9,7 @@ import (
 templ Detail(data database.RingtoneModel, loggedInUserID int) {
 	<!DOCTYPE html>
 	<html lang="en">
-		@components.Head("detail.css", fmt.Sprintf("%s by %s", data.Name, data.AuthorName), "Check out my Glyphtone!")
+		@components.Head("detail.css", fmt.Sprintf("%s by %s", data.Name, data.AuthorName), fmt.Sprintf("Check out %s by %s", data.Name, data.AuthorName))
 		<body>
 			@components.Header(loggedInUserID != 0)
 			<main>

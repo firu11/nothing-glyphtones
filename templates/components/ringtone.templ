@@ -10,8 +10,8 @@ templ Ringtone(data database.RingtoneModel, index int, ownedByLoggedInAuthor boo
 	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ data.DisplayID } data-phone={ strings.Join([]string(data.PhoneNames), ",") } data-glyphs={ data.Glyphs.String }>
 		<div class="audio">
 			<button type="button">
-				<img class="red" src="/static/icons/loading.svg"/>
-				<img class="white" src="/static/icons/loading.svg"/>
+				<img class="red" src="/static/icons/loading.svg" alt="loading"/>
+				<img class="white" src="/static/icons/loading.svg" alt="loading"/>
 			</button>
 			<div class="wave"></div>
 		</div>
@@ -47,7 +47,7 @@ templ Rename(ringtone database.RingtoneModel, err error) {
 		<div>
 			<input type="text" value={ ringtone.Name } name="name" autofocus/>
 			<button type="submit">
-				<img src="/static/icons/ok.svg" width="15"/>
+				<img src="/static/icons/ok.svg" width="15" alt="submit icon"/>
 			</button>
 		</div>
 		if err != nil {
@@ -63,7 +63,7 @@ templ Captions(ringtone database.RingtoneModel, ownedByLoggedInAuthor bool) {
 		<span class="name">
 			{ ringtone.Name }
 			if ownedByLoggedInAuthor {
-				<img src="/static/icons/edit.svg" hx-get={ fmt.Sprintf("/rename/%s", ringtone.DisplayID) } hx-target="closest .captions" hx-swap="outerHTML" height="15" width="15"/>
+				<img src="/static/icons/edit.svg" hx-get={ fmt.Sprintf("/rename/%s", ringtone.DisplayID) } hx-target="closest .captions" hx-swap="outerHTML" height="15" width="15" alt="edit icon"/>
 			}
 		</span>
 		<span>by <a href={ templ.SafeURL(fmt.Sprintf("/author/%s", ringtone.AuthorName)) }>{ ringtone.AuthorName }</a></span>
@@ -83,21 +83,21 @@ templ Actions(ringtone database.RingtoneModel, ownedByLoggedInAuthor bool, hideE
 	<div class="actions">
 		<div class="first-line">
 			<a href={ templ.SafeURL(fmt.Sprintf("/sounds/%s.ogg", ringtone.DisplayID)) } title="Download" download={ fmt.Sprintf("%s - Phone %s.ogg", ringtone.Name, strings.Join(ringtone.PhoneNames, ", ")) } rel="nofollow">
-				<img src="/static/icons/download.svg" hx-post={ fmt.Sprintf("/download/%s", ringtone.DisplayID) } hx-swap="none"/>
-				<img src="/static/icons/download-red.svg" hx-post={ fmt.Sprintf("/download/%s", ringtone.DisplayID) } hx-swap="none"/>
+				<img src="/static/icons/download.svg" hx-post={ fmt.Sprintf("/download/%s", ringtone.DisplayID) } hx-swap="none" alt="download"/>
+				<img src="/static/icons/download-red.svg" hx-post={ fmt.Sprintf("/download/%s", ringtone.DisplayID) } hx-swap="none" alt="download"/>
 			</a>
 			if !hideEnlargeBtn {
 				<a href={ templ.SafeURL(fmt.Sprintf("/g/%s", ringtone.DisplayID)) } title="Show in detail">
-					<img src="/static/icons/resize.svg"/>
-					<img src="/static/icons/resize-red.svg"/>
+					<img src="/static/icons/resize.svg" alt="resize"/>
+					<img src="/static/icons/resize-red.svg" alt="resize red"/>
 				</a>
 			}
 		</div>
 		<div class="second-line">
 			if ownedByLoggedInAuthor {
 				<a hx-post={ fmt.Sprintf("/delete-ringtone/%s", ringtone.DisplayID) } hx-swap="none" hx-confirm={ fmt.Sprintf("Do you really want to delete \"%s\" glyphtone?", ringtone.Name) } title="Delete">
-					<img src="/static/icons/remove.svg"/>
-					<img src="/static/icons/remove-red.svg"/>
+					<img src="/static/icons/remove.svg" alt="remove"/>
+					<img src="/static/icons/remove-red.svg" alt="remove red"/>
 				</a>
 			} else {
 				@Votes(ringtone.DisplayID, ringtone.Votes, ringtone.LoggedInAuthorsVote)
@@ -110,34 +110,34 @@ templ Votes(displayID string, votes int, userVote int) {
 	<div class="vote">
 		if userVote == 1 {
 			<a hx-post={ fmt.Sprintf("/vote/%s?vote=0", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/up-selected.svg" height="34" width="34"/>
-				<img src="/static/icons/up-red.svg" height="34" width="34"/>
+				<img src="/static/icons/up-selected.svg" height="34" width="34" alt="upvote"/>
+				<img src="/static/icons/up-red.svg" height="34" width="34" alt="upvote"/>
 			</a>
 			<span>{ fmt.Sprintf("%d", votes) }</span>
 			<a hx-post={ fmt.Sprintf("/vote/%s?vote=2", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/down.svg" height="34" width="34"/>
-				<img src="/static/icons/down-red.svg" height="34" width="34"/>
+				<img src="/static/icons/down.svg" height="34" width="34" alt="downvote"/>
+				<img src="/static/icons/down-red.svg" height="34" width="34" alt="downvote"/>
 			</a>
 		} else if userVote == 2 {
 			<a hx-post={ fmt.Sprintf("/vote/%s?vote=1", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/up.svg" height="34" width="34"/>
-				<img src="/static/icons/up-red.svg" height="34" width="34"/>
+				<img src="/static/icons/up.svg" height="34" width="34" alt="upvote"/>
+				<img src="/static/icons/up-red.svg" height="34" width="34" alt="upvote"/>
 			</a>
 			<span>{ fmt.Sprintf("%d", votes) }</span>
 			<a hx-post={ fmt.Sprintf("/vote/%s?vote=0", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/down-selected.svg" height="34" width="34"/>
-				<img src="/static/icons/down-red.svg" height="34" width="34"/>
+				<img src="/static/icons/down-selected.svg" height="34" width="34" alt="downvote"/>
+				<img src="/static/icons/down-red.svg" height="34" width="34" alt="downvote"/>
 			</a>
 		} else {
 			// userVote = 0
 			<a hx-post={ fmt.Sprintf("/vote/%s?vote=1", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Upvote / Like" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/up.svg" height="34" width="34"/>
-				<img src="/static/icons/up-red.svg" height="34" width="34"/>
+				<img src="/static/icons/up.svg" height="34" width="34" alt="upvote"/>
+				<img src="/static/icons/up-red.svg" height="34" width="34" alt="upvote"/>
 			</a>
 			<span>{ fmt.Sprintf("%d", votes) }</span>
 			<a hx-post={ fmt.Sprintf("/vote/%s?vote=2", displayID) } hx-target="closest .vote" hx-swap="outerHTML" title="Downvote / Dislike" hx-on::responseError="if(event.detail.xhr.status === 401) alert('Unauthorized! Please log in.');">
-				<img src="/static/icons/down.svg" height="34" width="34"/>
-				<img src="/static/icons/down-red.svg" height="34" width="34"/>
+				<img src="/static/icons/down.svg" height="34" width="34" alt="downvote"/>
+				<img src="/static/icons/down-red.svg" height="34" width="34" alt="downvote"/>
 			</a>
 		}
 	</div>

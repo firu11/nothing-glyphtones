@@ -7,7 +7,7 @@ templ Head(stylesheetName, title, description string) {
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		if (title == "") {
-			<title>Glyphtones</title>
+			<title>Glyphtones - Nothing phone ringtones</title>
 		} else {
 			<title>{ title }</title>
 		}
@@ -23,8 +23,8 @@ templ Head(stylesheetName, title, description string) {
 			<link rel="stylesheet" href={ fmt.Sprintf("/static/styles/%s", stylesheetName) }/>
 		}
 		<script src="/static/scripts/htmx.min.js"></script>
-		<meta name="google-site-verification" content="1ydvf9Gm0D2YSvnwdpJgPgSc0QpXNRz1pdAgqgjwNFM"/>
 		<script defer src="https://umami.firu.dev/important" data-website-id="224287ce-8423-433d-bc0c-2270e3c5ddfa"></script>
+		<meta name="google-site-verification" content="1ydvf9Gm0D2YSvnwdpJgPgSc0QpXNRz1pdAgqgjwNFM"/>
 		/* -------------------------------------- FAVICONS --------------------------------------- */
 		<link rel="icon" type="image/png" href="/static/favicons/favicon-96x96.png" sizes="96x96"/>
 		<link rel="icon" type="image/svg+xml" href="/static/favicons/favicon.svg"/>
@@ -48,7 +48,7 @@ templ Header(loggedIn bool) {
 				<a id="login" href="/google-login">Log In</a>
 			} else {
 				<a href="/me">
-					<img src="/static/icons/user.svg"/>
+					<img src="/static/icons/user.svg" alt="user icon"/>
 				</a>
 			}
 		</nav>
@@ -60,10 +60,10 @@ templ Footer() {
 		<span>GLYPHTONES does not claim ownership of the audio files users provide. Uploading any audio files that are subject to copyright or are not meant to be a Nothing Phone ringtone is prohibited. See <a href="/dmca">DMCA</a>.</span>
 		<div id="footer-links">
 			<a href="https://github.com/firu11/nothing-glyphtones" rel="external">
-				<img src="/static/icons/github.svg"/>
+				<img src="/static/icons/github.svg" alt="github logo"/>
 			</a>
 			<a id="buy-me-a-coffee" href="https://www.buymeacoffee.com/firu" target="_blank">
-				<img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=firu&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff"/>
+				<img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=firu&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" alt="support button"/>
 			</a>
 		</div>
 	</footer>
