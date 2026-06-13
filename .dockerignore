@@ -1,0 +1,10 @@
+.git
+.gitignore
+
+# editor files
+.DS_Store
+.vscode/
+.zed/
+
+# large files
+sounds/

@@ -1,5 +1,5 @@
 # --- Stage 1: Build ---
-FROM docker.io/library/golang:1.25-alpine AS builder
+FROM docker.io/library/golang:alpine AS builder
 # Install git and build tools (go needs that to get some dependencies)
 RUN apk add --no-cache git ca-certificates
 # Set working directory
@@ -16,7 +16,7 @@ RUN templ generate
 RUN GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags "-s -w" -o glyphtones .
 
 # --- Stage 2: Runtime ---
-FROM docker.io/library/alpine:3.22
+FROM docker.io/library/alpine:latest
 # Install ffmpeg, certificates and curl for healthcheck
 RUN apk add --no-cache ffmpeg ca-certificates curl
 WORKDIR /app
