@@ -35,6 +35,8 @@
     width: 58.12px;
     height: 160px;
 
+    border-radius: 14px;
+
     svg {
       padding: 12px !important;
     }
