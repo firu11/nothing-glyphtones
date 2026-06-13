@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="182" height="182" viewBox="0 0 182 182" id="(4a)">
-  <g transform="translate(81, 21)">
-    <rect id="0" x="0" y="0"   width="20" height="20" fill="white" fill-opacity="0.1"/>
-    <rect id="1" x="0" y="20"  width="20" height="20" fill="white" fill-opacity="0.1"/>
-    <rect id="2" x="0" y="40"  width="20" height="20" fill="white" fill-opacity="0.1"/>
-    <rect id="3" x="0" y="60"  width="20" height="20" fill="white" fill-opacity="0.1"/>
-    <rect id="4" x="0" y="80" width="20" height="20" fill="white" fill-opacity="0.1"/>
-    <rect id="5" x="0" y="100" width="20" height="20" fill="white" fill-opacity="0.1"/>
-    <rect id="6" x="0" y="120" width="20" height="20" fill="red"   fill-opacity="0.1"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="141" viewBox="0 0 21 141" id="(4a)">
+  <g>
+    <rect id="0" x="0" y="0"   width="20" height="20" fill="white" opacity="0.1"/>
+    <rect id="1" x="0" y="20"  width="20" height="20" fill="white" opacity="0.1"/>
+    <rect id="2" x="0" y="40"  width="20" height="20" fill="white" opacity="0.1"/>
+    <rect id="3" x="0" y="60"  width="20" height="20" fill="white" opacity="0.1"/>
+    <rect id="4" x="0" y="80" width="20" height="20" fill="white" opacity="0.1"/>
+    <rect id="5" x="0" y="100" width="20" height="20" fill="white" opacity="0.1"/>
+    <rect id="6" x="0" y="120" width="20" height="20" fill="red" opacity="0.1"/>
   </g>
 </svg>
