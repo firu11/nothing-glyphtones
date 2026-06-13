@@ -31,6 +31,15 @@
     }
   }
 
+  &.vertical-rect {
+    width: 58.12px;
+    height: 160px;
+
+    svg {
+      padding: 12px !important;
+    }
+  }
+
   svg {
     position: absolute;
     top: 0;
@@ -60,6 +69,17 @@
       width: 220px;
       height: 220px;
       border-radius: 50%;
+    }
+
+    &.vertical-rect {
+      width: 80px;
+      height: 220px;
+
+      border-radius: 14px;
+
+      svg {
+        padding: 20px;
+      }
     }
   }
 }
