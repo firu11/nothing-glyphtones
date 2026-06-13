@@ -49,12 +49,19 @@ function showPhoneModel() {
   if (['(1)', '(1)_15', '(2)'].includes(activePhone)) {
     preview.classList.replace('square', 'rectangle');
     preview.classList.replace('circle', 'rectangle');
+    preview.classList.replace('vertical-rect', 'rectangle');
   } else if (['(2a)', '(3a)'].includes(activePhone)) {
     preview.classList.replace('rectangle', 'square');
     preview.classList.replace('circle', 'square');
+    preview.classList.replace('vertical-rect', 'square');
   } else if (['(3)'].includes(activePhone)) {
     preview.classList.replace('rectangle', 'circle');
     preview.classList.replace('square', 'circle');
+    preview.classList.replace('vertical-rect', 'circle');
+  } else if (['(4a)'].includes(activePhone)) {
+    preview.classList.replace('rectangle', 'vertical-rect');
+    preview.classList.replace('square', 'vertical-rect');
+    preview.classList.replace('circle', 'vertical-rect');
   }
 }
 

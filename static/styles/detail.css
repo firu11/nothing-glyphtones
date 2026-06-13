@@ -99,6 +99,10 @@ main {
       grid-template-columns: 220px 35em;
     }
 
+    &:has(.vertical-rect) {
+      grid-template-columns: 58px 35em;
+    }
+
     #glyph-preview {
       justify-self: end;
       align-self: start;
