@@ -49,7 +49,7 @@ function showPhoneModel() {
   if (['(1)', '(1)_15', '(2)'].includes(activePhone)) {
     preview.classList.replace('square', 'rectangle');
     preview.classList.replace('circle', 'rectangle');
-  } else if (['(2a)', '(3a)'].includes(activePhone)) {
+  } else if (['(2a)', '(3a)', '(4a)'].includes(activePhone)) {
     preview.classList.replace('rectangle', 'square');
     preview.classList.replace('circle', 'square');
   } else if (['(3)'].includes(activePhone)) {
