@@ -54,7 +54,7 @@ function showPhoneModel() {
     preview.classList.replace('rectangle', 'square');
     preview.classList.replace('circle', 'square');
     preview.classList.replace('vertical-rect', 'square');
-  } else if (['(3)'].includes(activePhone)) {
+  } else if (['(3)', '(4a) Pro'].includes(activePhone)) {
     preview.classList.replace('rectangle', 'circle');
     preview.classList.replace('square', 'circle');
     preview.classList.replace('vertical-rect', 'circle');
