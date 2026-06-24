@@ -472,7 +472,7 @@ func deleteRingtone(c echo.Context) error {
 
 	err := database.DeleteRingtone(displayID, authorID)
 	if err != nil {
-		return Render(c, views.OtherError(http.StatusBadRequest, err))
+		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
 	utils.DeleteFile(fmt.Sprintf("%s/%s.ogg", utils.RingtonesDir, displayID))
@@ -490,7 +490,11 @@ func detailRingtone(c echo.Context) error {
 
 	ringtone, err := database.GetRingtone(displayID, userID)
 	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+		if errors.Is(err, sql.ErrNoRows) {
+			return notFound(c)
+		}
+		fmt.Println(err)
+		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
 	return Render(c, views.Detail(ringtone, userID))
