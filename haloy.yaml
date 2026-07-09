@@ -1,0 +1,30 @@
+name: "glyphtones"
+server: "haloy-api.firu.dev"
+
+health_check_path: "/health"
+
+domains:
+  - domain: "glyphtones.firu.dev"
+
+secret_providers:
+  sops:
+    production:
+      file: "./secrets.yaml"
+
+env:
+  - name: "DB_CONNECTION_STRING"
+    from:
+      secret: "sops:production:db_conn_string"
+  - name: "GOOGLE_REDIRECT_URL"
+    value: "https://glyphtones.firu.dev/google-callback"
+  - name: "GOOGLE_ID"
+    from:
+      secret: "sops:production:google_id"
+  - name: "GOOGLE_SECRET"
+    from:
+      secret: "sops:production:google_secret"
+  - name: "PRODUCTION"
+    value: "true"
+  - name: "TOKEN_KEY"
+    from:
+      secret: "sops:production:token_key"

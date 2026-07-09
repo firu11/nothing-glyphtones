@@ -8,3 +8,8 @@
 
 # large files
 sounds/
+
+# deployment config
+haloy.yaml
+.sops.yaml
+secrets.yaml

@@ -13,7 +13,7 @@ RUN go install github.com/a-h/templ/cmd/templ@latest
 COPY . .
 # Build the Go binary for Linux ARM
 RUN templ generate
-RUN GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -ldflags "-s -w" -o glyphtones .
+RUN CGO_ENABLED=0 go build -ldflags "-s -w" -o glyphtones .
 
 # --- Stage 2: Runtime ---
 FROM docker.io/library/alpine:latest
