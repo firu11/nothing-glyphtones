@@ -16,11 +16,11 @@ import (
 	"glyphtones/templates/views"
 	"glyphtones/utils"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 	"github.com/lib/pq"
 )
 
-func (s *Server) renameView(c echo.Context) error {
+func (s *Server) renameView(c *echo.Context) error {
 	authorID := s.auth.GetIDFromCookie(c)
 	if authorID == 0 {
 		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("You're not logged in.")))
@@ -38,7 +38,7 @@ func (s *Server) renameView(c echo.Context) error {
 	return Render(c, components.Rename(ringtone, nil))
 }
 
-func (s *Server) rename(c echo.Context) error {
+func (s *Server) rename(c *echo.Context) error {
 	authorID := s.auth.GetIDFromCookie(c)
 	if authorID == 0 {
 		return errors.New("You're not logged in.")
@@ -72,7 +72,7 @@ func (s *Server) rename(c echo.Context) error {
 	return Render(c, components.Captions(ringtone, true))
 }
 
-func (s *Server) uploadView(c echo.Context) error {
+func (s *Server) uploadView(c *echo.Context) error {
 	effects, err := database.GetEffects()
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
@@ -82,7 +82,7 @@ func (s *Server) uploadView(c echo.Context) error {
 	return Render(c, views.Upload(err == nil, c.FormValue("c"), effects, "", "", nil))
 }
 
-func (s *Server) uploadFile(c echo.Context) error {
+func (s *Server) uploadFile(c *echo.Context) error {
 	authorID := s.auth.GetIDFromCookie(c)
 	if authorID == 0 {
 		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in authors can upload Glyphtones")))
@@ -182,7 +182,7 @@ func (s *Server) uploadFile(c echo.Context) error {
 	return Render(c, views.SuccessfulUpload())
 }
 
-func (s *Server) downloadRingtone(c echo.Context) error {
+func (s *Server) downloadRingtone(c *echo.Context) error {
 	displayID := c.Param("displayID")
 	if len(displayID) <= 5 {
 		return c.NoContent(http.StatusBadRequest)
@@ -205,7 +205,7 @@ func (s *Server) downloadRingtone(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-func (s *Server) deleteRingtone(c echo.Context) error {
+func (s *Server) deleteRingtone(c *echo.Context) error {
 	displayID := c.Param("displayID")
 	if len(displayID) <= 5 {
 		return c.NoContent(http.StatusBadRequest)
@@ -226,7 +226,7 @@ func (s *Server) deleteRingtone(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-func (s *Server) detailRingtone(c echo.Context) error {
+func (s *Server) detailRingtone(c *echo.Context) error {
 	displayID := c.Param("displayID")
 	if len(displayID) <= 5 {
 		return c.NoContent(http.StatusBadRequest)
@@ -245,7 +245,7 @@ func (s *Server) detailRingtone(c echo.Context) error {
 	return Render(c, views.Detail(ringtone, userID))
 }
 
-func (s *Server) vote(c echo.Context) error {
+func (s *Server) vote(c *echo.Context) error {
 	displayID := c.Param("displayID")
 	if len(displayID) <= 5 {
 		return c.NoContent(http.StatusBadRequest)

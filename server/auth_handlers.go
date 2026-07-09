@@ -14,17 +14,17 @@ import (
 	"glyphtones/templates/components"
 	"glyphtones/templates/views"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 	"golang.org/x/oauth2"
 	godiacritics "gopkg.in/Regis24GmbH/go-diacritics.v2"
 )
 
-func (s *Server) googleLogin(c echo.Context) error {
+func (s *Server) googleLogin(c *echo.Context) error {
 	url := s.googleOauthConfig.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
-func (s *Server) googleCallback(c echo.Context) error {
+func (s *Server) googleCallback(c *echo.Context) error {
 	code := c.QueryParam("code")
 	if code == "" {
 		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("Bad request")))
@@ -75,7 +75,7 @@ func (s *Server) googleCallback(c echo.Context) error {
 	return c.Redirect(http.StatusTemporaryRedirect, "/me")
 }
 
-func (s *Server) logout(c echo.Context) error {
+func (s *Server) logout(c *echo.Context) error {
 	s.auth.RemoveAuthCookie(c)
 	c.Response().Header().Set("HX-Redirect", "/")
 	return Render(c, components.Header(false))

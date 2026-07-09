@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 const CookieName = "GlyphtonesCookie"
@@ -70,7 +70,7 @@ func (a *Auth) validateToken(tokenString string) (bool, int, error) {
 	return token.Valid, data.ID, err
 }
 
-func (a *Auth) WriteAuthCookie(c echo.Context, id int) error {
+func (a *Auth) WriteAuthCookie(c *echo.Context, id int) error {
 	jwt, err := a.generateToken(id)
 	if err != nil {
 		return err
@@ -89,7 +89,7 @@ func (a *Auth) WriteAuthCookie(c echo.Context, id int) error {
 	return nil
 }
 
-func (a *Auth) GetIDFromCookie(c echo.Context) int {
+func (a *Auth) GetIDFromCookie(c *echo.Context) int {
 	cookie, err := c.Cookie(CookieName)
 	if err != nil {
 		return 0
@@ -102,7 +102,7 @@ func (a *Auth) GetIDFromCookie(c echo.Context) int {
 	return id
 }
 
-func (a *Auth) RemoveAuthCookie(c echo.Context) {
+func (a *Auth) RemoveAuthCookie(c *echo.Context) {
 	cookie := http.Cookie{
 		Name:     CookieName,
 		Value:    "",

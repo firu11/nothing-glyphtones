@@ -1,13 +1,15 @@
 package server
 
 import (
+	"log"
 	"regexp"
 
 	"glyphtones/config"
 	"glyphtones/utils"
 
 	"github.com/a-h/templ"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v5/middleware"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -42,18 +44,32 @@ func NewServer(cfg config.Config, auth *utils.Auth) *Server {
 	}
 }
 
-func (s *Server) NewEcho() *echo.Echo {
+func (s *Server) NewEcho() (*echo.Echo, error) {
 	e := echo.New()
+	e.Use(middleware.Gzip())
+	e.Use(dynamicNoCacheMiddleware)
 
-	if !s.cfg.Production {
-		e.Static("/static", "static")
-		e.Static("/sounds", "sounds")
+	staticDir, err := ResolveDir("static")
+	if err != nil {
+		if s.cfg.Production {
+			return nil, err
+		}
+		log.Println(err)
 	}
 
+	soundsDir, err := ResolveDir(utils.RingtonesDir)
+	if err != nil {
+		if s.cfg.Production {
+			return nil, err
+		}
+		log.Println(err)
+	}
+
+	RegisterStaticRoutes(e, staticDir, soundsDir)
 	s.registerRoutes(e)
-	return e
+	return e, nil
 }
 
-func Render(c echo.Context, cmp templ.Component) error {
+func Render(c *echo.Context, cmp templ.Component) error {
 	return cmp.Render(c.Request().Context(), c.Response())
 }

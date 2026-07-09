@@ -15,10 +15,10 @@ import (
 	"glyphtones/templates/views"
 	"glyphtones/utils"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
-func (s *Server) index(c echo.Context) error {
+func (s *Server) index(c *echo.Context) error {
 	if c.QueryParams().Has("reset-filters") {
 		c.SetCookie(&http.Cookie{
 			Name:   lastSearchCookieName,
@@ -132,7 +132,7 @@ func (s *Server) index(c echo.Context) error {
 	return Render(c, views.Index(data))
 }
 
-func (s *Server) author(c echo.Context) error {
+func (s *Server) author(c *echo.Context) error {
 	authorName := c.Param("name")
 	if authorName == "" {
 		return c.Redirect(http.StatusTemporaryRedirect, "/")
@@ -170,7 +170,7 @@ func (s *Server) author(c echo.Context) error {
 	return Render(c, views.Profile(data))
 }
 
-func (s *Server) me(c echo.Context) error {
+func (s *Server) me(c *echo.Context) error {
 	userID := s.auth.GetIDFromCookie(c)
 	if userID == 0 {
 		return c.Redirect(http.StatusTemporaryRedirect, "/")
@@ -187,22 +187,22 @@ func (s *Server) me(c echo.Context) error {
 	return c.Redirect(http.StatusPermanentRedirect, fmt.Sprintf("/author/%s", user.Name))
 }
 
-func (s *Server) guide(c echo.Context) error {
+func (s *Server) guide(c *echo.Context) error {
 	_, err := c.Cookie(utils.CookieName)
 	return Render(c, views.Guide(err == nil))
 }
 
-func (s *Server) dmca(c echo.Context) error {
+func (s *Server) dmca(c *echo.Context) error {
 	_, err := c.Cookie(utils.CookieName)
 	return Render(c, views.Dmca(err == nil))
 }
 
-func (s *Server) notFound(c echo.Context) error {
+func (s *Server) notFound(c *echo.Context) error {
 	_, err := c.Cookie(utils.CookieName)
 	return Render(c, views.NotFoundView(err == nil))
 }
 
-func (s *Server) authorRenameView(c echo.Context) error {
+func (s *Server) authorRenameView(c *echo.Context) error {
 	authorID := s.auth.GetIDFromCookie(c)
 	if authorID == 0 {
 		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("You're not logged in.")))
@@ -215,7 +215,7 @@ func (s *Server) authorRenameView(c echo.Context) error {
 	return Render(c, components.EditName(author.Name, nil))
 }
 
-func (s *Server) authorRename(c echo.Context) error {
+func (s *Server) authorRename(c *echo.Context) error {
 	authorID := s.auth.GetIDFromCookie(c)
 	if authorID == 0 {
 		return errors.New("You're not logged in.")

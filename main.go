@@ -33,6 +33,11 @@ func main() {
 	auth := utils.NewAuth(cfg.TokenKey, cfg.Production)
 	appServer := server.NewServer(cfg, auth)
 
-	e := appServer.NewEcho()
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", cfg.ListenPort)))
+	e, err := appServer.NewEcho()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := e.Start(fmt.Sprintf(":%s", cfg.ListenPort)); err != nil {
+		log.Fatal(err)
+	}
 }

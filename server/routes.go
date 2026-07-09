@@ -7,7 +7,7 @@ import (
 
 	"glyphtones/database"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 func (s *Server) registerRoutes(e *echo.Echo) {
@@ -35,7 +35,7 @@ func (s *Server) registerRoutes(e *echo.Echo) {
 	e.POST("/logout", s.logout)
 }
 
-func (s *Server) healthcheck(c echo.Context) error {
+func (s *Server) healthcheck(c *echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 2*time.Second)
 	defer cancel()
 
