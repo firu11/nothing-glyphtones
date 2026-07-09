@@ -4,28 +4,36 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
-var (
-	secure     bool   = os.Getenv("PRODUCTION") == "true"
-	privateKey []byte = []byte(os.Getenv("TOKEN_KEY"))
+const CookieName = "GlyphtonesCookie"
 
-	tokenLifetime time.Duration = 14 * 24 * time.Hour // 14 days
-	CookieName                  = "GlyphtonesCookie"
-	issuer                      = "glyphtones.firu.dev"
-)
+const issuer = "glyphtones.firu.dev"
+
+const tokenLifetime = 14 * 24 * time.Hour
+
+type Auth struct {
+	secure     bool
+	privateKey []byte
+}
 
 type data struct {
 	ID int `json:"id"`
 	jwt.RegisteredClaims
 }
 
-func generateToken(id int) (string, error) {
+func NewAuth(tokenKey string, secure bool) *Auth {
+	return &Auth{
+		secure:     secure,
+		privateKey: []byte(tokenKey),
+	}
+}
+
+func (a *Auth) generateToken(id int) (string, error) {
 	claims := data{
 		ID: id,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -37,19 +45,19 @@ func generateToken(id int) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(privateKey)
+	return token.SignedString(a.privateKey)
 }
 
-func validateToken(tokenString string) (bool, int, error) {
+func (a *Auth) validateToken(tokenString string) (bool, int, error) {
 	data := data{}
 	token, err := jwt.ParseWithClaims(tokenString, &data, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
-		return privateKey, nil
+		return a.privateKey, nil
 	},
-		jwt.WithLeeway(10*time.Second), // allow small clock skew
-		jwt.WithIssuedAt(),             // validate iat
+		jwt.WithLeeway(10*time.Second),
+		jwt.WithIssuedAt(),
 		jwt.WithIssuer(issuer),
 		jwt.WithAudience(issuer),
 	)
@@ -62,8 +70,8 @@ func validateToken(tokenString string) (bool, int, error) {
 	return token.Valid, data.ID, err
 }
 
-func WriteAuthCookie(c echo.Context, id int) error {
-	jwt, err := generateToken(id)
+func (a *Auth) WriteAuthCookie(c echo.Context, id int) error {
+	jwt, err := a.generateToken(id)
 	if err != nil {
 		return err
 	}
@@ -73,35 +81,35 @@ func WriteAuthCookie(c echo.Context, id int) error {
 		Value:    jwt,
 		Path:     "/",
 		Expires:  time.Now().Add(tokenLifetime),
-		HttpOnly: true,   // prevents JS access
-		Secure:   secure, // set to false only in local dev (no HTTPS)
+		HttpOnly: true,
+		Secure:   a.secure,
 		SameSite: http.SameSiteLaxMode,
 	}
 	c.SetCookie(&cookie)
 	return nil
 }
 
-func GetIDFromCookie(c echo.Context) int {
+func (a *Auth) GetIDFromCookie(c echo.Context) int {
 	cookie, err := c.Cookie(CookieName)
 	if err != nil {
 		return 0
 	}
-	valid, id, err := validateToken(cookie.Value)
+	valid, id, err := a.validateToken(cookie.Value)
 	if err != nil || !valid {
-		RemoveAuthCookie(c)
+		a.RemoveAuthCookie(c)
 		return 0
 	}
 	return id
 }
 
-func RemoveAuthCookie(c echo.Context) {
+func (a *Auth) RemoveAuthCookie(c echo.Context) {
 	cookie := http.Cookie{
 		Name:     CookieName,
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
-		Secure:   secure,
+		Secure:   a.secure,
 		SameSite: http.SameSiteLaxMode,
 	}
 	c.SetCookie(&cookie)

@@ -6,6 +6,7 @@ require (
 	github.com/a-h/templ v0.3.1020
 	github.com/golang-jwt/jwt/v5 v5.3.1
 	github.com/labstack/echo/v4 v4.15.2
+	github.com/sethvargo/go-envconfig v1.3.0
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 	github.com/zeebo/blake3 v0.2.4
 	gopkg.in/Regis24GmbH/go-diacritics.v2 v2.0.3

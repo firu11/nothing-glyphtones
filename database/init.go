@@ -2,23 +2,22 @@ package database
 
 import (
 	"database/sql"
-	"log"
-	"os"
 
 	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
 
-func Init() {
+func Init(connectionString string) error {
 	var err error
-	DB, err = sql.Open("postgres", os.Getenv("DB_CONNECTION_STRING"))
+	DB, err = sql.Open("postgres", connectionString)
 	if err != nil {
-		log.Fatal("database connection failed", err)
+		return err
 	}
 
-	err = DB.Ping()
-	if err != nil {
-		log.Fatal("database unreachable: ", err)
+	if err = DB.Ping(); err != nil {
+		return err
 	}
+
+	return nil
 }

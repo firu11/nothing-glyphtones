@@ -1,31 +1,23 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
-	"regexp"
 
+	"glyphtones/config"
 	"glyphtones/database"
+	"glyphtones/server"
 	"glyphtones/utils"
-
-	"github.com/labstack/echo/v4"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
 )
-
-var googleOauthConfig *oauth2.Config
-
-const maxRingtoneSize = 3 * 1024 * 1024 // 3MB
-
-var (
-	ringtoneNameR regexp.Regexp = *regexp.MustCompile("^[ -~]{2,30}$")
-	authorNameR   regexp.Regexp = *regexp.MustCompile("^[a-z0-9_-]{3,20}$")
-)
-
-var LastSearchCookieName string = "Glyphtones_last_search_options"
 
 func main() {
+	cfg, err := config.Load(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	if err := os.MkdirAll(utils.RingtonesDir, 0o755); err != nil {
 		log.Panic(err)
 	}
@@ -34,29 +26,13 @@ func main() {
 		log.Panic(err)
 	}
 
-	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  os.Getenv("GOOGLE_REDIRECT_URL"),
-		ClientID:     os.Getenv("GOOGLE_ID"),
-		ClientSecret: os.Getenv("GOOGLE_SECRET"),
-		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"},
-		Endpoint:     google.Endpoint,
+	if err := database.Init(cfg.DBConnectionString); err != nil {
+		log.Fatal("database init failed: ", err)
 	}
 
-	database.Init()
+	auth := utils.NewAuth(cfg.TokenKey, cfg.Production)
+	appServer := server.NewServer(cfg, auth)
 
-	e := echo.New()
-
-	if os.Getenv("PRODUCTION") == "false" || os.Getenv("PRODUCTION") == "" {
-		e.Static("/static", "static")
-		e.Static("/sounds", "sounds")
-	}
-	setupRouter(e)
-
-	// TODO some env config
-	port, ok := os.LookupEnv("LISTEN_PORT")
-	if !ok {
-		port = "8080"
-	}
-	port = fmt.Sprintf(":%s", port)
-	e.Logger.Fatal(e.Start(port))
+	e := appServer.NewEcho()
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", cfg.ListenPort)))
 }
