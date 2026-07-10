@@ -10,7 +10,6 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v5"
-	"github.com/labstack/echo/v5/middleware"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -50,7 +49,6 @@ func NewServer(cfg config.Config, store *database.Store, auth *utils.Auth) *Serv
 
 func (s *Server) NewEcho() (*echo.Echo, error) {
 	e := echo.New()
-	e.Use(middleware.Gzip())
 	e.Use(dynamicNoCacheMiddleware)
 
 	staticDir, err := ResolveDir("static")

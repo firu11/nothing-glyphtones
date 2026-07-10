@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v5/middleware"
 )
 
 func ResolveDir(dir string) (string, error) {
@@ -28,7 +29,7 @@ func ResolveDir(dir string) (string, error) {
 
 func RegisterStaticRoutes(e *echo.Echo, staticDir string, soundsDir string) {
 	if staticDir != "" {
-		e.Static("/static", staticDir, cacheControlMiddleware("max-age=3600"))
+		e.Static("/static", staticDir, middleware.Gzip(), cacheControlMiddleware("max-age=3600"))
 	}
 	if soundsDir != "" {
 		e.Static("/sounds", soundsDir, cacheControlMiddleware("max-age=604800"))
