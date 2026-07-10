@@ -55,3 +55,11 @@ func dynamicNoCacheMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		return next(c)
 	}
 }
+
+func fullPageGzipMiddleware() echo.MiddlewareFunc {
+	return middleware.GzipWithConfig(middleware.GzipConfig{
+		Skipper: func(c *echo.Context) bool {
+			return isHX(c)
+		},
+	})
+}

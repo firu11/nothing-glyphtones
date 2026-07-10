@@ -25,6 +25,11 @@ env:
       secret: sops:production:google_secret
   - name: PRODUCTION
     value: "true"
+  - name: RINGTONES_DIR
+    value: /sounds
   - name: TOKEN_KEY
     from:
       secret: sops:production:token_key
+
+volumes:
+  - /srv/data/glyphtones:/sounds
