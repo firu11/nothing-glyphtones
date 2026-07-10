@@ -2,18 +2,26 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"glyphtones/config"
 	"glyphtones/database"
 	"glyphtones/server"
 	"glyphtones/utils"
+
+	"github.com/labstack/echo/v5"
 )
 
 func main() {
-	ctx := context.Background()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 
 	cfg, err := config.Load(ctx)
 	if err != nil {
@@ -41,7 +49,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := e.Start(fmt.Sprintf(":%s", cfg.ListenPort)); err != nil {
+
+	sc := echo.StartConfig{
+		Address:         fmt.Sprintf(":%s", cfg.ListenPort),
+		GracefulTimeout: 10 * time.Second,
+	}
+	if err := sc.Start(ctx, e); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
 	}
 }
