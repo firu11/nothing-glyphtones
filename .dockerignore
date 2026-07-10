@@ -1,12 +1,13 @@
 .git
 .gitignore
+.gitattributes
 
 # editor files
 .DS_Store
 .vscode/
 .zed/
 
-# large files
+# local ringtone files
 sounds/
 
 # deployment config
