@@ -1,23 +1,38 @@
 package database
 
 import (
+	"context"
 	"database/sql"
+	"fmt"
 
 	_ "github.com/lib/pq"
 )
 
-var DB *sql.DB
+type Store struct {
+	db *sql.DB
+}
 
-func Init(connectionString string) error {
-	var err error
-	DB, err = sql.Open("postgres", connectionString)
+func Open(ctx context.Context, connectionString string) (*Store, error) {
+	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("open database: %w", err)
 	}
 
-	if err = DB.Ping(); err != nil {
-		return err
+	if err := db.PingContext(ctx); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("ping database: %w", err)
 	}
 
-	return nil
+	return &Store{db: db}, nil
+}
+
+func (s *Store) Close() error {
+	if s == nil || s.db == nil {
+		return nil
+	}
+	return s.db.Close()
+}
+
+func (s *Store) PingContext(ctx context.Context) error {
+	return s.db.PingContext(ctx)
 }

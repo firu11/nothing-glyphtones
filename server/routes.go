@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"glyphtones/database"
-
 	"github.com/labstack/echo/v5"
 )
 
@@ -39,7 +37,7 @@ func (s *Server) healthcheck(c *echo.Context) error {
 	ctx, cancel := context.WithTimeout(c.Request().Context(), 2*time.Second)
 	defer cancel()
 
-	if database.DB.PingContext(ctx) != nil {
+	if err := s.store.PingContext(ctx); err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusOK)

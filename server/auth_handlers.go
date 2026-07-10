@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,8 +8,8 @@ import (
 	"math/rand/v2"
 	"net/http"
 	"strings"
+	"time"
 
-	"glyphtones/database"
 	"glyphtones/templates/components"
 	"glyphtones/templates/views"
 
@@ -19,52 +18,72 @@ import (
 	godiacritics "gopkg.in/Regis24GmbH/go-diacritics.v2"
 )
 
+type googleUserInfo struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
 func (s *Server) googleLogin(c *echo.Context) error {
-	url := s.googleOauthConfig.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	state, err := randomHex(16)
+	if err != nil {
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to start login")))
+	}
+
+	c.SetCookie(&http.Cookie{
+		Name:     oauthStateCookieName,
+		Value:    state,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   s.cfg.Production,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(10 * time.Minute),
+	})
+
+	url := s.googleOauthConfig.AuthCodeURL(state, oauth2.AccessTypeOffline)
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
 func (s *Server) googleCallback(c *echo.Context) error {
+	stateCookie, err := c.Cookie(oauthStateCookieName)
+	if err != nil || stateCookie.Value == "" || c.QueryParam("state") != stateCookie.Value {
+		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("Invalid login state")))
+	}
+	s.clearOAuthStateCookie(c)
+
 	code := c.QueryParam("code")
 	if code == "" {
 		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("Bad request")))
 	}
 
-	token, err := s.googleOauthConfig.Exchange(context.Background(), code)
+	ctx := c.Request().Context()
+	token, err := s.googleOauthConfig.Exchange(ctx, code)
 	if err != nil {
-		log.Println(err)
+		log.Printf("google token exchange failed: %v", err)
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to exchange token")))
 	}
 
-	client := s.googleOauthConfig.Client(context.Background(), token)
+	client := s.googleOauthConfig.Client(ctx, token)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to fetch user info")))
 	}
 	defer resp.Body.Close()
 
-	var authorInfo map[string]any
+	var authorInfo googleUserInfo
 	if err := json.NewDecoder(resp.Body).Decode(&authorInfo); err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to decode author info")))
 	}
-
-	name := authorInfo["name"].(string)
-	name = godiacritics.Normalize(name)
-	name = strings.Trim(name, " ")
-	name = strings.ReplaceAll(name, " ", "_")
-	name = strings.ToLower(name)
-	if len(name) > 30 {
-		name = name[0:30]
-	}
-	if !authorNameR.MatchString(name) {
-		name = fmt.Sprintf("author%d", rand.IntN(10000))
+	if authorInfo.Name == "" || authorInfo.Email == "" {
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Google account is missing required profile fields")))
 	}
 
-	authorID, err := database.CreateAuthor(name, authorInfo["email"].(string))
+	name := normalizeAuthorName(authorInfo.Name)
+	authorID, err := s.store.CreateAuthor(ctx, name, authorInfo.Email)
 	if err != nil {
 		if strings.Contains(err.Error(), "unique_name") {
-			authorID, _ = database.CreateAuthor(fmt.Sprintf("%s%d", name, rand.IntN(10000)), authorInfo["email"].(string))
-		} else {
+			authorID, err = s.store.CreateAuthor(ctx, fmt.Sprintf("%s%d", name, rand.IntN(10000)), authorInfo.Email)
+		}
+		if err != nil {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
 	}
@@ -79,4 +98,30 @@ func (s *Server) logout(c *echo.Context) error {
 	s.auth.RemoveAuthCookie(c)
 	c.Response().Header().Set("HX-Redirect", "/")
 	return Render(c, components.Header(false))
+}
+
+func normalizeAuthorName(name string) string {
+	name = godiacritics.Normalize(name)
+	name = strings.TrimSpace(name)
+	name = strings.ReplaceAll(name, " ", "_")
+	name = strings.ToLower(name)
+	if len(name) > 30 {
+		name = name[:30]
+	}
+	if !authorNameR.MatchString(name) {
+		name = fmt.Sprintf("author%d", rand.IntN(10000))
+	}
+	return name
+}
+
+func (s *Server) clearOAuthStateCookie(c *echo.Context) {
+	c.SetCookie(&http.Cookie{
+		Name:     oauthStateCookieName,
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+		Secure:   s.cfg.Production,
+		SameSite: http.SameSiteLaxMode,
+	})
 }

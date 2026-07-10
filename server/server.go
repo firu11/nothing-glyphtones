@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"glyphtones/config"
+	"glyphtones/database"
 	"glyphtones/utils"
 
 	"github.com/a-h/templ"
@@ -17,6 +18,7 @@ import (
 const (
 	maxRingtoneSize      = 3 * 1024 * 1024 // 3MB
 	lastSearchCookieName = "Glyphtones_last_search_options"
+	oauthStateCookieName = "Glyphtones_oauth_state"
 )
 
 var (
@@ -26,14 +28,16 @@ var (
 
 type Server struct {
 	cfg               config.Config
+	store             *database.Store
 	auth              *utils.Auth
 	googleOauthConfig *oauth2.Config
 }
 
-func NewServer(cfg config.Config, auth *utils.Auth) *Server {
+func NewServer(cfg config.Config, store *database.Store, auth *utils.Auth) *Server {
 	return &Server{
-		cfg:  cfg,
-		auth: auth,
+		cfg:   cfg,
+		store: store,
+		auth:  auth,
 		googleOauthConfig: &oauth2.Config{
 			RedirectURL:  cfg.GoogleRedirectURL,
 			ClientID:     cfg.GoogleID,
@@ -54,15 +58,15 @@ func (s *Server) NewEcho() (*echo.Echo, error) {
 		if s.cfg.Production {
 			return nil, err
 		}
-		log.Println(err)
+		log.Printf("resolve static dir: %v", err)
 	}
 
-	soundsDir, err := ResolveDir(utils.RingtonesDir)
+	soundsDir, err := ResolveDir(s.cfg.RingtonesDir)
 	if err != nil {
 		if s.cfg.Production {
 			return nil, err
 		}
-		log.Println(err)
+		log.Printf("resolve sounds dir: %v", err)
 	}
 
 	RegisterStaticRoutes(e, staticDir, soundsDir)

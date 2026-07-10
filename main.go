@@ -13,25 +13,29 @@ import (
 )
 
 func main() {
-	cfg, err := config.Load(context.Background())
+	ctx := context.Background()
+
+	cfg, err := config.Load(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := os.MkdirAll(utils.RingtonesDir, 0o755); err != nil {
-		log.Panic(err)
+	if err := os.MkdirAll(cfg.RingtonesDir, 0o755); err != nil {
+		log.Fatal(err)
 	}
 
-	if err := os.MkdirAll(utils.TemporaryDir, 0o755); err != nil {
-		log.Panic(err)
+	if err := os.MkdirAll(cfg.TemporaryDir, 0o755); err != nil {
+		log.Fatal(err)
 	}
 
-	if err := database.Init(cfg.DBConnectionString); err != nil {
+	store, err := database.Open(ctx, cfg.DBConnectionString)
+	if err != nil {
 		log.Fatal("database init failed: ", err)
 	}
+	defer store.Close()
 
 	auth := utils.NewAuth(cfg.TokenKey, cfg.Production)
-	appServer := server.NewServer(cfg, auth)
+	appServer := server.NewServer(cfg, store, auth)
 
 	e, err := appServer.NewEcho()
 	if err != nil {

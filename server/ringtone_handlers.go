@@ -7,30 +7,30 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
-	"glyphtones/database"
 	"glyphtones/templates/components"
 	"glyphtones/templates/views"
 	"glyphtones/utils"
 
 	"github.com/labstack/echo/v5"
-	"github.com/lib/pq"
 )
 
+const downloadedCookieTTL = 1_000_000 * time.Hour
+
 func (s *Server) renameView(c *echo.Context) error {
-	authorID := s.auth.GetIDFromCookie(c)
+	authorID := s.currentUserID(c)
 	if authorID == 0 {
 		return Render(c, views.OtherErrorView(http.StatusBadRequest, errors.New("You're not logged in.")))
 	}
 
 	displayID := c.Param("displayID")
-	if len(displayID) <= 5 {
+	if !validDisplayID(displayID) {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	ringtone, err := database.GetRingtone(displayID, authorID)
+	ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, authorID)
 	if err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
@@ -39,69 +39,67 @@ func (s *Server) renameView(c *echo.Context) error {
 }
 
 func (s *Server) rename(c *echo.Context) error {
-	authorID := s.auth.GetIDFromCookie(c)
+	authorID := s.currentUserID(c)
 	if authorID == 0 {
 		return errors.New("You're not logged in.")
 	}
 	displayID := c.Param("displayID")
-	if len(displayID) <= 5 {
+	if !validDisplayID(displayID) {
 		return c.NoContent(http.StatusBadRequest)
 	}
 	newName := c.FormValue("name")
 	if !ringtoneNameR.MatchString(newName) {
-		ringtone, err := database.GetRingtone(displayID, authorID)
+		ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, authorID)
 		if err != nil {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
 		ringtone.Name = newName
 		return Render(c, components.Rename(ringtone, errors.New("The name must be 2-20 letters and only a-z and some special characters.")))
 	}
-	err := database.RenameRingtone(displayID, newName, authorID)
-	if err != nil {
-		ringtone, err := database.GetRingtone(displayID, authorID)
-		if err != nil {
-			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+	if err := s.store.RenameRingtone(c.Request().Context(), displayID, newName, authorID); err != nil {
+		ringtone, getErr := s.store.GetRingtone(c.Request().Context(), displayID, authorID)
+		if getErr != nil {
+			return Render(c, views.OtherErrorView(http.StatusInternalServerError, getErr))
 		}
 		return Render(c, components.Rename(ringtone, errors.New("Something went wrong")))
 	}
-	ringtone, err := database.GetRingtone(displayID, authorID)
+	ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, authorID)
 	if err != nil {
-		return Render(c, components.Rename(ringtone, errors.New("Something went wrong")))
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
 	return Render(c, components.Captions(ringtone, true))
 }
 
 func (s *Server) uploadView(c *echo.Context) error {
-	effects, err := database.GetEffects()
+	effects, err := s.store.GetEffects(c.Request().Context())
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	_, err = c.Cookie(utils.CookieName)
-	return Render(c, views.Upload(err == nil, c.FormValue("c"), effects, "", "", nil))
+	return Render(c, views.Upload(s.loggedInFromCookie(c), c.FormValue("c"), effects, "", "", nil))
 }
 
 func (s *Server) uploadFile(c *echo.Context) error {
-	authorID := s.auth.GetIDFromCookie(c)
+	authorID := s.currentUserID(c)
 	if authorID == 0 {
 		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("Only logged-in authors can upload Glyphtones")))
 	}
-	author, err := database.GetAuthor(authorID)
+	ctx := c.Request().Context()
+	author, err := s.store.GetAuthor(ctx, authorID)
 	if err != nil {
 		return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("Something went wrong")))
 	}
 
 	errorHandler := func(mainErr error) error {
-		effects, err := database.GetEffects()
+		effects, err := s.store.GetEffects(ctx)
 		if err != nil {
 			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 		}
-		return Render(c, views.UploadForm(c.FormValue("c"), effects, c.FormValue("e"), c.FormValue("name"), authorID != 0, mainErr))
+		return Render(c, views.UploadForm(c.FormValue("c"), effects, c.FormValue("e"), c.FormValue("name"), true, mainErr))
 	}
 
 	if author.Banned {
-		log.Println("ban")
 		return errorHandler(errors.New("You cannot upload since you are banned!"))
 	}
 
@@ -119,64 +117,26 @@ func (s *Server) uploadFile(c *echo.Context) error {
 	if err != nil {
 		return errorHandler(errors.New("Missing the file."))
 	}
-	split := strings.Split(file.Filename, ".")
-	if len(split) == 0 || split[len(split)-1] != "ogg" {
+	if !hasOGGExtension(file.Filename) {
 		return errorHandler(errors.New("It seems that the file provided is not a Nothing Glyphtone."))
 	}
 
-	src, err := file.Open()
-	if err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
+	req := uploadRequest{
+		Name:          name,
+		Category:      category,
+		Effect:        effect,
+		AuthorID:      authorID,
+		AutoGenerated: autoGenerated,
 	}
-	defer src.Close()
-
-	tmpFile, err := utils.CreateTemporaryFile(src)
-	if err != nil {
-		log.Println(err)
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
-	}
-	defer func() {
-		name := tmpFile.Name()
-		tmpFile.Close()
-		utils.DeleteFile(name)
-	}()
-
-	stats, err := os.Stat(tmpFile.Name())
-	if err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
-	}
-	if stats.Size() > maxRingtoneSize {
-		return errorHandler(errors.New("The file is too large! (3MB limit)"))
-	}
-
-	hashBytes, err := utils.GetCheckSum(tmpFile)
-	if err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
-	}
-
-	phones, err := database.GetPhones()
-	if err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
-	}
-
-	phonesCompatibleIDs, glyphData, ok := utils.CheckFile(tmpFile, phones)
-	if !ok {
-		return errorHandler(errors.New("It seems that the file provided is not a Nothing Glyphtone."))
-	}
-
-	displayIDName, err := database.CreateRingtone(name, category, phonesCompatibleIDs, effect, authorID, autoGenerated, glyphData, hashBytes)
-	if err != nil {
-		if pgErr, ok := err.(*pq.Error); ok {
-			if pgErr.Code == "23505" && pgErr.Constraint == "ringtone_hash_key" {
-				return Render(c, views.OtherError(http.StatusBadRequest, errors.New("You're trying to upload a file which has been uploaded before. Please do not do that...")))
-			}
+	if err := s.saveUploadedRingtone(ctx, req, file); err != nil {
+		switch {
+		case errors.Is(err, utils.ErrInvalidRingtoneFile):
+			return errorHandler(errors.New("It seems that the file provided is not a Nothing Glyphtone."))
+		case errors.Is(err, errDuplicateRingtone):
+			return Render(c, views.OtherError(http.StatusBadRequest, errors.New("You're trying to upload a file which has been uploaded before. Please do not do that...")))
+		default:
+			return Render(c, views.OtherError(http.StatusInternalServerError, err))
 		}
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
-	}
-
-	err = utils.CreateRingtoneFile(tmpFile, displayIDName)
-	if err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
 	return Render(c, views.SuccessfulUpload())
@@ -184,22 +144,24 @@ func (s *Server) uploadFile(c *echo.Context) error {
 
 func (s *Server) downloadRingtone(c *echo.Context) error {
 	displayID := c.Param("displayID")
-	if len(displayID) <= 5 {
+	if !validDisplayID(displayID) {
 		return c.NoContent(http.StatusBadRequest)
 	}
 	_, err := c.Cookie(fmt.Sprintf("Glyphtone_%s_downloaded", displayID))
 	if err == nil {
 		return c.NoContent(http.StatusOK)
 	}
-	err = database.RingtoneIncreaseDownload(displayID)
-	if err != nil {
+	if err := s.store.RingtoneIncreaseDownload(c.Request().Context(), displayID); err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	cookie := http.Cookie{
-		Name:    fmt.Sprintf("Glyphtone_%s_downloaded", displayID),
-		Value:   "true",
-		Expires: time.Now().Add(time.Hour * 1_000_000),
-		Path:    "/",
+		Name:     fmt.Sprintf("Glyphtone_%s_downloaded", displayID),
+		Value:    "true",
+		Expires:  time.Now().Add(downloadedCookieTTL),
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   s.cfg.Production,
 	}
 	c.SetCookie(&cookie)
 	return c.NoContent(http.StatusOK)
@@ -207,20 +169,22 @@ func (s *Server) downloadRingtone(c *echo.Context) error {
 
 func (s *Server) deleteRingtone(c *echo.Context) error {
 	displayID := c.Param("displayID")
-	if len(displayID) <= 5 {
+	if !validDisplayID(displayID) {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	authorID := s.auth.GetIDFromCookie(c)
+	authorID := s.currentUserID(c)
 	if authorID == 0 {
 		return Render(c, views.OtherError(http.StatusBadRequest, errors.New("You're not logged in.")))
 	}
 
-	err := database.DeleteRingtone(displayID, authorID)
-	if err != nil {
+	if err := s.store.DeleteRingtone(c.Request().Context(), displayID, authorID); err != nil {
 		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
-	utils.DeleteFile(fmt.Sprintf("%s/%s.ogg", utils.RingtonesDir, displayID))
+	soundPath := filepath.Join(s.cfg.RingtonesDir, displayID+".ogg")
+	if err := utils.DeleteFile(soundPath); err != nil && !errors.Is(err, os.ErrNotExist) {
+		log.Printf("delete ringtone file %s: %v", soundPath, err)
+	}
 
 	c.Response().Header().Set("HX-Refresh", "true")
 	return c.NoContent(http.StatusOK)
@@ -228,17 +192,17 @@ func (s *Server) deleteRingtone(c *echo.Context) error {
 
 func (s *Server) detailRingtone(c *echo.Context) error {
 	displayID := c.Param("displayID")
-	if len(displayID) <= 5 {
+	if !validDisplayID(displayID) {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	userID := s.auth.GetIDFromCookie(c)
+	userID := s.currentUserID(c)
 
-	ringtone, err := database.GetRingtone(displayID, userID)
+	ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return s.notFound(c)
 		}
-		fmt.Println(err)
+		log.Printf("detail ringtone %s: %v", displayID, err)
 		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
@@ -247,10 +211,10 @@ func (s *Server) detailRingtone(c *echo.Context) error {
 
 func (s *Server) vote(c *echo.Context) error {
 	displayID := c.Param("displayID")
-	if len(displayID) <= 5 {
+	if !validDisplayID(displayID) {
 		return c.NoContent(http.StatusBadRequest)
 	}
-	userID := s.auth.GetIDFromCookie(c)
+	userID := s.currentUserID(c)
 	if userID == 0 {
 		return c.NoContent(http.StatusUnauthorized)
 	}
@@ -260,17 +224,16 @@ func (s *Server) vote(c *echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 
-	err = database.Vote(userID, displayID, vote)
-	if err != nil {
-		log.Println(err)
-		ringtone, err := database.GetRingtone(displayID, userID)
-		if err != nil {
+	if err := s.store.Vote(c.Request().Context(), userID, displayID, vote); err != nil {
+		log.Printf("vote for %s: %v", displayID, err)
+		ringtone, getErr := s.store.GetRingtone(c.Request().Context(), displayID, userID)
+		if getErr != nil {
 			return c.NoContent(http.StatusInternalServerError)
 		}
 		return Render(c, components.Votes(ringtone.DisplayID, ringtone.Votes, ringtone.LoggedInAuthorsVote))
 	}
 
-	ringtone, err := database.GetRingtone(displayID, userID)
+	ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, userID)
 	if err != nil {
 		return c.NoContent(http.StatusInternalServerError)
 	}

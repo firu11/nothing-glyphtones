@@ -6,108 +6,115 @@ import (
 	"encoding/base64"
 	"encoding/csv"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"os/exec"
-
-	"glyphtones/database"
 )
 
-var (
-	RingtonesDir string = "./sounds"
-	TemporaryDir string = "./tmp"
-)
+var ErrInvalidRingtoneFile = errors.New("invalid ringtone file")
 
-func CheckFile(file *os.File, phones []database.PhoneModel) ([]int, string, bool) {
-	var phonesResult []int
+type PhoneSpec struct {
+	ID              int
+	NumberOfColumns int
+	AlternateCols   int
+}
+
+type FileCheckResult struct {
+	PhoneIDs  []int
+	GlyphData string
+}
+
+func CheckFile(file *os.File, phones []PhoneSpec) (FileCheckResult, error) {
+	var result FileCheckResult
 
 	cmd := exec.Command("ffprobe", "-i", file.Name(), "-show_streams", "-select_streams", "a", "-v", "quiet", "-of", "json")
 
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {
-		fmt.Println("Error running FFprobe:", err)
-		return phonesResult, "", false
+		return result, fmt.Errorf("run ffprobe: %w", err)
 	}
 
-	var result map[string]any
-	if err := json.Unmarshal(out.Bytes(), &result); err != nil {
-		fmt.Println("Error running Json Unmarshal:", err)
-		return phonesResult, "", false
+	var probe struct {
+		Streams []struct {
+			CodecName string         `json:"codec_name"`
+			Tags      map[string]any `json:"tags"`
+		} `json:"streams"`
+	}
+	if err := json.Unmarshal(out.Bytes(), &probe); err != nil {
+		return result, fmt.Errorf("decode ffprobe output: %w", err)
 	}
 
-	streams, ok := result["streams"].([]any)
-	if !ok || len(streams) == 0 {
-		return phonesResult, "", false
+	if len(probe.Streams) == 0 {
+		return result, ErrInvalidRingtoneFile
 	}
-	firstStream, ok := streams[0].(map[string]any)
-	if !ok {
-		return phonesResult, "", false
-	}
-	if firstStream["codec_name"] != "opus" {
-		return phonesResult, "", false
-	}
-	tags, ok := firstStream["tags"].(map[string]any)
-	if !ok {
-		return phonesResult, "", false
+	stream := probe.Streams[0]
+	if stream.CodecName != "opus" {
+		return result, ErrInvalidRingtoneFile
 	}
 
-	author, ok := tags["AUTHOR"].(string)
-	if !ok {
-		return phonesResult, "", false
+	author, ok := stream.Tags["AUTHOR"].(string)
+	if !ok || author == "" {
+		return result, ErrInvalidRingtoneFile
 	}
 
-	// im not sure what the difference between StdEncoding and RawStdEncoding is, but sometimes the file doesn't decode with the normal one so I have to try raw too...
-	decoded, err := base64.StdEncoding.DecodeString(author) // decode from base64 to bytes
+	decoded, err := base64.StdEncoding.DecodeString(author)
 	if err != nil {
-		decoded, err = base64.RawStdEncoding.DecodeString(author) // decode from base64 to bytes
+		decoded, err = base64.RawStdEncoding.DecodeString(author)
 		if err != nil {
-			return phonesResult, "", false
+			return result, ErrInvalidRingtoneFile
 		}
 	}
-	reader, err := zlib.NewReader(bytes.NewReader(decoded)) // decode zlib compression
+
+	reader, err := zlib.NewReader(bytes.NewReader(decoded))
 	if err != nil {
-		return phonesResult, "", false
+		return result, ErrInvalidRingtoneFile
 	}
 	defer reader.Close()
 
 	var decompressed bytes.Buffer
-	_, err = io.Copy(&decompressed, reader) // copy the result to buffer
-	if err != nil {
-		return phonesResult, "", false
+	if _, err := io.Copy(&decompressed, reader); err != nil {
+		return result, ErrInvalidRingtoneFile
 	}
 
 	csvReader := csv.NewReader(&decompressed)
 	csvReader.TrimLeadingSpace = true
 	record, err := csvReader.Read()
 	if err != nil {
-		return phonesResult, "", false
+		return result, ErrInvalidRingtoneFile
 	}
+
 	columns := len(record)
 	for i := len(record) - 1; i >= 0; i-- {
 		if record[i] == "" {
-			columns -= 1
-		} else {
-			break
+			columns--
+			continue
 		}
+		break
 	}
 
-	for _, v := range phones {
-		if v.NumberOfColumns == columns || v.NumberOfColumns2 == columns {
-			phonesResult = append(phonesResult, v.ID)
+	result.GlyphData = author
+	for _, phone := range phones {
+		if phone.NumberOfColumns == columns || phone.AlternateCols == columns {
+			result.PhoneIDs = append(result.PhoneIDs, phone.ID)
 		}
 	}
+	if len(result.PhoneIDs) == 0 {
+		return FileCheckResult{}, ErrInvalidRingtoneFile
+	}
 
-	file.Seek(0, 0)
+	if _, err := file.Seek(0, 0); err != nil {
+		return FileCheckResult{}, fmt.Errorf("rewind ringtone file: %w", err)
+	}
 
-	// finally if everything is ok, return true
-	return phonesResult, author, true
+	return result, nil
 }
 
-func CreateRingtoneFile(src *os.File, name string) error {
-	dst, err := os.Create(fmt.Sprintf("%s/%s.ogg", RingtonesDir, name))
+func CreateRingtoneFile(src *os.File, dstDir string, name string) error {
+	dst, err := os.Create(fmt.Sprintf("%s/%s.ogg", dstDir, name))
 	if err != nil {
 		return err
 	}
@@ -117,26 +124,34 @@ func CreateRingtoneFile(src *os.File, name string) error {
 	return err
 }
 
-func CreateTemporaryFile(src io.Reader) (*os.File, error) {
-	dst, err := os.CreateTemp(TemporaryDir, "upload")
+func CreateTemporaryFile(tmpDir string, src io.Reader) (*os.File, error) {
+	dst, err := os.CreateTemp(tmpDir, "upload")
 	if err != nil {
-		log.Println(3)
-		return dst, err
+		return nil, fmt.Errorf("create temp file: %w", err)
 	}
 
-	_, err = io.Copy(dst, src)
-	if err != nil {
-		log.Println(4)
-		return dst, err
+	if _, err := io.Copy(dst, src); err != nil {
+		dst.Close()
+		return nil, fmt.Errorf("copy upload to temp file: %w", err)
 	}
 
-	dst.Seek(0, 0)
+	if _, err := dst.Seek(0, 0); err != nil {
+		dst.Close()
+		return nil, fmt.Errorf("rewind temp file: %w", err)
+	}
 
 	return dst, nil
 }
 
-func DeleteFile(name string) {
+func DeleteFile(name string) error {
 	if err := os.Remove(name); err != nil {
-		log.Println(err)
+		return err
+	}
+	return nil
+}
+
+func LogDeleteFileError(path string, err error) {
+	if err != nil {
+		log.Printf("delete file %s: %v", path, err)
 	}
 }

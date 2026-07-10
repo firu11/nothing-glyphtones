@@ -46,8 +46,9 @@ docker run --rm \
   -p 8080:8080 \
   -e DB_CONNECTION_STRING="postgresql://chris:password@localhost:5432/glyphtones?sslmode=disable" \
   -e GOOGLE_SECRET="<GOOGLE_CONSOLE_SECRET>" \
-  -e GOOGLE_ID="<GOOGLE_CONSOLE_ID> \
+  -e GOOGLE_ID="<GOOGLE_CONSOLE_ID>" \
   -e GOOGLE_REDIRECT_URL="http://localhost:8080/google-callback" \
+  -e TOKEN_KEY="change-me" \
   glyphtones
 ```
 
@@ -57,8 +58,8 @@ docker run --rm \
 2. Install [Templ](https://templ.guide/quick-start/installation) via `go install`
 3. Create a new database in psql
 4. Clone this repository
-5. Run the _init.sql_ file to setup the database
-6. Configure your enviroment variables
+5. Run the _database/init.sql_ file to setup the database
+6. Configure your environment variables
 7. Run the project (`templ generate && go run .`)
 
 #### MacOS example:
@@ -79,22 +80,16 @@ postgres=# \q  # exit
 git clone https://github.com/firu11/nothing-glyphtones.git  # clone the repository
 
 # CONFIGURATION
-cd nothing-glyphtones       # go into the project
-psql glyphtones < init.sql  # load the init.sql file into the database
-# edit the configuration:
-#   when following this tutorial, only 3 variables need to be changed
-#   DB_NAME=glyphtones
-#   DB_USER=chris
-#   DB_NAME=password
-# save the file
-
+cd nothing-glyphtones                # go into the project
+psql glyphtones < database/init.sql  # load the init.sql file into the database
 # RUN
 export DB_CONNECTION_STRING="postgresql://chris:password@localhost:5432/glyphtones?sslmode=disable"
 export GOOGLE_SECRET="<GOOGLE_CONSOLE_SECRET>"
 export GOOGLE_ID="<GOOGLE_CONSOLE_ID>"
 export GOOGLE_REDIRECT_URL="http://localhost:8080/google-callback"
+export TOKEN_KEY="change-me"
 
 templ generate  # generate html templates
 go run .        # run the code
-# go to: http://localhost:1323 and voilà
+# go to: http://localhost:8080 and voilà
 ```
