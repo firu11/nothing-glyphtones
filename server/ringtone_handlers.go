@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -33,7 +33,7 @@ func (s *Server) renameView(c *echo.Context) error {
 	}
 	ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, authorID)
 	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+		return internalError(c, "get ringtone for rename", err, false)
 	}
 
 	return Render(c, components.Rename(ringtone, nil))
@@ -52,28 +52,29 @@ func (s *Server) rename(c *echo.Context) error {
 	if !ringtoneNameR.MatchString(newName) {
 		ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, authorID)
 		if err != nil {
-			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+			return internalError(c, "get ringtone after invalid rename", err, true)
 		}
 		ringtone.Name = newName
 		return Render(c, components.Rename(ringtone, errors.New("The name must be 2-20 letters and only a-z and some special characters.")))
 	}
 	if err := s.store.RenameRingtone(c.Request().Context(), displayID, newName, authorID); err != nil {
+		slog.Error("failed to rename ringtone", "method", c.Request().Method, "path", c.Request().URL.Path, "display_id", displayID, "error", err)
 		ringtone, getErr := s.store.GetRingtone(c.Request().Context(), displayID, authorID)
 		if getErr != nil {
-			return Render(c, views.OtherErrorView(http.StatusInternalServerError, getErr))
+			return internalError(c, "reload ringtone after failed rename", getErr, true)
 		}
 		return Render(c, components.Rename(ringtone, errors.New("Something went wrong")))
 	}
 	ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, authorID)
 	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+		return internalError(c, "reload renamed ringtone", err, true)
 	}
 
 	var effects []database.EffectModel
 	if authorID == 1 {
 		effects, err = s.store.GetEffects(c.Request().Context())
 		if err != nil {
-			return c.NoContent(http.StatusInternalServerError)
+			return internalError(c, "query effects after rename", err, false)
 		}
 	}
 	return Render(c, components.Captions(ringtone, effects, true, authorID == 1))
@@ -97,7 +98,7 @@ func (s *Server) updateRingtoneMetadata(c *echo.Context) error {
 	ctx := c.Request().Context()
 	effects, err := s.store.GetEffects(ctx)
 	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+		return internalError(c, "query effects for metadata update", err, false)
 	}
 	validEffect := false
 	for _, effect := range effects {
@@ -110,11 +111,11 @@ func (s *Server) updateRingtoneMetadata(c *echo.Context) error {
 		return c.NoContent(http.StatusBadRequest)
 	}
 	if err := s.store.UpdateRingtoneMetadata(ctx, displayID, category, effectID, c.FormValue("auto_generated") == "on"); err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+		return internalError(c, "update ringtone metadata", err, false)
 	}
 	ringtone, err := s.store.GetRingtone(ctx, displayID, 1)
 	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+		return internalError(c, "reload updated ringtone", err, false)
 	}
 	return Render(c, components.Captions(ringtone, effects, true, true))
 }
@@ -122,7 +123,7 @@ func (s *Server) updateRingtoneMetadata(c *echo.Context) error {
 func (s *Server) uploadView(c *echo.Context) error {
 	effects, err := s.store.GetEffects(c.Request().Context())
 	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+		return internalError(c, "query upload effects", err, true)
 	}
 
 	return Render(c, views.Upload(s.loggedInFromCookie(c), c.FormValue("c"), effects, "", "", nil))
@@ -136,13 +137,13 @@ func (s *Server) uploadFile(c *echo.Context) error {
 	ctx := c.Request().Context()
 	author, err := s.store.GetAuthor(ctx, authorID)
 	if err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, errors.New("Something went wrong")))
+		return internalError(c, "get uploading author", err, false)
 	}
 
 	errorHandler := func(mainErr error) error {
 		effects, err := s.store.GetEffects(ctx)
 		if err != nil {
-			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+			return internalError(c, "query effects for upload error", err, true)
 		}
 		return Render(c, views.UploadForm(c.FormValue("c"), effects, c.FormValue("e"), c.FormValue("name"), true, mainErr))
 	}
@@ -183,7 +184,7 @@ func (s *Server) uploadFile(c *echo.Context) error {
 		case errors.Is(err, errDuplicateRingtone):
 			return Render(c, views.OtherError(http.StatusBadRequest, errors.New("You're trying to upload a file which has been uploaded before. Please do not do that...")))
 		default:
-			return Render(c, views.OtherError(http.StatusInternalServerError, err))
+			return internalError(c, "save uploaded ringtone", err, false)
 		}
 	}
 
@@ -200,7 +201,7 @@ func (s *Server) downloadRingtone(c *echo.Context) error {
 		return c.NoContent(http.StatusOK)
 	}
 	if err := s.store.RingtoneIncreaseDownload(c.Request().Context(), displayID); err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+		return internalError(c, "increment ringtone download", err, false)
 	}
 	cookie := http.Cookie{
 		Name:     fmt.Sprintf("Glyphtone_%s_downloaded", displayID),
@@ -226,12 +227,12 @@ func (s *Server) deleteRingtone(c *echo.Context) error {
 	}
 
 	if err := s.store.DeleteRingtone(c.Request().Context(), displayID, authorID); err != nil {
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
+		return internalError(c, "delete ringtone", err, false)
 	}
 
 	soundPath := filepath.Join(s.cfg.RingtonesDir, displayID+".ogg")
 	if err := utils.DeleteFile(soundPath); err != nil && !errors.Is(err, os.ErrNotExist) {
-		log.Printf("delete ringtone file %s: %v", soundPath, err)
+		slog.Error("failed to delete ringtone file", "path", soundPath, "display_id", displayID, "error", err)
 	}
 
 	c.Response().Header().Set("HX-Refresh", "true")
@@ -250,15 +251,14 @@ func (s *Server) detailRingtone(c *echo.Context) error {
 		if errors.Is(err, sql.ErrNoRows) {
 			return s.notFound(c)
 		}
-		log.Printf("detail ringtone %s: %v", displayID, err)
-		return Render(c, views.OtherError(http.StatusInternalServerError, err))
+		return internalError(c, "get ringtone detail", err, true)
 	}
 
 	var effects []database.EffectModel
 	if userID == 1 {
 		effects, err = s.store.GetEffects(c.Request().Context())
 		if err != nil {
-			return Render(c, views.OtherError(http.StatusInternalServerError, err))
+			return internalError(c, "query effects for ringtone detail", err, true)
 		}
 	}
 	return Render(c, views.Detail(ringtone, effects, userID))
@@ -280,17 +280,17 @@ func (s *Server) vote(c *echo.Context) error {
 	}
 
 	if err := s.store.Vote(c.Request().Context(), userID, displayID, vote); err != nil {
-		log.Printf("vote for %s: %v", displayID, err)
+		slog.Error("failed to update ringtone vote", "method", c.Request().Method, "path", c.Request().URL.Path, "display_id", displayID, "author_id", userID, "error", err)
 		ringtone, getErr := s.store.GetRingtone(c.Request().Context(), displayID, userID)
 		if getErr != nil {
-			return c.NoContent(http.StatusInternalServerError)
+			return internalError(c, "reload ringtone after failed vote", getErr, false)
 		}
 		return Render(c, components.Votes(ringtone.DisplayID, ringtone.Votes, ringtone.LoggedInAuthorsVote))
 	}
 
 	ringtone, err := s.store.GetRingtone(c.Request().Context(), displayID, userID)
 	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+		return internalError(c, "reload ringtone after vote", err, false)
 	}
 
 	return Render(c, components.Votes(ringtone.DisplayID, ringtone.Votes, ringtone.LoggedInAuthorsVote))

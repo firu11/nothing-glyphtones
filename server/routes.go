@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -39,6 +40,7 @@ func (s *Server) healthcheck(c *echo.Context) error {
 	defer cancel()
 
 	if err := s.store.PingContext(ctx); err != nil {
+		slog.Error("database healthcheck failed", "method", c.Request().Method, "path", c.Request().URL.Path, "error", err)
 		return c.NoContent(http.StatusInternalServerError)
 	}
 	return c.NoContent(http.StatusOK)

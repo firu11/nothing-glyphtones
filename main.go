@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,6 +20,16 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
+func configureLogging(production bool) {
+	var handler slog.Handler
+	if production {
+		handler = slog.NewJSONHandler(os.Stderr, nil)
+	} else {
+		handler = slog.NewTextHandler(os.Stderr, nil)
+	}
+	slog.SetDefault(slog.New(handler))
+}
+
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
@@ -27,6 +38,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	configureLogging(cfg.Production)
 
 	if err := os.MkdirAll(cfg.RingtonesDir, 0o755); err != nil {
 		log.Fatal(err)

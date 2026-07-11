@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"math/rand/v2"
 	"net/http"
 	"strings"
@@ -26,7 +25,7 @@ type googleUserInfo struct {
 func (s *Server) googleLogin(c *echo.Context) error {
 	state, err := randomHex(16)
 	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to start login")))
+		return internalError(c, "generate OAuth state", err, true)
 	}
 
 	c.SetCookie(&http.Cookie{
@@ -58,23 +57,22 @@ func (s *Server) googleCallback(c *echo.Context) error {
 	ctx := c.Request().Context()
 	token, err := s.googleOauthConfig.Exchange(ctx, code)
 	if err != nil {
-		log.Printf("google token exchange failed: %v", err)
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to exchange token")))
+		return internalError(c, "exchange Google OAuth token", err, true)
 	}
 
 	client := s.googleOauthConfig.Client(ctx, token)
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
 	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to fetch user info")))
+		return internalError(c, "fetch Google user info", err, true)
 	}
 	defer resp.Body.Close()
 
 	var authorInfo googleUserInfo
 	if err := json.NewDecoder(resp.Body).Decode(&authorInfo); err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Failed to decode author info")))
+		return internalError(c, "decode Google user info", err, true)
 	}
 	if authorInfo.Name == "" || authorInfo.Email == "" {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, errors.New("Google account is missing required profile fields")))
+		return internalError(c, "validate Google user info", errors.New("missing required profile fields"), true)
 	}
 
 	name := normalizeAuthorName(authorInfo.Name)
@@ -84,12 +82,12 @@ func (s *Server) googleCallback(c *echo.Context) error {
 			authorID, err = s.store.CreateAuthor(ctx, fmt.Sprintf("%s%d", name, rand.IntN(10000)), authorInfo.Email)
 		}
 		if err != nil {
-			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+			return internalError(c, "create author", err, true)
 		}
 	}
 
 	if err := s.auth.WriteAuthCookie(c, authorID); err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+		return internalError(c, "write auth cookie", err, true)
 	}
 	return c.Redirect(http.StatusTemporaryRedirect, "/me")
 }

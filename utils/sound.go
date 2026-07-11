@@ -9,7 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 )
@@ -152,6 +152,6 @@ func DeleteFile(name string) error {
 
 func LogDeleteFileError(path string, err error) {
 	if err != nil {
-		log.Printf("delete file %s: %v", path, err)
+		slog.Error("failed to delete file", "path", path, "error", err)
 	}
 }
