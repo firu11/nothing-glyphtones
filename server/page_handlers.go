@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"glyphtones/database"
 	"glyphtones/templates/components"
 	"glyphtones/templates/views"
 
@@ -41,21 +42,21 @@ func (s *Server) index(c *echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
+	effects, err := s.store.GetEffects(ctx)
+	if err != nil {
+		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+	}
+
 	if isHX(c) {
 		c.Response().Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
 		c.Response().Header().Set("Pragma", "no-cache")
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, filters.Page, authorID, "", "index"))
+		return Render(c, components.ListOfRingtones(ringtones, effects, numberOfPages, filters.Page, authorID, "", "index"))
 	}
 
 	phones, err := s.store.GetPhones(ctx)
 	if err != nil {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
-	effects, err := s.store.GetEffects(ctx)
-	if err != nil {
-		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
-	}
-
 	for i := range phones {
 		phones[i].Selected = containsInt(filters.Phones, phones[i].ID)
 	}
@@ -93,8 +94,16 @@ func (s *Server) author(c *echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
+	var effects []database.EffectModel
+	if userID == 1 {
+		effects, err = s.store.GetEffects(ctx)
+		if err != nil {
+			return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
+		}
+	}
+
 	if isHX(c) {
-		return Render(c, components.ListOfRingtones(ringtones, numberOfPages, pageNumber, userID, authorName, "profile"))
+		return Render(c, components.ListOfRingtones(ringtones, effects, numberOfPages, pageNumber, userID, authorName, "profile"))
 	}
 
 	author, err := s.store.GetAuthorByName(ctx, authorName)
@@ -104,6 +113,7 @@ func (s *Server) author(c *echo.Context) error {
 
 	data := views.ProfileData{
 		Ringtones:        ringtones,
+		Effects:          effects,
 		NumberOfPages:    numberOfPages,
 		Page:             pageNumber,
 		Author:           author,

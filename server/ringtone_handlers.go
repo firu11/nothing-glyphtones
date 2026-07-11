@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"time"
 
+	"glyphtones/database"
 	"glyphtones/templates/components"
 	"glyphtones/templates/views"
 	"glyphtones/utils"
@@ -68,7 +69,54 @@ func (s *Server) rename(c *echo.Context) error {
 		return Render(c, views.OtherErrorView(http.StatusInternalServerError, err))
 	}
 
-	return Render(c, components.Captions(ringtone, true))
+	var effects []database.EffectModel
+	if authorID == 1 {
+		effects, err = s.store.GetEffects(c.Request().Context())
+		if err != nil {
+			return c.NoContent(http.StatusInternalServerError)
+		}
+	}
+	return Render(c, components.Captions(ringtone, effects, true, authorID == 1))
+}
+
+func (s *Server) updateRingtoneMetadata(c *echo.Context) error {
+	if s.currentUserID(c) != 1 {
+		return c.NoContent(http.StatusForbidden)
+	}
+
+	displayID := c.Param("displayID")
+	if !validDisplayID(displayID) {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	category, categoryErr := strconv.Atoi(c.FormValue("category"))
+	effectID, effectErr := strconv.Atoi(c.FormValue("effect"))
+	if categoryErr != nil || category < 1 || category > len(components.Categories) || effectErr != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	ctx := c.Request().Context()
+	effects, err := s.store.GetEffects(ctx)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	validEffect := false
+	for _, effect := range effects {
+		if effect.ID == effectID {
+			validEffect = true
+			break
+		}
+	}
+	if !validEffect {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	if err := s.store.UpdateRingtoneMetadata(ctx, displayID, category, effectID, c.FormValue("auto_generated") == "on"); err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	ringtone, err := s.store.GetRingtone(ctx, displayID, 1)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	return Render(c, components.Captions(ringtone, effects, true, true))
 }
 
 func (s *Server) uploadView(c *echo.Context) error {
@@ -206,7 +254,14 @@ func (s *Server) detailRingtone(c *echo.Context) error {
 		return Render(c, views.OtherError(http.StatusInternalServerError, err))
 	}
 
-	return Render(c, views.Detail(ringtone, userID))
+	var effects []database.EffectModel
+	if userID == 1 {
+		effects, err = s.store.GetEffects(c.Request().Context())
+		if err != nil {
+			return Render(c, views.OtherError(http.StatusInternalServerError, err))
+		}
+	}
+	return Render(c, views.Detail(ringtone, effects, userID))
 }
 
 func (s *Server) vote(c *echo.Context) error {

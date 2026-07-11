@@ -12,6 +12,7 @@ type RingtoneModel struct {
 	DisplayID           string         `db:"display_id"`
 	Name                string         `db:"name"`
 	PhoneNames          pq.StringArray `db:"phone_names"`
+	EffectID            int            `db:"effect_id"`
 	EffectName          string         `db:"effect_name"`
 	Category            int            `db:"category"`
 	Downloads           int            `db:"downloads"`
