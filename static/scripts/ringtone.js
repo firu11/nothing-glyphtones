@@ -28,25 +28,14 @@ function setButtonState(button, state) {
   button.querySelector('.red').src = imagesRed[state];
 }
 
-function inflateGlyphs(buffer) {
-  const bytes = new Uint8Array(buffer);
-  try {
-    return Pako.inflate(bytes, { to: 'string' });
-  } catch {
-    const base64 = new TextDecoder().decode(bytes).replace(/\s/g, '');
-    const compressed = Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
-    return Pako.inflate(compressed, { to: 'string' });
-  }
-}
-
 function loadGlyphCSV(id) {
   if (!glyphCache.has(id)) {
-    const request = fetch(`/ringtones/${id}/glyphs`)
+    const request = fetch(`/g/${id}/glyphs`)
       .then((response) => {
         if (!response.ok) throw new Error(`Failed to load glyphs: ${response.status}`);
         return response.arrayBuffer();
       })
-      .then(inflateGlyphs)
+      .then((buffer) => Pako.inflate(new Uint8Array(buffer), { to: 'string' }))
       .then((value) => value.split(/\r?\n/).map((row) => row.split(',').slice(0, -1)))
       .catch((error) => {
         glyphCache.delete(id);

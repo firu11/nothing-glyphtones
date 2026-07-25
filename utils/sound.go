@@ -12,6 +12,7 @@ import (
 	"log/slog"
 	"os"
 	"os/exec"
+	"slices"
 )
 
 var ErrInvalidRingtoneFile = errors.New("invalid ringtone file")
@@ -88,8 +89,8 @@ func CheckFile(file *os.File, phones []PhoneSpec) (FileCheckResult, error) {
 	}
 
 	columns := len(record)
-	for i := len(record) - 1; i >= 0; i-- {
-		if record[i] == "" {
+	for _, r := range slices.Backward(record) {
+		if r == "" {
 			columns--
 			continue
 		}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"strings"
 
 	"glyphtones/database"
@@ -45,8 +46,6 @@ func (s *Server) index(c *echo.Context) error {
 	}
 
 	if isHX(c) {
-		c.Response().Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
-		c.Response().Header().Set("Pragma", "no-cache")
 		return Render(c, components.ListOfRingtones(ringtones, effects, numberOfPages, filters.Page, authorID, "", "index"))
 	}
 
@@ -55,10 +54,10 @@ func (s *Server) index(c *echo.Context) error {
 		return internalError(c, "query phones", err, true)
 	}
 	for i := range phones {
-		phones[i].Selected = containsInt(filters.Phones, phones[i].ID)
+		phones[i].Selected = slices.Contains(filters.Phones, phones[i].ID)
 	}
 	for i := range effects {
-		effects[i].Selected = containsInt(filters.Effects, effects[i].ID)
+		effects[i].Selected = slices.Contains(filters.Effects, effects[i].ID)
 	}
 
 	data := views.IndexData{
@@ -171,9 +170,11 @@ func (s *Server) authorRename(c *echo.Context) error {
 	}
 	newName := strings.ToLower(strings.TrimSpace(c.FormValue("name")))
 	if !authorNameR.MatchString(newName) {
-		return Render(c, components.EditName(
-			newName,
-			errors.New("Invalid name. Maximal length is 20 letters. Only letters, numbers and '_-' are allowed.")),
+		return Render(
+			c, components.EditName(
+				newName,
+				errors.New("Invalid name. Maximal length is 20 letters. Only letters, numbers and '_-' are allowed."),
+			),
 		)
 	}
 	if err := s.store.RenameAuthor(c.Request().Context(), authorID, newName); err != nil {
@@ -183,13 +184,4 @@ func (s *Server) authorRename(c *echo.Context) error {
 	c.Response().Header().Add("HX-Redirect", "/me")
 
 	return c.NoContent(http.StatusOK)
-}
-
-func containsInt(values []int, target int) bool {
-	for _, value := range values {
-		if value == target {
-			return true
-		}
-	}
-	return false
 }

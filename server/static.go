@@ -50,7 +50,6 @@ func dynamicNoCacheMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		path := c.Request().URL.Path
 		if !strings.HasPrefix(path, "/static") && !strings.HasPrefix(path, "/sounds") {
 			c.Response().Header().Set(echo.HeaderCacheControl, "no-store, no-cache, must-revalidate, max-age=0")
-			c.Response().Header().Set("Pragma", "no-cache")
 		}
 		return next(c)
 	}
