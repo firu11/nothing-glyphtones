@@ -6,6 +6,8 @@ const imagesRed = ['/static/icons/play-red.svg', '/static/icons/pause-red.svg', 
 let allWaveSurfers = [];
 let listOfRingtones = [];
 let all = [];
+let playRequest = 0;
+const glyphCache = new Map();
 const singleRingtonePreview = window.location.pathname.includes('/g/');
 
 function muteAllExcept(index) {
@@ -21,64 +23,97 @@ function muteAllExcept(index) {
   }
 }
 
-function click(e) {
-  if (e.target.tagName == 'BUTTON' && e.target.firstChild.tagName == 'IMG') {
-    const ringtoneDiv = e.target.parentElement.parentElement;
-    const i = parseInt(ringtoneDiv.getAttribute('data-i'));
+function setButtonState(button, state) {
+  button.querySelector('.white').src = images[state];
+  button.querySelector('.red').src = imagesRed[state];
+}
 
-    if (e.target.firstChild.getAttribute('src') == images[2]) return;
-
-    if (allWaveSurfers[i].isPlaying()) {
-      allWaveSurfers[i].pause();
-      if (!singleRingtonePreview) window.nowPlaying.phoneModel = null;
-      window.nowPlaying.player = null;
-      window.nowPlaying.isPlaying = false;
-      e.target.querySelector('.white').src = images[0];
-      e.target.querySelector('.red').src = imagesRed[0];
-    } else {
-      muteAllExcept(i);
-      allWaveSurfers[i].play();
-      window.nowPlaying.player = allWaveSurfers[i];
-      setPhoneModel(ringtoneDiv);
-
-      const glyphs = ringtoneDiv.getAttribute('data-glyphs');
-      let resultCSV = '';
-      try {
-        const compressedData = atob(glyphs);
-
-        const bytes = new Uint8Array(compressedData.length);
-        for (let i = 0; i < compressedData.length; i++) {
-          bytes[i] = compressedData.charCodeAt(i);
-        }
-        resultCSV = Pako.inflate(bytes, { to: 'string' });
-      } catch (err) {
-        console.log(err);
-      }
-
-      if (resultCSV !== undefined) {
-        let rows = resultCSV.split(/\r\n|\n/);
-        let csv = [];
-        rows.forEach((row) => {
-          csv.push(row.split(',').slice(0, -1));
-        });
-        window.nowPlaying.CSV = csv;
-      }
-
-      window.nowPlaying.isPlaying = true;
-      e.target.querySelector('.white').src = images[1];
-      e.target.querySelector('.red').src = imagesRed[1];
-    }
+function inflateGlyphs(buffer) {
+  const bytes = new Uint8Array(buffer);
+  try {
+    return Pako.inflate(bytes, { to: 'string' });
+  } catch {
+    const base64 = new TextDecoder().decode(bytes).replace(/\s/g, '');
+    const compressed = Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
+    return Pako.inflate(compressed, { to: 'string' });
   }
+}
+
+function loadGlyphCSV(id) {
+  if (!glyphCache.has(id)) {
+    const request = fetch(`/ringtones/${id}/glyphs`)
+      .then((response) => {
+        if (!response.ok) throw new Error(`Failed to load glyphs: ${response.status}`);
+        return response.arrayBuffer();
+      })
+      .then(inflateGlyphs)
+      .then((value) => value.split(/\r?\n/).map((row) => row.split(',').slice(0, -1)))
+      .catch((error) => {
+        glyphCache.delete(id);
+        throw error;
+      });
+    glyphCache.set(id, request);
+  }
+  return glyphCache.get(id);
+}
+
+async function click(event) {
+  const button = event.target.closest('.audio button');
+  if (!button || button.querySelector('.white').getAttribute('src') === images[2]) return;
+
+  const ringtoneDiv = button.closest('.ringtone');
+  const index = Number(ringtoneDiv.dataset.i);
+  const player = allWaveSurfers[index];
+
+  if (player.isPlaying()) {
+    playRequest++;
+    player.pause();
+    window.nowPlaying = singleRingtonePreview ? { phoneModel: window.nowPlaying.phoneModel } : {};
+    setButtonState(button, 0);
+    return;
+  }
+
+  const request = ++playRequest;
+  const cancelled = () => request !== playRequest || !ringtoneDiv.isConnected;
+  window.nowPlaying = {};
+  setButtonState(button, 2);
+
+  const glyphRequest = loadGlyphCSV(ringtoneDiv.dataset.id).catch((error) => {
+    console.error(error);
+    return null;
+  });
+
+  muteAllExcept(index);
+  try {
+    await player.play();
+  } catch (error) {
+    console.error(error);
+    setButtonState(button, 0);
+    return;
+  }
+
+  if (cancelled()) {
+    player.pause();
+    if (ringtoneDiv.isConnected) setButtonState(button, 0);
+    return;
+  }
+
+  window.nowPlaying = { CSV: null, player: player, isPlaying: true };
+  setPhoneModel(ringtoneDiv);
+  setButtonState(button, 1);
+
+  const csv = await glyphRequest;
+  if (csv !== null && !cancelled()) window.nowPlaying.CSV = csv;
 }
 
 function main(e) {
   if (e !== undefined && e.detail.elt.id !== 'list-of-ringtones') return; // only if the target is list of ringtones
 
-  document.removeEventListener('click', click);
-
   listOfRingtones = document.querySelector('#list-of-ringtones');
   all = document.querySelectorAll('.ringtone');
+  allWaveSurfers.forEach((wavesurfer) => wavesurfer.destroy());
   allWaveSurfers = [];
+  playRequest++;
 
   window.nowPlaying = {};
 

@@ -28,6 +28,7 @@ func (s *Server) registerRoutes(e *echo.Echo) {
 	e.POST("/admin/ringtone/:displayID", s.updateRingtoneMetadata)
 	e.POST("/delete-ringtone/:displayID", s.deleteRingtone)
 	e.GET("/g/:displayID", s.detailRingtone, fullPageGzipMiddleware())
+	e.GET("/g/:displayID/glyphs", s.ringtoneGlyphs)
 	e.GET("/guide", s.guide, fullPageGzipMiddleware())
 	e.GET("/dmca", s.dmca, fullPageGzipMiddleware())
 	e.GET("/google-login", s.googleLogin)

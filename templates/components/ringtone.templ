@@ -7,7 +7,7 @@ import (
 )
 
 templ Ringtone(data database.RingtoneModel, effects []database.EffectModel, index int, ownedByLoggedInAuthor bool, isAdmin bool, hideEnlargeBtn bool) {
-	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ data.DisplayID } data-phone={ strings.Join([]string(data.PhoneNames), ",") } data-glyphs={ data.Glyphs.String }>
+	<div class="ringtone" data-i={ fmt.Sprintf("%d", index) } data-id={ data.DisplayID } data-phone={ strings.Join([]string(data.PhoneNames), ",") }>
 		<div class="audio">
 			<button type="button">
 				<img class="red" src="/static/icons/loading.svg" alt="loading"/>

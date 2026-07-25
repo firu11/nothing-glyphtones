@@ -24,7 +24,7 @@ type PhoneSpec struct {
 
 type FileCheckResult struct {
 	PhoneIDs  []int
-	GlyphData string
+	GlyphData []byte
 }
 
 func CheckFile(file *os.File, phones []PhoneSpec) (FileCheckResult, error) {
@@ -96,7 +96,7 @@ func CheckFile(file *os.File, phones []PhoneSpec) (FileCheckResult, error) {
 		break
 	}
 
-	result.GlyphData = author
+	result.GlyphData = decoded
 	for _, phone := range phones {
 		if phone.NumberOfColumns == columns || phone.AlternateCols == columns {
 			result.PhoneIDs = append(result.PhoneIDs, phone.ID)

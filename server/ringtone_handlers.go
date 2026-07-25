@@ -191,6 +191,27 @@ func (s *Server) uploadFile(c *echo.Context) error {
 	return Render(c, views.SuccessfulUpload())
 }
 
+func (s *Server) ringtoneGlyphs(c *echo.Context) error {
+	displayID := c.Param("displayID")
+	if !validDisplayID(displayID) {
+		return c.NoContent(http.StatusBadRequest)
+	}
+
+	glyphs, err := s.store.GetRingtoneGlyphs(c.Request().Context(), displayID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return c.NoContent(http.StatusNotFound)
+		}
+		return internalError(c, "get ringtone glyphs", err, false)
+	}
+	if len(glyphs) == 0 {
+		return c.NoContent(http.StatusNotFound)
+	}
+
+	c.Response().Header().Set(echo.HeaderCacheControl, "public, max-age=31536000, immutable")
+	return c.Blob(http.StatusOK, "application/octet-stream", glyphs)
+}
+
 func (s *Server) downloadRingtone(c *echo.Context) error {
 	displayID := c.Param("displayID")
 	if !validDisplayID(displayID) {

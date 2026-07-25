@@ -25,7 +25,7 @@ CREATE TABLE ringtone (
     effect_id INTEGER REFERENCES effect (id),
     author_id INTEGER REFERENCES author (id),
     time_added TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    glyphs TEXT,
+    glyphs BYTEA,
     auto_generated BOOLEAN NOT NULL DEFAULT FALSE,
     display_id VARCHAR(15) NOT NULL,
     hash BYTEA UNIQUE NOT NULL
