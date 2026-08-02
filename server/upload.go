@@ -15,7 +15,10 @@ import (
 	"github.com/lib/pq"
 )
 
-var errDuplicateRingtone = errors.New("duplicate ringtone upload")
+var (
+	errDuplicateRingtone = errors.New("duplicate ringtone upload")
+	errFileTooLarge      = errors.New("the file is too large! (3MB limit)")
+)
 
 type uploadRequest struct {
 	Name          string
@@ -49,7 +52,7 @@ func (s *Server) saveUploadedRingtone(ctx context.Context, req uploadRequest, fi
 		return fmt.Errorf("stat temp ringtone file: %w", err)
 	}
 	if stats.Size() > maxRingtoneSize {
-		return fmt.Errorf("the file is too large! (3MB limit)")
+		return errFileTooLarge
 	}
 
 	hashBytes, err := utils.GetCheckSum(tmpFile)

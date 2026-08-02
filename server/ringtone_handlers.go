@@ -183,6 +183,8 @@ func (s *Server) uploadFile(c *echo.Context) error {
 			return errorHandler(errors.New("It seems that the file provided is not a Nothing Glyphtone."))
 		case errors.Is(err, errDuplicateRingtone):
 			return Render(c, views.OtherError(http.StatusBadRequest, errors.New("You're trying to upload a file which has been uploaded before. Please do not do that...")))
+		case errors.Is(err, errFileTooLarge):
+			return Render(c, views.OtherError(http.StatusBadRequest, err))
 		default:
 			return internalError(c, "save uploaded ringtone", err, false)
 		}
