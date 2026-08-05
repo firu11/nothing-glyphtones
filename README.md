@@ -17,6 +17,7 @@ The website is running in Germany, Falkenstein on [Hetzner](https://www.hetzner.
 
 ## Database Schema
 ![ER Diagram](database/diagram.svg)
+Or take a look here: [./database/init.sql](./database/init.sql)
 
 ---
 
@@ -58,7 +59,7 @@ docker run --rm \
 2. Install [Templ](https://templ.guide/quick-start/installation) via `go install`
 3. Create a new database in psql
 4. Clone this repository
-5. Run the _database/init.sql_ file to setup the database
+5. Run the [./database/init.sql](./database/init.sql) file to setup the database
 6. Configure your environment variables
 7. Run the project (`templ generate && go run .`)
 
