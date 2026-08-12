@@ -27,6 +27,11 @@ templ Upload(loggedIn bool, categoryValue string, effects []database.EffectModel
 
 templ UploadForm(categoryValue string, effects []database.EffectModel, effectsValue string, nameValue string, loggedIn bool, err error) {
 	<form id="upload" hx-put="/upload" hx-trigger="submit" hx-encoding="multipart/form-data" hx-swap="outerHTML">
+		<p class="upload-notice">
+			Please do not include your name or the phone model in the title! It will be handled automatically.
+			<br/>
+			Example title: "Daft Punk - Instant Crush"
+		</p>
 		<div id="main-container">
 			<div id="file-container">
 				<div id="audio">
@@ -78,7 +83,6 @@ templ UploadForm(categoryValue string, effects []database.EffectModel, effectsVa
 				}
 			</h3>
 		}
-		<p>Please do not include the <s>author's name</s> or the <s>phone model</s> in the title, as they are both taken care of.</p>
 	</form>
 }
 
