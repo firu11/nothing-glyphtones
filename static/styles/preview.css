@@ -29,6 +29,10 @@
     svg {
       padding-top: 9px;
     }
+
+    svg[id='(4a) Pro'] {
+      padding-top: 2px;
+    }
   }
 
   &.vertical-rect {
@@ -103,6 +107,10 @@
 
     svg {
       padding: 6px 6px 3px 6px;
+    }
+
+    svg[id='(4a) Pro'] {
+      padding-top: 4px;
     }
   }
 }
