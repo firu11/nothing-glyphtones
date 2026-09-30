@@ -155,6 +155,7 @@
 .filters-column #checkboxes {
   display: flex;
   flex-direction: column;
+  margin-bottom: 0.5rem;
 }
 
 .filters-column #checkboxes label {
