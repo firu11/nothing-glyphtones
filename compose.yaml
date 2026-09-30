@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: chris
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: glyphtones
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-18-data:/var/lib/postgresql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+volumes:
+  postgres-18-data:

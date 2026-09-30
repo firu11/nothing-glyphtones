@@ -42,9 +42,9 @@ docker run -d \
   -e POSTGRES_USER=chris \
   -e POSTGRES_PASSWORD=password \
   -e POSTGRES_DB=glyphtones \
-  -v glyphtones-postgres:/var/lib/postgresql/data \
+  -v glyphtones-postgres:/var/lib/postgresql \
   -v ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro \
-  postgres:17
+  postgres:18-alpine
 ```
 PostgreSQL runs `database/init.sql` when initializing a new data volume. If the `glyphtones-postgres` volume already exists, remove it with `docker volume rm glyphtones-postgres` before starting PostgreSQL to run the script again.
 
